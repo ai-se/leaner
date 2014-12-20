@@ -9,20 +9,9 @@ src="${stem}.py"
 url=$2
 
 cat<<EOF
-# $stem
 
-This file is part of LEANER where say that data mining is easy:
+<small>_This file is part of LEANER. To know more, download [$src]($url/$file)'s source or read our [home](README.md) page._</small>
 
-1. Find some crap;
-2. Cut the crap;
-3. Go to step 1.
-
-Want to know more? 
-
-+ Download [$src]($url/$file)
-+ Read our [home](README.md) page.
-
-____
 
 EOF
 cat $1 |

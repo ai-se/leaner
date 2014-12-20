@@ -1,17 +1,6 @@
-# libeg
 
-This file is part of LEANER where say that data mining is easy:
+<small>_This file is part of LEANER. To know more, download [libeg.py](https://github.com/ai-se/timm/blob/master/leaner/src/libeg.py)'s source or read our [home](README.md) page._</small>
 
-1. Find some crap;
-2. Cut the crap;
-3. Go to step 1.
-
-Want to know more? 
-
-+ Download [libeg.py](https://github.com/ai-se/timm/blob/master/leaner/src/libeg.py)
-+ Read our [home](README.md) page.
-
-____
 
 
 # General stuff (demos)
