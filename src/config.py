@@ -18,8 +18,7 @@ from boot import *
 @setting
 def LIB(**d): return o(
     buffer = 128,
-    points = 3,
     # Thresholds are from http://goo.gl/25bAh9
-    dull = [0.147, 0.33, 0.474][1]
+    dull = [0.147, 0.33, 0.474][0]
   ).update(**d)
 

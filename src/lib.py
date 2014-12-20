@@ -64,8 +64,7 @@ def say(*l):sys.stdout.write(', '.join(map(str,l)))
 Print list of numbers without too many decimal places.
 
 """
-def g(lst,n=None):
-  if n is None: n = the.LIB.points
+def g(lst,n=3):
   for col,val in enumerate(lst):
     if isinstance(val,float): val = round(val,n)
     lst[col] = val
