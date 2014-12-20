@@ -18,12 +18,12 @@ test:
 tests:
 	cd src; $(foreach f,$(tests), python $f;)
 
-typo:
+typo: publish
 	- git status
 	- git commit -am "stuff"
 	- git push origin master
 
-commit:
+commit: publish
 	- git status
 	- git commit -a
 	- git push origin master

@@ -6,17 +6,20 @@ simplicity on the other side of complexity."
 -- _Oliver Wendell Holmes Jr._
 
 LEANER is the least Python I can write to illustrate
-the most about data mining. Turns out, after decades
-of writing data miners, the great secret can now be
-revealed. Data mining is easy, if you follow three
-simple rules:
+the most about data mining. After decades
+of data mining research, the great secrets can now be
+revealed. Data miners are software and good data
+miners need to be written and maintained by good
+software engineers.  Also, data mining is easy if
+you follow three simple rules:
 
 1. Find some crap;
 2. Cut the crap;
 3. Go to step 1.
 
-LEANER needs a standard UNIX environment (with git, make, python 2.7+, etc).
-To install and test, use the following.
+LEANER needs a standard UNIX environment (with git,
+make, python 2.7+, etc).  To install and test, use
+the following.
 
 
 ```
@@ -42,11 +45,11 @@ Copyright (C) 2015 Tim Menzies <tim.menzies@gmail.com>
 
 + Don't worry about people stealing your ideas. If
   your ideas are any good, you'll have to ram them
-  down people's throats.
+  down people's throats.   
   _-- Howard Aiken_
 + To reach a wider audience, try _open source, open door, special sauce_. 
   Give away your tools to get a foot in the door. Then sell the
-  customization services that tunes the tools to local conditions.
+  customization services that tunes the tools to local conditions.   
   _-- Tim Menzies_
  
 Everyone is permitted to use, copy and distribute
@@ -54,7 +57,7 @@ verbatim or modified copies of this license
 document, and changing it is allowed as long as the
 name is changed.
 
-### TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
+TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
 
 1. You just DO WHAT THE F*CK YOU WANT TO.
 2. And do not blame me if anything screws up.
