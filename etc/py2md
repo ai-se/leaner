@@ -11,7 +11,7 @@ url=$2
 cat<<EOF
 # $stem
 
-This file is part of ML101, where say that data mining is easy:
+This file is part of LEANER where say that data mining is easy:
 
 1. Find some crap;
 2. Cut the crap;

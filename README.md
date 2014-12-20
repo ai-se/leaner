@@ -5,18 +5,37 @@ of complexity, but I would give my life for the
 simplicity on the other side of complexity."  
 -- _Oliver Wendell Holmes Jr._
 
-LEANER is the
-least Python I can write to illustrate the most
-about data mining.
+LEANER is the least Python I can write to illustrate
+the most about data mining. Turns out, after decades
+of writing data miners, the great secret can now be
+revealed. Data mining is easy, if you follow three
+simple rules:
 
+1. Find some crap;
+2. Cut the crap;
+3. Go to step 1.
+
+## Installation
+
+### Requires
+
+LEANER needs a standard UNIX environment (with make, python 2.7, etc).
+
+### Download and Test Instructions
+
+```
+git clone https://github.com/ai-se/leaner.git
+make test
+```
 
 
 
 ## Contents
 
-+ [boot](boot.md):  Boot Code
++ [boot](boot.md):  Boot code: stuff needed before anything else
 + [config](config.md):  Configuration Control
-+ [lib](lib.md):  Welcome to the future
++ [libeg](libeg.md):  General stuff (demos)
++ [lib](lib.md):  General stuff
 
 ## LICENSE
 

@@ -1,6 +1,6 @@
 # config
 
-This file is part of ML101, where say that data mining is easy:
+This file is part of LEANER where say that data mining is easy:
 
 1. Find some crap;
 2. Cut the crap;
@@ -27,7 +27,10 @@ from boot import *
 
 @setting
 def LIB(**d): return o(
-    buffer = 128
+    buffer = 128,
+    points = 3,
+    # Thresholds are from http://goo.gl/25bAh9
+    dull = [0.147, 0.33, 0.474][1]
   ).update(**d)
 
 ````

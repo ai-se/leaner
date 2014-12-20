@@ -1,6 +1,7 @@
+url="https://github.com/ai-se/timm/blob/master/leaner"
+
 py=$(shell cd src; ls *.py)
 md=$(subst src/,,$(subst .py,.md,$(py)))
-url="https://github.com/ai-se/timm/blob/master/leaner"
 
 all: publish commit
 
