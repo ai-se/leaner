@@ -6,6 +6,10 @@ sys.dont_write_bytecode =True
 
 # General stuff (demos)
 
+"""
+from lib import *
+"""
+
 ## Random stuff
 
 """
@@ -25,7 +29,7 @@ print('Resetting seed replicated old results:',
 
 """
 for one,two in pairs(lst()):
-  print('one',one,'two',two)
+  print('pairs of one',one,' and two',two)
 """
 
 ## Stats stuff
@@ -33,12 +37,14 @@ for one,two in pairs(lst()):
 """
 seed(1)
 lst1=[r() for _ in xrange(1000)]
-lst2=[r()**1.2 for _ in xrange(1000)]
 print('big difference:',
-      1==cliffsDelta(lst1,lst2))
-lst3=[r() for _ in xrange(1000)]
+      1==cliffsDelta(
+        lst1,
+        [r()**2 for _ in xrange(1000)]))
 print('small difference:',
-      0==cliffsDelta(lst1,lst2))
+      0==cliffsDelta(
+        lst1,
+        [r() for _ in xrange(1000)]))
 """
 
 ## Printing stuff

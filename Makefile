@@ -3,8 +3,21 @@ url="https://github.com/ai-se/leaner/blob/master"
 
 py=$(shell cd src; ls *.py)
 md=$(subst src/,,$(subst .py,.md,$(py)))
+tests=$(shell cd src; ls *eg.py)
 
 all: publish commit
+
+test:
+	@$(MAKE) tests | gawk ' \
+		BEGIN { yes=no=0} \
+                {m="."} \
+                /True/  {yes++; m = "+"} \
+                /False/ {no++;  m = "-"} \
+                {printf m} \
+		END {print "\ntests passed",yes,"failed",no}'
+
+tests:
+	cd src; $(foreach f,$(tests), python $f;)
 
 typo:
 	- git status

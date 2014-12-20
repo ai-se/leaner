@@ -49,6 +49,7 @@ def cliffsDelta(lst1, lst2,dull=None):
       if x > y : more += 1
       if x < y : less += 1
   d = (more - less) / (len(lst1)*len(lst2))
+  print(d)
   return abs(d) > dull
 """
 
