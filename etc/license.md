@@ -20,7 +20,7 @@ verbatim or modified copies of this license
 document, and changing it is allowed as long as the
 name is changed.
 
-### TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
+TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
 
 1. You just DO WHAT THE F*CK YOU WANT TO.
 2. And do not blame me if anything screws up.
