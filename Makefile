@@ -1,4 +1,3 @@
-
 url="https://github.com/ai-se/leaner/blob/master"
 
 py=$(shell cd src; ls *.py)
