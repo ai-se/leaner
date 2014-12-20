@@ -1,5 +1,5 @@
 
-<small>_This file is part of LEANER. To know more, download [boot.py](https://github.com/ai-se/timm/blob/master/leaner/src/boot.py)'s source or read our [home](README.md) page._</small>
+<small>_This file is part of LEANER. To know more, download [boot.py](https://github.com/ai-se/leaner/blob/master/src/boot.py)'s source or read our [home](README.md) page._</small>
 
 
 # Boot code: stuff needed before anything else

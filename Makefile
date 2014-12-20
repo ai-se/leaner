@@ -1,4 +1,5 @@
-url="https://github.com/ai-se/timm/blob/master/leaner"
+
+url="https://github.com/ai-se/leaner/blob/master"
 
 py=$(shell cd src; ls *.py)
 md=$(subst src/,,$(subst .py,.md,$(py)))
