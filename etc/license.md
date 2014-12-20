@@ -34,13 +34,20 @@ http://www.wtfpl.net/ for more details.
 
 ### FAQ (about this license)
 
-+ Q: Can I make money with my software using the WTFPL?
-  A: Yes.
-+ Q: By the way, with the WTFPL, can I also…
-  A: Oh but yes, of course you can.
-+ Q: But can I…   
-  A: Yes you can.
-+ Q: Can…   
-  A: Yes! 
+Q: Can I make money with my software using the WTFPL?
+
++ A: Yes.
+
+Q: By the way, with the WTFPL, can I also…
+
++ A: Oh but yes, of course you can.
+
+Q: But can I…
+
++ A: Yes you can.
+
+Q: Can…
+
++ A: Yes! 
 
 
