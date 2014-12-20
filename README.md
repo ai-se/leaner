@@ -16,12 +16,12 @@ simple rules:
 3. Go to step 1.
 
 LEANER needs a standard UNIX environment (with git, make, python 2.7+, etc).
-To install and test it, use the following:
+To install and test, use the following.
 
 
 ```
 git clone https://github.com/ai-se/leaner.git
-make test
+make test 
 ```
 
 
@@ -42,18 +42,21 @@ Copyright (C) 2015 Tim Menzies <tim.menzies@gmail.com>
 
 + Don't worry about people stealing your ideas. If
   your ideas are any good, you'll have to ram them
-  down people's throats. _-- Howard Aiken_
+  down people's throats.
+  _-- Howard Aiken_
 + To reach a wider audience, try _open source, open door, special sauce_. 
   Give away your tools to get a foot in the door. Then sell the
-  customization services that tunes the tools to local conditions. _-- Tim Menzies_
+  customization services that tunes the tools to local conditions.
+  _-- Tim Menzies_
  
-Everyone is permitted to copy and distribute
+Everyone is permitted to use, copy and distribute
 verbatim or modified copies of this license
 document, and changing it is allowed as long as the
 name is changed.
 
-### TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION 
+### TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
 
 1. You just DO WHAT THE F*CK YOU WANT TO.
+2. And do not blame me if anything screws up.
 
 

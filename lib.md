@@ -48,6 +48,7 @@ def cliffsDelta(lst1, lst2,dull=None):
       if x > y : more += 1
       if x < y : less += 1
   d = (more - less) / (len(lst1)*len(lst2))
+  print(d)
   return abs(d) > dull
 ````
 
@@ -62,8 +63,7 @@ def say(*l):sys.stdout.write(', '.join(map(str,l)))
 Print list of numbers without too many decimal places.
 
 ````python
-def g(lst,n=None):
-  if n is None: n = the.LIB.points
+def g(lst,n=3):
   for col,val in enumerate(lst):
     if isinstance(val,float): val = round(val,n)
     lst[col] = val
