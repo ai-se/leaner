@@ -15,13 +15,9 @@ simple rules:
 2. Cut the crap;
 3. Go to step 1.
 
-## Installation
+LEANER needs a standard UNIX environment (with git, make, python 2.7+, etc).
+To install and test it, use the following:
 
-### Requires
-
-LEANER needs a standard UNIX environment (with make, python 2.7, etc).
-
-### Download and Test Instructions
 
 ```
 git clone https://github.com/ai-se/leaner.git
