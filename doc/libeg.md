@@ -30,6 +30,21 @@ def _pairs():
     print('pairs of one',one,' and two',two)
 
 @go
+def _runs():
+  seed(1)
+  lst = sorted([round(r()/0.01) for _ in xrange(25)])
+  print(lst)
+  got =[(n,x) for n,x in runs(lst)]
+  want = [(1, 0.0), (3, 3.0), (1, 9.0), (1, 13.0), 
+          (1, 22.0), (1, 23.0), (1, 26.0), (1, 38.0), 
+          (1, 43.0), (2, 45.0), (1, 50.0), (1, 54.0), 
+          (1, 65.0), (1, 72.0), (2, 76.0), (1, 79.0), 
+          (1, 84.0), (1, 85.0), (1, 90.0), (1, 94.0),
+          (1, 95.0)]
+  print("\ngot= ",got)
+  print('\ngood runs?',want==got)
+
+@go
 def _cliffsDelta():
   seed(1)
   lst1=[r() for _ in xrange(1000)]

@@ -54,13 +54,28 @@ def msecs(f):
 
 ## Iterator Stuff
 
+Return all pairs of items i,i+1 from a list.
 """
 def pairs(lst):
-  "Return all pairs of items i,i+1 from a list."
+
   last=lst[0]
   for i in lst[1:]:
     yield last,i
     last = i
+"""
+
+Return counts of consecutively repeated items in a list.
+
+"""
+def runs(lst):
+  for j,two in enumerate(lst):
+    if j == 0:
+      one,i = two,0
+    if one!=two:
+      yield j - i,one
+      i = j
+    one=two
+  yield j - i + 1,two
 """
 
 ## Stats stuff
@@ -68,34 +83,37 @@ def pairs(lst):
 Cliff's delta computes the probability that one list
 has numbers bigger or smaller than another
 list. This version sorts the lists before making
-that test so for lists containing 100,1000,10000
-random numbers, it is 31,120,550 times faster
-(respectively) than another version that does not
+that test. For lists containing 100,1000,10000
+random numbers, this implementations
+is  one to three orders
+of magnitude faster
+than another version that does not
 use sorting.
 
 """
 def cliffsDelta(lst1,lst2,dull=None):
   dull = dull or the.LIB.dull
   m, n = len(lst1), len(lst2)
-  lst1, lst2 = sorted(lst1), sorted(lst2)
+  lst2 = sorted(lst2)
   j = more = less = 0
-  for x in lst1:
+  for repeats,x in runs(sorted(lst1)):
     while j <= (n - 1) and lst2[j] <  x: 
       j += 1
-    more += j
+    more += j*repeats
     while j <= (n - 1) and lst2[j] == x: 
       j += 1
-    less += n - j
+    less += (n - j)*repeats
   d= (more - less) / (m*n)
   return abs(d)  > dull
 """
 
 ## Printing stuff
 
-Print on or more of anything (no new lines).
+Print one or more of anything (no new lines).
 
 """
-def say(*l):sys.stdout.write(', '.join(map(str,l))) 
+def say(*l):
+  sys.stdout.write(', '.join(map(str,l))) 
 """
 
 Print list of numbers without too many decimal places.
