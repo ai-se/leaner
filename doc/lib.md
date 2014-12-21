@@ -26,6 +26,17 @@ ask = random.choice
 def shuffle(lst): random.shuffle(lst); return lst
 ````
 
+#Misc stuff
+
+````python
+def msecs(f):
+  import datetime
+  t1 = datetime.datetime.now()
+  f()
+  t2 = datetime.datetime.now() - t1
+  return t2.total_seconds()
+````
+
 ## Iterator Stuff
 
 ````python
@@ -39,17 +50,29 @@ def pairs(lst):
 
 ## Stats stuff
 
+Cliff's delta computes the probability that one list
+has numbers bigger or smaller than another
+list. This version sorts the lists before making
+that test so for lists containing 100,1000,10000
+random numbers, it is 31,120,550 times faster
+(respectively) than another version that does not
+use sorting.
+
 ````python
-def cliffsDelta(lst1, lst2,dull=None):
+def cliffsDelta(lst1,lst2,dull=None):
   dull = dull or the.LIB.dull
-  more = less = 0
+  m, n = len(lst1), len(lst2)
+  lst1, lst2 = sorted(lst1), sorted(lst2)
+  j = more = less = 0
   for x in lst1:
-    for y in lst2:
-      if x > y : more += 1
-      if x < y : less += 1
-  d = (more - less) / (len(lst1)*len(lst2))
-  print(d)
-  return abs(d) > dull
+    while j <= (n - 1) and lst2[j] <  x: 
+      j += 1
+    more += j
+    while j <= (n - 1) and lst2[j] == x: 
+      j += 1
+    less += n - j
+  d= (more - less) / (m*n)
+  return abs(d)  > dull
 ````
 
 ## Printing stuff
@@ -73,10 +96,10 @@ def g(lst,n=3):
 Print a list of lists, aligning all the columns.
 
 ````python
-def printm(matrix):
+def printm(matrix,sep=' | '):
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
-  fmt = ' | '.join('{{:{}}}'.format(x) for x in lens)
+  fmt = sep.join('{{:{}}}'.format(x) for x in lens)
   for row in [fmt.format(*row) for row in s]:
     print(row)
 ````
@@ -112,4 +135,14 @@ def xtile(lst,lo=0,hi=100,width=50,
   out[int(width/2)]    = bar
   out[place(pos(0.5))] = star 
   return '('+''.join(out) +  ")," +  pretty(what)
+````
+
+## Demo Stuff
+
+````python
+def go(d):
+  doc= '# '+d.__doc__+"\n" if d.__doc__ else ""
+  s='|'+'='*40 +'\n'
+  print('\n==| ' + d.func_name + ' ' + s+doc)
+  d()
 ````

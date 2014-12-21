@@ -4,13 +4,15 @@ py=$(shell cd src; ls *.py)
 md=doc/$(subst .md ,.md doc/,$(subst .py,.md,$(py)))
 tests=$(shell cd src; ls *eg.py)
 
+make=cd src; $(MAKE) --no-print-directory
+
 all: publish commit
 
 test:
-	@$(MAKE) tests | gawk -f etc/tests.awk
+	@$(make)  test
 
 tests:
-	@cd src; $(foreach f,$(tests), python $f;)
+	@$(make)  tests
 
 typo: publish
 	- git status
