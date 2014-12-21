@@ -38,7 +38,7 @@ README.md : etc/readme etc/license.md $(md) etc/toc1.awk
 	@cat $< > $@
 	@printf "\n\n## Contents\n\n" >> $@
 	@$(foreach f,$(py),\
-		gawk -f etc/toc1.awk src/$f >> $@;)
+		awk -f etc/toc1.awk src/$f >> $@;)
 	@cat etc/license.md  >> $@
 	git add $@
 
