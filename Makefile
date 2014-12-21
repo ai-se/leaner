@@ -7,10 +7,10 @@ tests=$(shell cd src; ls *eg.py)
 all: publish commit
 
 test:
-	@$(MAKE) tests | gawk etc/tests.awk
+	@$(MAKE) tests | gawk -f etc/tests.awk
 
 tests:
-	cd src; $(foreach f,$(tests), python $f;)
+	@cd src; $(foreach f,$(tests), python $f;)
 
 typo: publish
 	- git status
@@ -40,4 +40,4 @@ README.md : etc/readme.md etc/license.md $(md) etc/toc1.awk
 	@cat etc/license.md  >> $@
 	git add $@
 
-publish:  $(md) README.md 
+publish: $(md) README.md 
