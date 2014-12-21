@@ -17,7 +17,7 @@ The general idea is that:
 +  _Before_ you start reading data,
    you create one `Col` for each column. 
 + _After_ the data has been read, a column can be
-   `ask()`ed  a representative on what
+   `ask()`ed  for a representative on what
    values have been observed.
 +  _While_ reading data, the columns peek at each
    seen value (and update their information accordingly).
