@@ -31,60 +31,33 @@ make test
 
 ## Contents
 
-+ [boot](boot.md):  Boot code: stuff needed before anything else
-+ [config](config.md):  Configuration Control
-+ [libeg](libeg.md):  General stuff (demos)
-+ [lib](lib.md):  General stuff
++ [boot](doc/boot.md):  Boot code: stuff needed before anything else
++ [config](doc/config.md):  Configuration Control
++ [libeg](doc/libeg.md):  General stuff (demos)
++ [lib](doc/lib.md):  General stuff
 
 ## LICENSE
 
-DO WHAT THE F*CK YOU WANT TO PUBLIC LICENSE   
-Version 2, December 2004   
+Copyright (c) 2015 Tim Menzies  
+All rights reserved.
 
-Copyright (C) 2015 Tim Menzies <tim.menzies@gmail.com> 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-+ Don't worry about people stealing your ideas. If
-  your ideas are any good, you'll have to ram them
-  down people's throats.   
-  _-- Howard Aiken_
-+ To reach a wider audience, try _open source, open door, special sauce_. 
-  Give away your tools to get a foot in the door. Then sell the
-  customization services that tunes the tools to local conditions.   
-  _-- Tim Menzies_
- 
-Everyone is permitted to use, copy and distribute
-verbatim or modified copies of this license
-document, and changing it is allowed as long as the
-name is changed.
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
-### TERMS AND CONDITIONS FOR USAGE, COPYING, DISTRIBUTION AND MODIFICATION 
-
-1. You just DO WHAT THE F*CK YOU WANT TO.
-
-### Warranty
-
-This program is free software. It comes without any warranty, to
-the extent permitted by applicable law. You can redistribute it
-and/or modify it under the terms of the Do What The F*ck You Want
-To Public License, Version 2, as published by Sam Hocevar. See
-http://www.wtfpl.net/ for more details. 
-
-### FAQ (about this license)
-
-Q: Can I make money with my software using the WTFPL?
-
-+ A: Yes.
-
-Q: By the way, with the WTFPL, can I also…
-
-+ A: Oh but yes, of course you can.
-
-Q: But can I…
-
-+ A: Yes you can.
-
-Q: Can…
-
-+ A: Yes! 
-
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 

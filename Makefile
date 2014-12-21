@@ -1,19 +1,13 @@
 url="https://github.com/ai-se/leaner/blob/master"
 
 py=$(shell cd src; ls *.py)
-md=$(subst src/,,$(subst .py,.md,$(py)))
+md=doc/$(subst .md ,.md doc/,$(subst .py,.md,$(py)))
 tests=$(shell cd src; ls *eg.py)
 
 all: publish commit
 
 test:
-	@$(MAKE) tests | gawk ' \
-		BEGIN { yes=no=0} \
-                {m="."} \
-                /True/  {yes++; m = "+"} \
-                /False/ {no++;  m = "-"} \
-                {printf m} \
-		END {print "\ntests passed",yes,"failed",no}'
+	@$(MAKE) tests | gawk etc/tests.awk
 
 tests:
 	cd src; $(foreach f,$(tests), python $f;)
@@ -34,7 +28,7 @@ update:
 status:
 	- git status
 
-./%.md : src/%.py
+doc/%.md : src/%.py
 	@bash etc/py2md $< $(url) > $@
 	git add $@
 
@@ -46,4 +40,4 @@ README.md : etc/readme.md etc/license.md $(md) etc/toc1.awk
 	@cat etc/license.md  >> $@
 	git add $@
 
-publish: $(md) README.md 
+publish:  $(md) README.md 

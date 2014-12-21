@@ -10,7 +10,7 @@ url=$2
 
 cat<<EOF
 
-<small>_This file is part of LEANER. To know more, download [$src]($url/$file)'s source or read our [home](README.md) page._</small>
+<small>_This file is part of LEANER. To know more, download [$src]($url/$file)'s source or read our [home](https://github.com/ai-se/leaner) page._</small>
 
 
 EOF
