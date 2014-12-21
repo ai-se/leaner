@@ -30,8 +30,19 @@ make test
 + [config](doc/config.md):  Configuration Control
 + [libeg](doc/libeg.md):  General stuff (demos)
 + [lib](doc/lib.md):  General stuff
+## Installation
 
-## LICENSE
+LEANER uses a standard UNIX environment (with git,
+make, python 2.7+, bash, awk, etc).  To install and test, do
+the following:
+
+
+```
+git clone https://github.com/ai-se/leaner.git
+make test 
+```
+
+## License
 
 Copyright (c) 2015 Tim Menzies  
 All rights reserved.
