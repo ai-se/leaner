@@ -8,25 +8,25 @@
 ````python
 from lib import *
 
-def lst(): return list('0123456789')
+def lst0(): return list('0123456789')
 
 @go
 def _lists():
   "Random stuff"
   
   seed(1)
-  l1= shuffle(lst())
+  l1= shuffle(lst0())
   print(l1)
-  print(shuffle(lst()))
+  print(shuffle(lst0()))
   seed(1)
-  l2=shuffle(lst())
+  l2=shuffle(lst0())
   print('Resetting seed replicated old results:',
         l1==l2)
 
 @go
 def _pairs():
   "Walk thru pairs of the list."
-  for one,two in pairs(lst()):
+  for one,two in pairs(lst0()):
     print('pairs of one',one,' and two',two)
 
 @go

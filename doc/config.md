@@ -16,9 +16,16 @@ from boot import *
 
 @setting
 def LIB(**d): return o(
-    buffer = 128,
     # Thresholds are from http://goo.gl/25bAh9
     dull = [0.147, 0.33, 0.474][0]
+  ).update(**d)
+
+@setting
+def COL(**d): return o(
+    # Thresholds are from http://goo.gl/25bAh9
+    buffer = 128,
+    m = 2,
+    k = 1
   ).update(**d)
 
 ````

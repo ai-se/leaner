@@ -7,13 +7,21 @@
 
 ````python
 from config import *
-import random
+import random,math
 ````
 
 ## Type stuff
 
 ````python
 def ako(x,y): return isinstance(x,y)
+````
+
+## Math stuff
+
+````python
+pi=math.pi
+e=math.e
+sqrt=math.sqrt
 ````
 
 ## Random stuff
@@ -24,6 +32,11 @@ seed= random.seed
 ask = random.choice
 
 def shuffle(lst): random.shuffle(lst); return lst
+
+def normpdf(x, mu=0, sigma=1):
+  u = (x-mu) / abs(sigma)
+  y = exp(-u*u/2) / (sqrt(2*pi) * abs(sigma))
+  return y
 ````
 
 #Misc stuff

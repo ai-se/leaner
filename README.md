@@ -34,6 +34,7 @@ make test
 ## Contents
 
 + [boot](doc/boot.md):  Boot code: stuff needed before anything else
++ [cols](doc/cols.md):  Defining columns
 + [config](doc/config.md):  Configuration Control
 + [libeg](doc/libeg.md):  General stuff (demos)
 + [lib](doc/lib.md):  General stuff
