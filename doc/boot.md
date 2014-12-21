@@ -1,5 +1,5 @@
 
-<small>_This file is part of LEANER. To know more, view the source code [boot.py](../src/boot.py) or read our [home](..) page._</small>
+<small>_This file is part of LEANER. To know more, view the source code [boot.py](../src/boot.py) or read our [home](/) page._</small>
 
 
 # Boot code: stuff needed before anything else
