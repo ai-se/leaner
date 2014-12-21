@@ -1,5 +1,5 @@
 
-<small>_This file is part of LEANER. To know more, view the source code [lib.py](../src/src/lib.py)or read our [home](../) page._</small>
+<small>_This file is part of LEANER. To know more, view the source code [lib.py](../src/lib.py) or read our [home](../) page._</small>
 
 
 
