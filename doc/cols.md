@@ -13,15 +13,6 @@ from lib import *
 A generic column can be `ask()`ed for a representative
 value and/or `told()` what values have been observed.
 
-Also, you can ask a `Col` for:
-
-+ The distance between two col values (normalized 0 to 1)
-+ A `logger()`; i.e
-  a new column for storing things like this column.
-
-Finally, a `Col` can tell you how `likely()` is some
-value, given the `told()` values of that column.
-
 ````python
 class Col:
   def tell(i,x):
@@ -32,6 +23,50 @@ class Col:
     return x
 ````
 
+Also, you can ask a `Col` for:
+
++ The distance between two col values (normalized 0 to 1)
++ A `logger()`; i.e
+  a new column for storing things like this column.
+
+Finally, a `Col` can tell you how `likely()` is some
+value, given the `told()` values of that column.
+````python
+
+## `S`: Columns of Symbols
+
+Tracks the frequency counts of the `told()` symbols.
+Can report the entropy `ent()` of that distribution
+(which is a measure of the diversity of those symbols).
+
+````
+class S(Col): 
+  def __init__(i,all=None,name=''): 
+    i.all = all or {}
+    i.n = 0
+    i.name = str(name)
+  def tell1(i,x)  : 
+    i.all[x] = i.all.get(x,0) + 1
+  def ask(i)     : return(ask(i.all.keys()))
+  def dist(i,x,y): return 0 if x==y else 1
+  def norm(i,x)  : return x
+  def logger(i)  : return S(name=i.name)
+  def ent(i):
+    e=0
+    for key,value in i.all.items():
+      if value > 0:
+        p = value/i.n
+      e -= p*log(p,2)
+    return e
+  def likely(i,x,prior):
+    m = the.COL.m
+    return (i.all.get(x,0) + m*prior)/(i.n + m)
+````python
+    
+In `likely()`, the `prior` value is some used in a Naive Bayes
+classifier.
+
+
 ## `N`: Columns of Numbers
 
 Numeric columns track the `lo` and `hi` of the `told()`
@@ -41,7 +76,7 @@ numbers as well as their mean `mu` and standard deviation
 `N`s  also keep `kept()` a random sampling
 of the numbers (up to a max of `the.COL.buffer` numbers).
  
-````python
+````
 class N(Col):
   def __init__(i,init=[],lo=None,hi=None,name=''):
     i.n, i.lo, i.hi, i.name = 0,lo,hi,str(name)
@@ -74,34 +109,3 @@ class N(Col):
       i.name,i.n,i.lo ,i.hi)
   def likely(i,x,prior):
     return normpdf(x,i.mu.i.sd())
-````
-
-## `S`: Columns of Symbols
-
-Tracks the frequency counts of the `told()` symbols.
-Can report the entropy `ent()` of that distribution.
-
-````python
-class S(Col): 
-  def __init__(i,all=None,name=''): 
-    i.all = all or {}
-    i.n = 0
-    i.name = str(name)
-  def tell1(i,x)  : 
-    i.all[x] = i.all.get(x,0) + 1
-  def ask(i)     : return(ask(i.all.keys()))
-  def dist(i,x,y): return 0 if x==y else 1
-  def norm(i,x)  : return x
-  def logger(i)  : return S(name=i.name)
-  def ent(i):
-    e=0
-    for key,value in i.all.items():
-      if value > 0:
-        p = value/i.n
-      e -= p*log(p,2)
-    return e
-  def likely(i,x,prior):
-    m = the.COL.m
-    return (i.all.get(x,0) + m*prior)/(i.n + m)
-    
-````
