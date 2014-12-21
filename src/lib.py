@@ -23,6 +23,7 @@ def ako(x,y): return isinstance(x,y)
 pi=math.pi
 e=math.e
 sqrt=math.sqrt
+log=math.log
 """
 
 ## Random stuff
