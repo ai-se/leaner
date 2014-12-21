@@ -1,3 +1,5 @@
+<img align=right width=200 src="http://github.com/ai-se/leaner/img/learner.gif">
+
 # This is LEANER
 
 "I would not give a fig for the simplicity this side
