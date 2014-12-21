@@ -1,4 +1,4 @@
-<img align=right width=200 src="https://raw.githubusercontent.com/ai-se/leaner/master/img/leaner.gif">
+<img align=right width=300 src="https://raw.githubusercontent.com/ai-se/leaner/master/img/leaner.gif">
 
 # This is LEANER
 
