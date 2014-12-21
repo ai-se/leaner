@@ -1,5 +1,5 @@
 
-<small>_This file is part of LEANER. To know more, download [lib.py](https://github.com/ai-se/leaner/blob/master/src/lib.py)'s source or read our [home](https://github.com/ai-se/leaner) page._</small>
+<small>_This file is part of LEANER. To know more, view the source code [lib.py](../src/src/lib.py)or read our [home](../) page._</small>
 
 
 

@@ -1,4 +1,3 @@
-url="https://github.com/ai-se/leaner/blob/master"
 
 py=$(shell cd src; ls *.py)
 md=doc/$(subst .md ,.md doc/,$(subst .py,.md,$(py)))
@@ -31,7 +30,7 @@ status:
 	- git status
 
 doc/%.md : src/%.py
-	@bash etc/py2md $< $(url) > $@
+	@bash etc/py2md $<  > $@
 	git add $@
 
 README.md : etc/readme etc/license.md $(md) etc/toc1.awk

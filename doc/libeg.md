@@ -1,5 +1,5 @@
 
-<small>_This file is part of LEANER. To know more, download [libeg.py](https://github.com/ai-se/leaner/blob/master/src/libeg.py)'s source or read our [home](https://github.com/ai-se/leaner) page._</small>
+<small>_This file is part of LEANER. To know more, view the source code [libeg.py](../src/src/libeg.py)or read our [home](../) page._</small>
 
 
 
