@@ -2,8 +2,8 @@
 # Data Mining: a  LEANER approach
 
 <img align=right width=300 src="etc/img/leanRoboToolboxSmall.jpg">
-LEANER is the least Python I can write to illustrate
-the most about data mining. Turns out,
+LEANER is a data mining toolbox. It is the _least_  Python I can write to 
+_most_ illustrate  data mining. Turns out,
 data mining is easy if
 you follow three simple rules:
 
