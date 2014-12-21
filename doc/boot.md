@@ -37,7 +37,7 @@ def setting(f):
   return wrapper
 ````
 
-## 'the`: Where we Store the Globals
+## `the`: Where we Store the Globals
 
 ````python
 the=o()
