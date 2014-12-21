@@ -1,7 +1,7 @@
 
-# Data Mining, a LEANER approach
+# Data Mining: a  LEANER approach
 
-<img align=right width=300 src="etc/img/leaner.gif">
+<img align=right src="etc/img/leanRoboToolboxSmall.jpg">
 LEANER is the least Python I can write to illustrate
 the most about data mining. Turns out,
 data mining is easy if
