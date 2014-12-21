@@ -1,7 +1,7 @@
-<img align=right width=300 src="https://raw.githubusercontent.com/ai-se/leaner/master/etc/img/leaner.gif">
 
 # Data Mining, a LEANER approach
 
+<img align=right width=300 src="https://raw.githubusercontent.com/ai-se/leaner/master/etc/img/leaner.gif">
 LEANER is the least Python I can write to illustrate
 the most about data mining. Turns out,
 data mining is easy if
