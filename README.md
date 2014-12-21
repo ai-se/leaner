@@ -1,6 +1,6 @@
 <img align=right width=300 src="https://raw.githubusercontent.com/ai-se/leaner/master/etc/img/leaner.gif">
 
-# This is LEANER
+# Data Mining, a LEANER approach
 
 LEANER is the least Python I can write to illustrate
 the most about data mining. Turns out,
@@ -11,16 +11,6 @@ you follow three simple rules:
 2. Cut the crap;
 3. Go to step 1.
 
-LEANER needs a standard UNIX environment (with git,
-make, python 2.7+, bash, awk, etc).  To install and test, use
-the following.
-
-
-```
-git clone https://github.com/ai-se/leaner.git
-make test 
-```
-
 
 
 ## Contents
@@ -30,6 +20,7 @@ make test
 + [config](doc/config.md):  Configuration Control
 + [libeg](doc/libeg.md):  General stuff (demos)
 + [lib](doc/lib.md):  General stuff
+
 ## Installation
 
 LEANER uses a standard UNIX environment (with git,
