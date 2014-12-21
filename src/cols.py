@@ -11,8 +11,17 @@ from lib import *
 
 ### `Col`: Generic Columns
 
-A generic column can be `ask()`ed for a representative
-value and/or `told()` what values have been observed.
+`Col`umns keep track of what was seen in a column.
+The general idea is that:
+
++  _Before_ you start reading data,
+   you create one `Col` for each column. 
++ _After_ the data has been read, a column can be
+   `ask()`ed  a representative on what
+   values have been observed.
++  _While_ reading data, the columns peek at each
+   seen value (and update their information accordingly).
+   This is called `tell()`ing the column about a value.
 
 """
 class Col:
@@ -31,12 +40,11 @@ Also, you can ask a `Col` for:
   a new column for storing things like this column.
 
 Finally, a `Col` can tell you how `likely()` is some
-value, given the `told()` values of that column.
-"""
+value, given the `tell()`ed values of that column.
 
 ## `S`: Columns of Symbols
 
-Tracks the frequency counts of the `told()` symbols.
+Tracks the frequency counts of the `tell()`ed symbols.
 Can report the entropy `ent()` of that distribution
 (which is a measure of the diversity of those symbols).
 
@@ -65,12 +73,12 @@ class S(Col):
 """
     
 In `likely()`, the `prior` value is some used in a Naive Bayes
-classifier.
+classifier (details later).
 
 
 ## `N`: Columns of Numbers
 
-Numeric columns track the `lo` and `hi` of the `told()`
+Numeric columns track the `lo` and `hi` of the `tell()`ed
 numbers as well as their mean `mu` and standard deviation
 `sd()`.
 
