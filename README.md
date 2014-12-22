@@ -32,6 +32,11 @@ the following:
 git clone https://github.com/ai-se/leaner.git
 make test 
 ```
+
+## Current Status
+
+Work in progress. Not ready for others yet.
+
 ## How to Read This Code
 
 __this section needs work__
