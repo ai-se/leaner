@@ -33,12 +33,10 @@ doc/%.md : src/%.py
 	@bash etc/py2md $<  "$(url)" > $@
 	git add $@
 
-README.md : etc/readme etc/license.md $(md) etc/toc1.awk
-	@cat $< > $@
-	@printf "\n\n## Contents\n\n" >> $@
-	@$(foreach f,$(py),\
-		awk -f etc/toc1.awk src/$f >> $@;)
-	@cat etc/license.md  >> $@
+README.md : etc/readmeHeader etc/readmeFooter  $(md) etc/toc1.awk
+	@cat etc/readmeHeader > $@
+	@$(foreach f,$(py), awk -f etc/toc1.awk src/$f >> $@;)
+	@cat etc/readmeFooter  >> $@
 	git add $@
 
 publish: $(md) README.md 
