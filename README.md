@@ -36,36 +36,29 @@ make test
 
 __this section needs work__
 
-settings. specified locally per file, held in a global for (a) printing (b) tuning purposes.  not passed down (tedious for long chains of sub-calls)
-
-extensive use of iterators, list comprehensions, decorators
-
-write less classes: o is good
-
-N-1 globals better than N. we have only one "the"
-
-many file.py has fileeg.py. each eg starts with @go, fired on loading
-
-2 spaces, "self" ==> "i"
++ settings. specified locally per file, held in a global for (a) printing (b) tuning purposes.  not passed down (tedious for long chains of sub-calls)
++ extensive use of iterators, list comprehensions, decorators. read up on it!
++ write less classes: o is good
++ N-1 globals better than N. we have only one "the"
++ many file.py has fileeg.py. each eg starts with @go, fired on loading
++ 2 spaces, "self" ==> "i"
 
 ## Why Read This Code
 
 __this section needs work__
 
-Decades of research, data mining is simple.  Much to much made of the complexity of data mining when
++ Decades of research, data mining is simple.  Much to much made of the complexity of data mining when
 the truth is, it is much simpler than that (particulalry in the arena of statistical comparisons).
-
-My students can, after 6 to 12 weeks, build and modify start of the art devices. 
++ Seeing  a new synthesis. Not some increasing focus on one discipline but building tools that
+  work on many fields. Look closer at the pieces top build a new toolkit whose whole is more
+  than the parts.
++ My students can, after 6 to 12 weeks, build and modify start of the art devices. 
 A research career marked by many masters with journal publications (novel results, short time). 
 Do you want to be that productive?  You can!
-
-Thou shalt not click.
-
-Not enough to use these tools, need to look inside them (at least once). The shepperd results.
-
-Mix and match. e.g. data mining and moea closer than you might expect from reading the literature. 
-
-Fun!
++ Thou shalt not click.
++ Not enough to use these tools, need to look inside them (at least once). The shepperd results.
++ Mix and match. e.g. data mining and moea closer than you might expect from reading the literature. 
++ Fun!
 
 ## License
 
