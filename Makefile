@@ -1,4 +1,4 @@
-
+url="https://github.com/ai-se/leaner"
 py=$(shell cd src; ls *.py)
 md=doc/$(subst .md ,.md doc/,$(subst .py,.md,$(py)))
 tests=$(shell cd src; ls *eg.py)
@@ -30,7 +30,7 @@ status:
 	- git status
 
 doc/%.md : src/%.py
-	@bash etc/py2md $<  > $@
+	@bash etc/py2md $<  "$(url)" > $@
 	git add $@
 
 README.md : etc/readme etc/license.md $(md) etc/toc1.awk

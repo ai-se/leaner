@@ -1,1 +1,1 @@
-For details on this directory, see [our home page](../)
+For details on this directory, see https://github.com/ai-se/leaner.
