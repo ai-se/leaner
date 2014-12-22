@@ -35,7 +35,7 @@ make test
 
 ## Current Status
 
-Work in progress. Not ready for others yet.
+Work in progress. Started Dec 17 2014. But I got a cool logo!
 
 ## How to Read This Code
 
