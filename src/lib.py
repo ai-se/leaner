@@ -9,12 +9,20 @@ sys.dont_write_bytecode =True
 """
 from config import *
 import random,math
+
+@setting
+def LIB(**d): return o(
+    # Thresholds are from http://goo.gl/25bAh9
+    dull = [0.147, 0.33, 0.474][0]
+  ).update(**d)
+
 """
 
 ## Type stuff
 
 """
-def ako(x,y): return isinstance(x,y)
+def ako(x,y)    : return isinstance(x,y)
+def identity(x) : return x
 """
 
 ## Math stuff
@@ -36,8 +44,8 @@ ask = random.choice
 def shuffle(lst): random.shuffle(lst); return lst
 
 def normpdf(x, mu=0, sigma=1):
-  u = (x-mu) / abs(sigma)
-  y = exp(-u*u/2) / (sqrt(2*pi) * abs(sigma))
+  u = (x-mu) /abs( sigma)
+  y = e**(-u*u/2) / (sqrt(2*pi) * abs(sigma))
   return y
 """
 

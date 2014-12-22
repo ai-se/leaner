@@ -6,6 +6,16 @@
 
 ````python
 from lib import *
+
+@setting
+def COL(**d): return o(
+    # Thresholds are from http://goo.gl/25bAh9
+    buffer = 128,
+    m = 2,
+    k = 1,
+    missing='?'
+  ).update(**d)
+
 ````
 
 ### `Col`: Generic Columns
@@ -28,7 +38,7 @@ class Col:
     if x is None or x == the.COL.missing:
       return x
     i.n += 1
-    i.tell1(i,x)
+    i.tell1(x)
     return x
 ````
 
@@ -50,15 +60,18 @@ Can report the entropy `ent()` of that distribution
 ````python
 class S(Col): 
   def __init__(i,all=None,name=''): 
-    i.all = all or {}
+    i.all = {}
+    print('all',i.all)
     i.n = 0
     i.name = str(name)
+    map(i.tell,all)
   def tell1(i,x)  : 
     i.all[x] = i.all.get(x,0) + 1
   def ask(i)     : return(ask(i.all.keys()))
   def dist(i,x,y): return 0 if x==y else 1
   def norm(i,x)  : return x
   def logger(i)  : return S(name=i.name)
+  def read(i,x)  : return x
   def ent(i):
     e=0
     for key,value in i.all.items():
@@ -66,7 +79,7 @@ class S(Col):
         p = value/i.n
       e -= p*log(p,2)
     return e
-  def likely(i,x,prior):
+  def likely(i,x,prior=1):
     m = the.COL.m
     return (i.all.get(x,0) + m*prior)/(i.n + m)
 ````
@@ -90,11 +103,13 @@ class N(Col):
     i.n, i.lo, i.hi, i.name = 0,lo,hi,str(name)
     i._kept = [None]*the.COL.buffer
     i.mu = i.m2= 0
+    i.reader=reader
     map(i.tell,init)
   def ask(i)     : return i.lo + r()*(i.hi - i.lo)
   def dist(i,x,y): return i.norm(x) - i.norm(y)
   def logger(i): 
     return N(name=i.name,lo=i.lo,hi=i.hi)
+  def read(i,x): return float(x)
   def tell1(i,x):
     if i.lo is None: i.lo = x
     if i.hi is None: i.hi = x
@@ -108,13 +123,13 @@ class N(Col):
     if i.n < 2: return 0
     return (max(0,i.m2)/(i.n - 1))**0.5
   def kept(i): 
-    return [x for x in i._kept if x is not None]
+    return sorted([x for x in i._kept if x is not None])
   def norm(i,x):
     tmp =(x - i.lo) / (i.hi - i.lo + 0.00001)
     return max(0,min(tmp,1))
   def __repr__(i): 
     return '{:%s #%s [%s .. %s]}'%(
       i.name,i.n,i.lo ,i.hi)
-  def likely(i,x,prior):
-    return normpdf(x,i.mu.i.sd())
+  def likely(i,x,prior=None):
+    return normpdf(x,i.mu,i.sd())
 ````

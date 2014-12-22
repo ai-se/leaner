@@ -16,10 +16,12 @@ you follow three simple rules:
 ## Contents
 
 + [boot](doc/boot.md):  Boot code: stuff needed before anything else
++ [colseg](doc/colseg.md):  Column stuff (demos)
 + [cols](doc/cols.md):  Defining columns
 + [config](doc/config.md):  Configuration Control
 + [libeg](doc/libeg.md):  General stuff (demos)
 + [lib](doc/lib.md):  General stuff
++ [table](doc/table.md):  Handling Tables of Data
 
 ## Installation
 

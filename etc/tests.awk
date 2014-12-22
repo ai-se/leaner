@@ -1,7 +1,8 @@
-BEGIN   { yes=no=0       }	
-        { m="."          }	
-/True/  { yes++; m = "+" } 
-/False/ { no++;  m = "-" } 
-        { printf m       } 
-END     { print "\ntests passed",yes,"failed",no }
+BEGIN       { yes=no=0       }	
+            { m="."          }	
+/True/      { yes += gsub("True","") ; m = "+" } 
+/False/     { no  += gsub("False",""); m = "-" } 
+            { printf m       } 
+! (NR % 50) { print ""}
+END         { print "\ntests passed",yes,"failed",no }
 
