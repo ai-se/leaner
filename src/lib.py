@@ -32,6 +32,8 @@ pi=math.pi
 e=math.e
 sqrt=math.sqrt
 log=math.log
+
+def mult(lst): return reduce(lambda x,y: x*y,lst)
 """
 
 ## Random stuff

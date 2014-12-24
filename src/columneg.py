@@ -7,7 +7,7 @@ sys.dont_write_bytecode =True
 # Column stuff (demos)
 
 """
-from cols import *
+from column import *
 
 @go
 def _S():

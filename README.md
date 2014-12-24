@@ -14,12 +14,14 @@ you follow three simple rules:
 ## Contents
 
 + [boot](doc/boot.md):  Boot code: stuff needed before anything else
-+ [colseg](doc/colseg.md):  Column stuff (demos)
-+ [cols](doc/cols.md):  Defining columns
++ [cocomo](doc/cocomo.md):  Software Effort and Risk Estimation
++ [cocomo](doc/cocomo.md):  vlow low nom high vhigh xhigh
++ [columneg](doc/columneg.md):  Column stuff (demos)
++ [column](doc/column.md):  Defining columns
++ [columns](doc/columns.md):  Handling Columns of Data
 + [config](doc/config.md):  Configuration Control
 + [libeg](doc/libeg.md):  General stuff (demos)
 + [lib](doc/lib.md):  General stuff
-+ [table](doc/table.md):  Handling Tables of Data
 
 ## Installation
 
