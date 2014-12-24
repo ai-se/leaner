@@ -183,6 +183,9 @@ def xtile(lst,lo=0,hi=100,width=50,
 def go(d):
   doc= '# '+d.__doc__+"\n" if d.__doc__ else ""
   s='|'+'='*40 +'\n'
-  print('\n==| ' + d.func_name + ' ' + s+doc)
-  d()
+  print('\n==|',d.func_name + ' ' + s+doc)
+  try:
+    d()
+  except:
+    print('Demo function did not crash: False')
 ````

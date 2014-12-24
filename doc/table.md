@@ -20,7 +20,7 @@ into independent and dependent variables.
 
 ````python
 from cols import *
-import zipfile,re,fnmatch
+import zipfile,re
 
 @setting
 def TBL(**d): return o(
@@ -29,7 +29,7 @@ def TBL(**d): return o(
     num="$",
     sep  = ',',
     bad = r'(["\' \t\r\n]|#.*)',
-    datafile = lambda z: '../data/%s' %z
+    source = lambda f: unzip('../data/data.zip',f)
   ).update(**d)
 
 def table(**d):
@@ -39,7 +39,7 @@ def table(**d):
 def unzip(zipped, want):
   with zipfile.ZipFile(zipped,'r') as archive:
     for got in archive.namelist():
-      if fnmatch.fnmatch(got, want):
+      if got == want: 
         for line in archive.open(got,'r'):
           yield line
         break

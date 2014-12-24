@@ -54,7 +54,8 @@ __this section needs work__
 
 + Decades of research, data mining is simple.  Much to much made of the complexity of data mining when
 the truth is, it is much simpler than that (particulalry in the arena of statistical comparisons).
-+ Seeing  a new synthesis. Not some increasing focus on one discipline but building tools that
++ Many books offer small examples of different kinds of data miners. 
+  Wanted something different- something that draws all the methods together. Seeing  a new synthesis. Not some increasing focus on one discipline but building tools that
   work on many fields. Look closer at the pieces top build a new toolkit whose whole is more
   than the parts.
 + My students can, after 6 to 12 weeks, build and modify start of the art devices. 
