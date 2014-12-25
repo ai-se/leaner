@@ -9,7 +9,7 @@ sys.dont_write_bytecode = True
 """
 
 from columns import *
-
+from bore    import *
 """
 
 ## Core COCOMO Equuation.
@@ -608,22 +608,6 @@ Lastly, we divide our results in into the 100 _best_ scores and the 900 _rest_
 then look for decisions that are more common in _best_ than _rest_.
 """
 
-def bestOrRest(log,score,enough=0.1):
-  lo,hi,e={},{},0.0001
-  for l in log:
-    for n,v in enumerate(l):
-      if n != 0: 
-        lo[n] = min(v,lo.get(n, 10**32))
-        hi[n] = max(v,hi.get(n,-10**32))
-  for l in log:
-    for n,v in enumerate(l):
-      if n != 0:
-        l[n]= (l[n] - lo[n]) / (hi[n] - lo[n] + e)
-    l += [score(*l[1:])]
-  log = sorted(log,key=lambda l: l[-1],reverse=True)
-  x = int(len(log) * enough)
-  return log[:x],log[x:]
-
 def keys(project,n=50,enough=0.75,goal=goal1): 
   log =  []
   for _ in xrange(n):
@@ -632,37 +616,11 @@ def keys(project,n=50,enough=0.75,goal=goal1):
     smell = badSmell(settings)
     kloc  = settings["kloc"]
     del  decisions["kloc"]
-    log += [[decisions,kloc,smell,est]]
-  best,rest = bestOrRest(log,goal)
-  contrast(best,rest)
+    log += [o(decisions = decisions,
+              like      = [kloc],
+              dislike   = [smell,est])]
+  return bore( log )
 
-def kratio(d):
-  n = len(d)
-  out = {}
-  for x in d:
-    for k,v in x[0].items():
-      out[(k,v)] = (out.get((k,v),0) + 1)/n
-  return out
-
-def bore(better,worse):
-  out=[]
-  for (k,v),s1 in better.items():
-    s2 = worse.get(k,e)
-    print(s1,s2)
-    if s1 > s2:
-      print(s1)
-      out += [(s1**2/(s1+s2),k,v)]
-  return sorted(out,reverse=True)
-  
-def contrast(best,rest):
-  better = kratio(best)
-  worse  = kratio(rest)
-  print(better)
-  print(worse)
-  print(bore(better,worse))
-
-
- 
 #_coc(proj=demo2); exit()
 
 
