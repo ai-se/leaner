@@ -10,12 +10,12 @@ from lib import *
 
 @setting
 def COL(**d): return o(
-    # Thresholds are from http://goo.gl/25bAh9
+# Thresholds are from http://goo.gl/25bAh9
     buffer = 128,
     m = 2,
     k = 1,
     missing='?'
-  ).update(**d)
+    ).update(**d)
 
 """
 

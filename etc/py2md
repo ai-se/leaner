@@ -15,7 +15,7 @@ cat<<EOF
 
 EOF
 cat $1 |
-gawk --source '
+awk --source '
 BEGIN { First = 1
         In = 1}
 /^"""</,/^>"""/ { next }
