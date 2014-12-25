@@ -18,7 +18,7 @@ def _S():
 
 @go
 def _N():
-  seed(1)
+  rrseed(1)
   n=N([x for x in xrange(100)])
   print(n.mu==49.5,n.sd(), n.lo==0,n.hi==99)
   l1=n.likely(49)

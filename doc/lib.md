@@ -39,7 +39,7 @@ def mult(lst): return reduce(lambda x,y: x*y,lst)
 
 ````python
 r   = random.random
-seed= random.seed
+rseed= random.seed
 ask = random.choice
 
 def shuffle(lst): random.shuffle(lst); return lst

@@ -14,6 +14,7 @@ you follow three simple rules:
 ## Contents
 
 + [boot](doc/boot.md):  Boot code: stuff needed before anything else
++ [cocomoeg](doc/cocomoeg.md):  Test Cases for COCOMO
 + [cocomo](doc/cocomo.md):  Software Effort and Risk Estimation
 + [cocomo](doc/cocomo.md):  vlow low nom high vhigh xhigh
 + [columneg](doc/columneg.md):  Column stuff (demos)

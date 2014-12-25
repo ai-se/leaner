@@ -5,6 +5,12 @@
 
 # Software Effort and Risk Estimation
 
+````python
+
+from columns import *
+
+````
+
 ## Core COCOMO Equuation.
 
 From the Boehm'00 book.
@@ -12,7 +18,12 @@ From the Boehm'00 book.
 Take a dictionary whose keys describe COCOMO attributes.
 Look up the value of those keys in a array of tunings.
 
-Using the above, generate some estimates. 
+Using the above, generate some estimates, measured in terms of
+_development months_ where one month
+is 152 hours work by one developer (and includes development and management hours).
+For example, if _effort_=100, then according to COCOMO,
+five developers would finish
+the project in 20 _months_.
 
 ````python
 def COCOMO2(project, t=None,a=2.94, b=0.91):
@@ -24,19 +35,70 @@ def COCOMO2(project, t=None,a=2.94, b=0.91):
     else:
       values = t[k]
       value  = values[setting - 1]
-      # add upper case items to scale factors
       if k[0].isupper: sfs += value 
       else           : ems *= value
   return a * ems * kloc**(b + 0.01 * sfs)
 ````
 
-Note one (slightly arcane) convention: any variable
-that starts with an upper case is a _scale factor_
-that influences effort in an exponential manner.
+__LESSON 1__: According to Boehm,
+development effort is exponential on lines of code 
+But there is more to it that just size.
+  Effort is changed linearly by a set of _effort multipliers_ (`em`) and
+  exponentially by some _scale factors_ (`sf`).
 
-Here's the COCOMO tunings. The first few things
-decrease effort exponentially so that start
-with an upper case letter.
+```
+scale          | Prec |  have we done this before?
+factors        | Flex |  development flexibility 
+(exponentially | Resl |  any risk resolution activities?
+ decrease      | Team |  team cohesion
+ effort)       | Pmat |  process maturity
+------------------------------------------------------------
+upper          | acap |  analyst capability
+(linearly      | pcap |  programmer capability
+ decrease      | pcon |  programmer continuity
+ effort)       | aexp |  analyst experience
+               | pexp |  programmer experience
+               | ltex |  language and tool experience
+               | tool |  use of tools
+               | site |  multiple site development
+               | sced |  length of schedule   
+-----------------------------------------------------------
+lower          | rely |  required reliability  
+(linearly      | data |  secondary memory  storage requirements
+ increase      | cplx |  program complexity
+ effort)       | ruse |  software reuse
+               | docu |  documentation requirements
+               | time |  runtime pressure
+               | stor |  main memory requirements
+               | pvol |  platform volatility  
+```
+
+__LESSON 2__ : The factors that effect delivery are not just
+what code is being developed. The above factors divide into:
+
++ Product attributes: _what _ is being developed 
+  (rely, data, clx, ruse, doco);
++ Platform attributes: _where_ is it being developed
+  (time, stor, pvol);
++ Personnel attributes: _who_ is doing the work
+  (acap, pcal, pcon, aexp, pexp, ltex);
++ Project attributes: _how_ is it being developed
+  (tools, site, sced).
++ And the _misc_ scale factors: Prec, Flex, Resl, Team, Pmat.
+
+The `COCOMO2` code uses the following set of tunings
+that Boehm learned, sort of, from 161 projects from
+commercial, aerospace, government, and non-profit
+organizations-- mostly from the period 1990 to 2000
+(I saw "sort of" cause Boehm actually "fiddled" with
+these numbers, here and there, using his domain
+knowledge).
+
+Here are the actual tunings. The variables can range
+from very low to extremely high. The first few
+variables decrease effort exponentially and to
+distinguish those _scale factors_, we will start
+them with an upper case letter.
 
 ````python
 _ = None;  Coc2tunings = dict(
@@ -46,34 +108,40 @@ _ = None;  Coc2tunings = dict(
   Prec=[        6.20, 4.96, 3.72, 2.48, 1.24,    _],
   Resl=[        7.07, 5.65, 4.24, 2.83, 1.41,    _],
   Team=[        5.48, 4.38, 3.29, 2.19, 1.01,    _],
-````
-
-Now the things which linearly increase effort:
-
-````python
+  acap=[        1.42, 1.19, 1.00, 0.85, 0.71,    _],
+  aexp=[        1.22, 1.10, 1.00, 0.88, 0.81,    _],
   cplx=[        0.73, 0.87, 1.00, 1.17, 1.34, 1.74],
   data=[           _, 0.90, 1.00, 1.14, 1.28,    _],
   docu=[        0.81, 0.91, 1.00, 1.11, 1.23,    _],
-  rely=[        0.82, 0.92, 1.00, 1.10, 1.26,    _],
-  ruse=[           _, 0.95, 1.00, 1.07, 1.15, 1.24],
-  stor=[           _,    _, 1.00, 1.05, 1.17, 1.46],
-  time=[           _,    _, 1.00, 1.11, 1.29, 1.63],
-  pvol=[           _, 0.87, 1.00, 1.15, 1.30,    _],
-````
-
-Now the things that linearly decrease effort:
-
-````python
-  acap=[        1.42, 1.19, 1.00, 0.85, 0.71,    _],
-  aexp=[        1.22, 1.10, 1.00, 0.88, 0.81,    _],
   ltex=[        1.20, 1.09, 1.00, 0.91, 0.84,    _],
   pcap=[        1.34, 1.15, 1.00, 0.88, 0.76,    _], 
   pcon=[        1.29, 1.12, 1.00, 0.90, 0.81,    _],
   pexp=[        1.19, 1.09, 1.00, 0.91, 0.85,    _], 
+  pvol=[           _, 0.87, 1.00, 1.15, 1.30,    _],
+  rely=[        0.82, 0.92, 1.00, 1.10, 1.26,    _],
+  ruse=[           _, 0.95, 1.00, 1.07, 1.15, 1.24],
   sced=[        1.43, 1.14, 1.00, 1.00, 1.00,    _], 
   site=[        1.22, 1.09, 1.00, 0.93, 0.86, 0.80], 
+  stor=[           _,    _, 1.00, 1.05, 1.17, 1.46],
+  time=[           _,    _, 1.00, 1.11, 1.29, 1.63],
   tool=[        1.17, 1.09, 1.00, 0.90, 0.78,    _]) 
 ````
+
+__LESSON 3__: There are so many ways to speed up or slow
+down a project. Each of the above attributes has a _max effect_
+(the highest divided by the lowest number). The next effect
+of all those max effects is...
+
+```
+11,022.4 = 3.53 * 2.38 * 1.63 * 1.54 * 1.53 * 1.52 * 1.51
+         * 1.51 * 1.5  * 1.49 * 1.46 * 1.43 * 1.43 * 1.43 * 1.42
+         * 1.4  * 1.39 * 1.33 * 1.31 * 1.29 * 1.32 * 1.26
+```
+
+That is, ignoring the exponential effect of code size, the other
+factors can change the effort of a project by three orders
+of magnitude.
+
 
 ## Defining Legal Ranges
 
@@ -139,130 +207,218 @@ other variables are really  _ranges_ of values
 representing the space of options within certain software being built
 at NASA.
 
-
 ````python
+
+@ok
+def flight():
+  "JPL Flight systems"
+  return dict(
+    Pmat = [2,3],         aexp = [2,3,4,5],
+    cplx = [3,4,5,6],     data = [2,3],
+    kloc= xrange(7,418),
+    ltex = [1,2,3,4],     pcap = [3,4,5],
+    pexp = [1,2,3,4],     rely = [3,4,5],
+    sced = [3],           stor = [3,4],
+    time = [3,4],         tool = [2],
+    acap = [3,4,5])
+
+@ok
+def ground():
+  "JPL ground systems"
+  return dict(
+    Pmat = [2,3],         acap = [3,4,5],
+    aexp = [2,3,4,5],     cplx = [1,2,3,4],
+    data = [2,3],         kloc=xrange(11,392),
+    ltex = [1,2,3,4],     pcap = [3,4,5],
+    pexp = [1,2,3,4],     sced = [3],
+    stor = [3,4],         time = [3,4],
+    tool = [2],           rely = [1,2,3,4])
+
+@ok
 def osp():
   "Orbital space plane. Flight guidance system."
   return dict(
-    Flex = [2,3,4,5],
-    Pmat = [1,2,3,4],
-    Prec = [1,2],
-    Resl = [1,2,3],
-    Team = [2,3],
-    acap = [2,3],
-    aexp = [2,3],
-    cplx = [5,6],
-    data = [3],
-    docu = [2,3,4],
-    ksloc= xrange(75,125),
-    ltex = [2,3,4],
-    pcap = [3],
-    pcon = [2,3],
-    pexp = [3],
-    pvol = [2],
-    rely = [5],
-    ruse = [2,3,4],
-    sced = [1,2, 3],
-    site = [3],
-    stor = [3,4,5],
+    Flex = [2,3,4,5], Pmat = [1,2,3,4],
+    Prec = [1,2],     Resl = [1,2,3],
+    Team = [2,3],     acap = [2,3],
+    aexp = [2,3],     cplx = [5,6],
+    data = [3],       docu = [2,3,4],
+    kloc= xrange(75,125),
+    ltex = [2,3,4],   pcap = [3],
+    pcon = [2,3],     pexp = [3],
+    pvol = [2],       rely = [5],
+    ruse = [2,3,4],   sced = [1,2, 3],
+    site = [3],       stor = [3,4,5],
     tool = [2,3])
-````
-prec 3 5
-flex 3
-OSP2
-pmat 4 5
-resl 4
-docu 3 4
-team 3
-ltex 2 5
-time 3
-sced 2 4
-stor 3
-KSLOC 75 125
-data 4
-pvol 3
-ruse 4
-rely 5
-acap 4
-pcap 3
-pcon 3
-apex 4
-plex 4
-tool 5
-cplx 4
-site 6
-````python
-
-
-````
-@ok
-def demo1(): return dict()
 
 @ok
-def demo2(): return dict(kloc=xrange(2,11),docu=[2,3,4,5])
+def osp2():
+  """Osp, version 2. Note there are more restrictions
+  here than in osp version1 (since as a project
+  develops, more things are set in stone)."""
+  return dict(
+    docu = [3,4],    Flex = [3],
+    Pmat = [4,5],    Prec = [3,4, 5],
+    Resl = [4],      Team = [3],
+    acap = [4],      aexp = [4],
+    cplx = [4],      data = [4],
+    kloc= xrange(75,125),
+    ltex = [2,5],    pcap = [3],
+    pcon = [3],      pexp = [4],
+    pvol = [3],      rely = [5],
+    ruse = [4],      sced = [2,3,4],
+    site = [6],      stor = [3],
+    time = [3],      tool = [5])
+
+@ok
+def anything(): 
+  "Anything goes."
+  return {}
+````
+
+### Complete-ing
+
+Note that some of these descriptions are more detailed than others.
+For example:
+
++  For _flight systems_, we just do not know the range of
+   possibilities for (e.g.) _site_. 
++  For the  last function (`anything`), nothing is mentioned at all
+   so an `anything` project samples across the entire range 
+   of everything.
+
+To complete these partial descriptions, we need to _complete_ them.
+Any value missing from these
+descriptions is assumed to range over its full range (min to max).
+The following code:
+
++ `ranges()` looks up the ranges for `all` COCOMO values 
++ `project()` makes some `decisions` by selecting one value
+   for each range of a particular project.
++ `guess()` replaces a range with one value, picked at random
++ The guesses from the project are then added to  `all`.
 
 ````python
-def guess(d):
-  return {k:ask(x) for k,x in d.items()}
-
-def _coc(proj,seed=1,n=1000):  
-  seed(seed)
-  settings, estimates = ranges(), []
-  for _ in xrange(n):
-    settings = guess(settings)
-    guessed  = guess(proj())
-    settings.update(guessed)
-    estimates += [COCOMO2(settings),guessed]
-  g(proj.__name__, estimates)
+def complete(project):
+  all    ,_          = guess(ranges())
+  guessed,decisions  = guess(project())
+  all.update(guessed)
+  return all,decisions
  
+def guess(d):
+  all,some={},{}
+  for k,x in d.items():
+    y = ask(x)
+    if len(x) > 1: some[k] = y
+    all[k] = y
+  return all,some
 
-#_coc(demo1)
-#_coc(demo2)
-#exit()
+````
+
+For example, here some code to generate projects that are consistent
+with what we know about `flight` projects:
+
+```
+all,_ = complete(flight)
+for k,v in all.items():
+       print("\t",k,v)
+
+ 	 Flex 3
+	 Pmat 2
+	 Prec 3
+	 Resl 2
+	 Team 5
+	 acap 4
+	 aexp 3
+	 cplx 6
+	 data 3
+	 docu 3
+	 kloc 385
+	 ltex 3
+	 pcap 4
+	 pcon 4
+	 pexp 3
+	 pvol 4
+	 rely 3
+	 ruse 3
+	 site 6
+	 stor 3
+	 time 4
+	 tool 2
+    sced 3
+```
+
+## Putting It All Together
+
+Using the above, we can generate (say) 1000 projects at random
+that conform to the constraints of `fight`, `ground`, `osp`, `osp2`
+and study their effort estimates.
+
+The generated distributions are as follows. Note that the anything/osp2
+projects have the largest/smallest ranges since they have the least/most
+constraints.
+
+```
+                                               min  25-th  50-th  75-th  max
+                                             =====  =====  =====  =====  ====
+ anything, (--    *  ------|------------- ),    7,  3778,  8716, 13892, 41697
+   flight, (- *---         |              ),   32,  1433,  2888,  4721,  9729
+   ground, ( *----         |              ),   57,  1051,  2387,  3975,  8665
+      osp, (*              |              ),  718,  1092,  1294,  1521,  2146
+     osp2, (*              |              ),  515,   683,   816,   924,  1151
+```
+
+In the effort estimation literature, it is usual to
+report the 50 to 75th percentile as the estimate.
+
+## Bad Smells
+
+The concept of a _bad smell_ has been widely
+discussed by [Fowler and Beck][fowler99], [Fontana
+et al.][fontana12], and [others][codesmell]. Such
+_bad smells_ are an indicator of problems within a
+software project.  They are characteristics
+of projects that may indicate a problem that makes
+software hard to evolve and maintain, may trigger
+refactoring of code, or delivering code late and
+over budget.
+
+More generally, in software engineering, bad smells
+are any symptom in a program that possibly indicates
+a deeper problem.  Such bad smells may not always
+come from actual problems.  Instead, they indicate
+some weakness in some aspect of the project that may
+be slowing down development or increasing the risk
+of bugs or failures in the future.
 
 
+[fowler99]: http://v.gd/QglBdv  "Fowler, M. and K. Beck, Refactoring: improving the design of existing code . 1999: Addison Wesley Professional."
 
-def keys(proj,seed=1,n=50,enough=0.75): 
-  seed(seed)
+[fontana12]: http://www.jot.fm/issues/issue_2012_08/article5.pdf "Fontana, F.A. and Braione, P. and Zanoni, M. Automatic detection of bad smells in code: An experimental assessment Journal of Object Technology, Vol.11 No.2, 2012."
 
-  
-  lo, hi,log = {}, {}, []
-  for _ in xrange(n):
-    settings = guess(ranges())
-    guessed  = guess(proj())
-    settings.update(guessed)
-    est  = COCOMO2(settings)
-    mad  = risks(settings)
-    kloc = settings["kloc"]
-    log += [(est,kloc,mad,guessed)]
-    for k,v in [('kloc',kloc),('est',est),('mad',mad)]:
-      lo[k] = min(v, lo.get(k,   10**32))
-      hi[k] = max(v, hi.get(k,-1*10**32))
-  best=[]
-  rest=[]
-  for est0,kloc0,mad0,guessed in log:
-    est1  = norm(est0,  "est",  lo, hi)
-    kloc1 = norm(kloc0, "kloc", lo, hi) 
-    mad1  = norm(mad0,  "mad",  lo, hi) 
-    score = 1 - ((est1**2 + (1-kloc1)**2 + mad1) **0.5 / (3**0.5))
-    if score > enough: best += guessed
-    else: rest += guessed
-    print("kloc",kloc0,"est",est0,"mad",mad0,"=",score)
+[codesmell]: http://en.wikipedia.org/wiki/Code_smell "Web Reference for code smell"
 
-def norm(v,x,lo,hi):
-  return (v - lo[x]) / (hi[x] - lo[x] + 0.0001)
+[Madachy and his students][madachy97] have worked
+through combinations of COCOMO parameters to offer a
+_bad smell_ detector for software projects.
+For example, here is a bad smell:
 
-def risks(project):
-  risk = 0
-  for (x1,x2),m in Mad.items():
-    v1    = project[x1] 
-    v2    = project[x2]
-    risk += m[v1 - 1][v2 - 2]
-  return risk
++ The schedule is tight ;
++ And we are building very complex software;  
++ Or we are building software that runs in tight execution time constraints,
 
-Mad={}
+That is modeled the first table shown below. Tight
+schedule means the first few rows of `sced` and
+(e.g.) high complexity are the right-hand side
+columns of `cplx`:
 
-Mad[('sced','cplx')] = Mad[('sced','time')] = [
+[madachy97]: http://v.gd/zyX09Q  "Raymond J. Madachy, Heuristic Risk Assessment Using Cost Factors, IEEE Software, vol. 14, no. 3, pp. 51-59, May/June, 1997"
+
+````python
+
+Stink={}
+
+Stink[('sced','cplx')] = Stink[('sced','time')] = [
  [0,0,0,1,2,4],
  [0,0,0,0,1,2],
  [0,0,0,0,0,1],
@@ -270,7 +426,15 @@ Mad[('sced','cplx')] = Mad[('sced','time')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('sced','rely')] =  Mad[('sced','pvol')] = [
+````
+
+The rest of the tables have the same form:  there is one corner of the table where the stink is worse (rises to "2"). And if the stink is really bad, the
+smell goes up to "4". Note that these numbers are not precise values; rather they are qualitative indicators of subjective human opinion. But see if
+you disagree with any of the following:
+
+````python
+
+Stink[('sced','rely')] =  Stink[('sced','pvol')] = [
  [0,0,0,1,2,0],
  [0,0,0,0,1,0],
  [0,0,0,0,0,0],
@@ -278,9 +442,9 @@ Mad[('sced','rely')] =  Mad[('sced','pvol')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('ltex','pcap')] = Mad[('sced','acap')] = \
-Mad[('sced','pexp')] = Mad[('sced','pcap')] = \
-Mad[('sced','aexp')] = [
+Stink[('ltex','pcap')] = Stink[('sced','acap')] = \
+Stink[('sced','pexp')] = Stink[('sced','pcap')] = \
+Stink[('sced','aexp')] = [
  [4,2,1,0,0,0],
  [2,1,0,0,0,0],
  [1,0,0,0,0,0],
@@ -288,11 +452,11 @@ Mad[('sced','aexp')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('sced','tool')] = Mad[('sced','ltex')] = \
-Mad[('sced','Pmat')] = Mad[('Pmat','acap')] = \
-Mad[('tool','acap')] = Mad[('tool','pcap')] = \
-Mad[('tool','Pmat')] = Mad[('Team','aexp')] = \
-Mad[('Team','sced')] = Mad[('Team','site')] = [
+Stink[('sced','tool')] = Stink[('sced','ltex')] = \
+Stink[('sced','Pmat')] = Stink[('Pmat','acap')] = \
+Stink[('tool','acap')] = Stink[('tool','pcap')] = \
+Stink[('tool','Pmat')] = Stink[('Team','aexp')] = \
+Stink[('Team','sced')] = Stink[('Team','site')] = [
  [2,1,0,0,0,0],
  [1,0,0,0,0,0],
  [0,0,0,0,0,0],
@@ -300,8 +464,8 @@ Mad[('Team','sced')] = Mad[('Team','site')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('rely','acap')] = Mad[('rely','Pmat')] = \
-Mad[('rely','pcap')] = [
+Stink[('rely','acap')] = Stink[('rely','Pmat')] = \
+Stink[('rely','pcap')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0],
  [1,0,0,0,0,0],
@@ -309,11 +473,11 @@ Mad[('rely','pcap')] = [
  [4,2,1,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('cplx','acap')] = Mad[('cplx','pcap')] = \
-Mad[('cplx','tool')] = Mad[('stor','acap')] = \
-Mad[('time','acap')] = Mad[('ruse','aexp')] = \
-Mad[('ruse','ltex')] = Mad[('Pmat','pcap')] = \
-Mad[('stor','pcap')] = Mad[('time','pcap')] = [
+Stink[('cplx','acap')] = Stink[('cplx','pcap')] = \
+Stink[('cplx','tool')] = Stink[('stor','acap')] = \
+Stink[('time','acap')] = Stink[('ruse','aexp')] = \
+Stink[('ruse','ltex')] = Stink[('Pmat','pcap')] = \
+Stink[('stor','pcap')] = Stink[('time','pcap')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0],
  [0,0,0,0,0,0],
@@ -321,7 +485,7 @@ Mad[('stor','pcap')] = Mad[('time','pcap')] = [
  [2,1,0,0,0,0],
  [4,2,1,0,0,0]]
 
-Mad[('pvol','pexp')] = [
+Stink[('pvol','pexp')] = [
  [0,0,0,0,0,0],
  [0,0,0,0,0,0],
  [0,0,0,0,0,0],
@@ -329,17 +493,180 @@ Mad[('pvol','pexp')] = [
  [2,1,0,0,0,0],
  [0,0,0,0,0,0]]
 
-Mad[('time','tool')] = [
- [0,0,0,0,0,0],
- [0,0,0,0,0,0],
- [0,0,0,0,0,0],
- [0,0,0,0,0,0],
- [1,0,0,0,0,0],
- [2,1,0,0,0,0]]
+Stink[('time','tool')] = [
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0],
+  [1,0,0,0,0,0],
+  [2,1,0,0,0,0]]
 
+````
+
+Using these `Stink` tables, we can check how bad our
+projects smell.
+
+````python
+
+def badSmell(project,log=None):
+  stink = 0
+  for (x1,x2),m in Stink.items():
+      v1     = project[x1] 
+      v2     = project[x2]
+      inc    = m[v1 - 1][v2 - 2]
+      if inc and not log is None:
+         key = (x1,v1,x2,v2)
+         log[key] = log.get(key,0) + inc 
+      stink += inc
+  return stink
+
+````
+
+Here's the bad smells seen in 1000 randomly generated projects. Note that
+`osp` really stinks.
+
+```
+      osp, (    -------   *|  ----------  ),    8,    19,    25,    32,    49
+ anything, (--   *  -------|-------       ),    0,     5,     9,    15,    40
+   flight, (--  * ------   |              ),    0,     5,     8,    11,    22
+     osp2, (  *-           |              ),    4,     4,     5,     6,     8
+   ground, (- *--------    |              ),    0,     2,     4,     6,    20
+```
+
+To see why, we  collected 1000 samples from `osp` and looked at the main offenders
+(those with scores worse than 25% of the worst score).
+
+````python
+def whatStinks(project,seed=1,n=1000):
+  rseed(seed)
+  log = {}
+  for _ in xrange(n):
+    settings,_ = complete(project)
+    badSmell(settings,log)
+  lst = sorted([(v/n,k) for k,v in log.items()],
+                reverse=True)
+  most = lst[0][0]
+  return [(v,k) for v,k in lst if v >= most*0.25]
+````
+
+The results showed that, with `osp`, there are many
+times we are trying to build highly reliable or
+highly complex software using lower-end developers.
+
+```
+stink = 2.13 when rely = 5 and acap = 2
+stink = 2.00 when rely = 5 and pcap = 3
+stink = 1.08 when cplx = 6 and acap = 2
+stink = 1.05 when rely = 5 and Pmat = 2
+stink = 0.99 when cplx = 6 and pcap = 3
+stink = 0.94 when rely = 5 and acap = 3
+stink = 0.89 when cplx = 6 and tool = 2
+stink = 0.71 when sced = 1 and acap = 2
+stink = 0.65 when sced = 1 and aexp = 2
+stink = 0.65 when sced = 1 and pexp = 3
+stink = 0.65 when sced = 1 and pcap = 3
+stink = 0.54 when cplx = 6 and tool = 3
+```
+
+Another problem, that appears four times at the end of the list,
+is that we are rushing to complete the project using lower-end developers.
+
+## What to Do?
+
+So now we know that if we specify the range of possibilities in a project,
+and sample across that range, that projects can have widely varying
+estimates and, sometimes, can really smell really bad.
+
+What to do? How to find project settings that let us deliver most code,
+with least effort, while incurring fewest smells? Formally this is an 
+_optimization_ problem of the form _(decisions,objectives)_ where
+
++ _Decisions_ are some values selected from the ranges of 
+  of our projects (e.g. `flight`, `ground`, `osp`, etc);
++ The _objectives_ are to minimize _effort_, _badSmells_ while
+  maximizing _kloc_
+
+To guide this search we will run our projects 1000 times and then
+(to make a level playing field), normalize all the efforts, badSmells
+and kloc to 0..1 for min to max. Then we will score each project with a formula
+that gets _better_ the further we move from the worst case
+scenario of _(kloc,badSmells,effort) = (0,1,1)_.
+
+````python
+def goal1(kloc, badSmell, effort):
+  x = (0 - kloc    )**2 
+  y = (1 - badSmell)**2 
+  z = (1 - effort  )**2
+  d=sqrt(x + y + z) / sqrt(3)
+  return d
+````
+
+(We divide by `sqrt(3)` just for convenience-- the resulting score will be
+bounded 0 to 1 for worst to best.)
+
+Lastly, we divide our results in into the 100 _best_ scores and the 900 _rest_
+then look for decisions that are more common in _best_ than _rest_.
+````python
+
+def bestOrRest(log,score,enough=0.1):
+  lo,hi,e={},{},0.0001
+  for l in log:
+    for n,v in enumerate(l):
+      if n != 0: 
+        lo[n] = min(v,lo.get(n, 10**32))
+        hi[n] = max(v,hi.get(n,-10**32))
+  for l in log:
+    for n,v in enumerate(l):
+      if n != 0:
+        l[n]= (l[n] - lo[n]) / (hi[n] - lo[n] + e)
+    l += [score(*l[1:])]
+  log = sorted(log,key=lambda l: l[-1],reverse=True)
+  x = int(len(log) * enough)
+  return log[:x],log[x:]
+
+def keys(project,seed=1,n=50,enough=0.75): 
+  rseed(seed)
+  log =  []
+  for _ in xrange(n):
+    settings,decisions  = complete(project)
+    est   = COCOMO2(settings)
+    smell = badSmell(settings)
+    kloc  = settings["kloc"]
+    del  decisions["kloc"]
+    log += [[decisions,kloc,smell,est]]
+  best,rest = bestOrRest(log,goal1)
+  contrast(best,rest)
+
+def kratio(d):
+  n = len(d)
+  out = {}
+  for x in d:
+    for k,v in x[0].items():
+      out[(k,v)] = (out.get((k,v),0) + 1)/n
+  return out
+
+def contrast1(better,worse):
+  out=[]
+  for (k,v),s1 in better.items():
+    s2 = worse.get(k,e)
+    print(s1,s2)
+    if s1 > s2:
+      print(s1)
+      out += [(s1**2/(s1+s2),k,v)]
+  return sorted(out,reverse=True)
+  
+def contrast(best,rest):
+  better = kratio(best)
+  worse  = kratio(rest)
+  print(better)
+  print(worse)
+  print(contrast1(better,worse))
+
+
+ 
 #_coc(proj=demo2); exit()
 
-keys(demo2);
+
 #exit()
 def COCONUT(training,          # list of projects
             a=10, b=1,         # initial  (a,b) guess

@@ -103,13 +103,28 @@ class N(Column):
     i.n, i.lo, i.hi, i.name = 0,lo,hi,str(name)
     i._kept = [None]*the.COL.buffer
     i.mu = i.m2= 0
-    i.reader=reader
     map(i.tell,init)
-  def ask(i)     : return i.lo + r()*(i.hi - i.lo)
-  def dist(i,x,y): return i.norm(x) - i.norm(y)
+  def __repr__(i): 
+    return '{:%s #%s [%s .. %s]}'%(
+      i.name,i.n,i.lo ,i.hi)
+  def ask(i): 
+    return i.lo + r()*(i.hi - i.lo)
+  def dist(i,x,y): 
+    return i.norm(x) - i.norm(y)
+  def kept(i): 
+    return sorted([x for x in i._kept if x is not None])
+  def likely(i,x,prior=None):
+    return normpdf(x,i.mu,i.sd())
   def logger(i): 
     return N(name=i.name,lo=i.lo,hi=i.hi)
-  def read(i,x): return float(x)
+  def norm(i,x):
+    tmp =(x - i.lo) / (i.hi - i.lo + 0.00001)
+    return max(0,min(tmp,1))
+  def read(i,x): 
+    return float(x)
+  def sd(i):
+    if i.n < 2: return 0
+    return (max(0,i.m2)/(i.n - 1))**0.5
   def tell1(i,x):
     if i.lo is None: i.lo = x
     if i.hi is None: i.hi = x
@@ -119,17 +134,6 @@ class N(Column):
     i.m2 += delta*(x - i.mu)
     l = len(i._kept)
     if r() <= l/i.n: i._kept[ int(r()*l) ]= x
-  def sd(i):
-    if i.n < 2: return 0
-    return (max(0,i.m2)/(i.n - 1))**0.5
-  def kept(i): 
-    return sorted([x for x in i._kept if x is not None])
-  def norm(i,x):
-    tmp =(x - i.lo) / (i.hi - i.lo + 0.00001)
-    return max(0,min(tmp,1))
-  def __repr__(i): 
-    return '{:%s #%s [%s .. %s]}'%(
-      i.name,i.n,i.lo ,i.hi)
-  def likely(i,x,prior=None):
-    return normpdf(x,i.mu,i.sd())
+ 
+ 
 ````
