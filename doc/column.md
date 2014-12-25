@@ -1,31 +1,30 @@
-from __future__ import division,print_function
-import sys
-sys.dont_write_bytecode =True
 
-"""
+<small>_This file is part of LEANER. To know more, view the source code [column.py](../src/column.py) or read our [home](https://github.com/ai-se/leaner) page._</small>
+
+
 # Defining columns
 
-"""
+````python
 from lib import *
 
 @setting
 def COL(**d): return o(
-# Thresholds are from http://goo.gl/25bAh9
+    # Thresholds are from http://goo.gl/25bAh9
     buffer = 128,
     m = 2,
     k = 1,
     missing='?'
-    ).update(**d)
+  ).update(**d)
 
-"""
+````
 
-### `Col`: Generic Columns
+### `Column`: Generic Columns
 
-`Col`umns keep track of what was seen in a column.
+`Column`s keep track of what was seen in a column.
 The general idea is that:
 
 +  _Before_ you start reading data,
-   you create one `Col` for each column. 
+   you create one `Column` for each column. 
 + _After_ the data has been read, a column can be
    `ask()`ed  for a representative on what
    values have been observed.
@@ -33,23 +32,23 @@ The general idea is that:
    seen value (and update their information accordingly).
    This is called `tell()`ing the column about a value.
 
-"""
-class Col:
+````python
+class Column:
   def tell(i,x):
     if x is None or x == the.COL.missing:
       return x
     i.n += 1
     i.tell1(x)
     return x
-"""
+````
 
-Also, you can ask a `Col` for:
+Also, you can ask a `Column` for:
 
 + The distance between two col values (normalized 0 to 1)
 + A `logger()`; i.e
   a new column for storing things like this column.
 
-Finally, a `Col` can tell you how `likely()` is some
+Finally, a `Column` can tell you how `likely()` is some
 value, given the `tell()`ed values of that column.
 
 ## `S`: Columns of Symbols
@@ -58,8 +57,8 @@ Tracks the frequency counts of the `tell()`ed symbols.
 Can report the entropy `ent()` of that distribution
 (which is a measure of the diversity of those symbols).
 
-"""
-class S(Col): 
+````python
+class S(Column): 
   def __init__(i,all=None,name=''): 
     i.all = {}
     print('all',i.all)
@@ -83,7 +82,7 @@ class S(Col):
   def likely(i,x,prior=1):
     m = the.COL.m
     return (i.all.get(x,0) + m*prior)/(i.n + m)
-"""
+````
     
 In `likely()`, the `prior` value is some used in a Naive Bayes
 classifier (details later).
@@ -98,19 +97,34 @@ numbers as well as their mean `mu` and standard deviation
 `N`s  also keep `kept()` a random sampling
 of the numbers (up to a max of `the.COL.buffer` numbers).
  
-"""
-class N(Col):
+````python
+class N(Column):
   def __init__(i,init=[],lo=None,hi=None,name=''):
     i.n, i.lo, i.hi, i.name = 0,lo,hi,str(name)
     i._kept = [None]*the.COL.buffer
     i.mu = i.m2= 0
-    i.reader=reader
     map(i.tell,init)
-  def ask(i)     : return i.lo + r()*(i.hi - i.lo)
-  def dist(i,x,y): return i.norm(x) - i.norm(y)
+  def __repr__(i): 
+    return '{:%s #%s [%s .. %s]}'%(
+      i.name,i.n,i.lo ,i.hi)
+  def ask(i): 
+    return i.lo + r()*(i.hi - i.lo)
+  def dist(i,x,y): 
+    return i.norm(x) - i.norm(y)
+  def kept(i): 
+    return sorted([x for x in i._kept if x is not None])
+  def likely(i,x,prior=None):
+    return normpdf(x,i.mu,i.sd())
   def logger(i): 
     return N(name=i.name,lo=i.lo,hi=i.hi)
-  def read(i,x): return float(x)
+  def norm(i,x):
+    tmp =(x - i.lo) / (i.hi - i.lo + 0.00001)
+    return max(0,min(tmp,1))
+  def read(i,x): 
+    return float(x)
+  def sd(i):
+    if i.n < 2: return 0
+    return (max(0,i.m2)/(i.n - 1))**0.5
   def tell1(i,x):
     if i.lo is None: i.lo = x
     if i.hi is None: i.hi = x
@@ -120,16 +134,6 @@ class N(Col):
     i.m2 += delta*(x - i.mu)
     l = len(i._kept)
     if r() <= l/i.n: i._kept[ int(r()*l) ]= x
-  def sd(i):
-    if i.n < 2: return 0
-    return (max(0,i.m2)/(i.n - 1))**0.5
-  def kept(i): 
-    return sorted([x for x in i._kept if x is not None])
-  def norm(i,x):
-    tmp =(x - i.lo) / (i.hi - i.lo + 0.00001)
-    return max(0,min(tmp,1))
-  def __repr__(i): 
-    return '{:%s #%s [%s .. %s]}'%(
-      i.name,i.n,i.lo ,i.hi)
-  def likely(i,x,prior=None):
-    return normpdf(x,i.mu,i.sd())
+ 
+ 
+````

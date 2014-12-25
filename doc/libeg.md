@@ -14,11 +14,11 @@ def lst0(): return list('0123456789')
 def _lists():
   "Random stuff"
   
-  seed(1)
+  rseed(1)
   l1= shuffle(lst0())
   print(l1)
   print(shuffle(lst0()))
-  seed(1)
+  rseed(1)
   l2=shuffle(lst0())
   print('Resetting seed replicated old results:',
         l1==l2)
@@ -31,7 +31,7 @@ def _pairs():
 
 @go
 def _runs():
-  seed(1)
+  rseed(1)
   lst = sorted([round(r()/0.01) for _ in xrange(25)])
   print(lst)
   got =[(n,x) for n,x in runs(lst)]
@@ -46,7 +46,7 @@ def _runs():
 
 @go
 def _cliffsDelta():
-  seed(1)
+  rseed(1)
   lst1=[r() for _ in xrange(1000)]
   print('big difference:',
         1==cliffsDelta(

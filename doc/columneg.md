@@ -1,13 +1,12 @@
-from __future__ import division,print_function
-import sys
-sys.dont_write_bytecode =True
 
-"""
+<small>_This file is part of LEANER. To know more, view the source code [columneg.py](../src/columneg.py) or read our [home](https://github.com/ai-se/leaner) page._</small>
+
+
 
 # Column stuff (demos)
 
-"""
-from cols import *
+````python
+from column import *
 
 @go
 def _S():
@@ -19,7 +18,7 @@ def _S():
 
 @go
 def _N():
-  seed(1)
+  rrseed(1)
   n=N([x for x in xrange(100)])
   print(n.mu==49.5,n.sd(), n.lo==0,n.hi==99)
   l1=n.likely(49)
@@ -29,3 +28,4 @@ def _N():
   print('outlier less likely:',l1,l2,l2< l1)
   
 
+````

@@ -1,14 +1,11 @@
-from __future__ import division,print_function
-import sys
-sys.dont_write_bytecode =True
 
-"""
+<small>_This file is part of LEANER. To know more, view the source code [columns.py](../src/columns.py) or read our [home](https://github.com/ai-se/leaner) page._</small>
 
-# Handling Tables of Data
 
-A table is a set of rows and  a header
-storing information about each column,
 
+# Handling Columns of Data
+
+Rows contain columns of data.
 Column headers are either `N` nums or `S`
 symbols objects. Columns are divided
 into independent and dependent variables.
@@ -19,34 +16,34 @@ into independent and dependent variables.
    things with
   `like==True`).
 
-"""
-from cols import *
-import zipfile,re,fnmatch
+````python
+from column import *
+import zipfile,re
 
 @setting
-def TBL(**d): return o(
+def COLS(**d): return o(
     # Thresholds are from http://goo.gl/25bAh9
     skip="?",
     num="$",
     sep  = ',',
     bad = r'(["\' \t\r\n]|#.*)',
-    datafile = lambda z: '../data/%s' %z
+    source = lambda f: unzip('../data/data.zip',f)
   ).update(**d)
 
-def table(**d):
+def columns(**d):
   return o(indep=[], dep=[],rows=[]
            ).update(**d)
 
 def unzip(zipped, want):
   with zipfile.ZipFile(zipped,'r') as archive:
     for got in archive.namelist():
-      if fnmatch.fnmatch(got, want):
+      if got == want: 
         for line in archive.open(got,'r'):
           yield line
         break
 
 def rows(file, source=open):
-  w = the.TBL
+  w = the.COLS
   def reader(name):
     return float if w.num in name else identity
   def lines(): 
@@ -69,3 +66,4 @@ def rows(file, source=open):
       yield n, [ read(line[col]) 
                  for col,read in todo ]
 
+````

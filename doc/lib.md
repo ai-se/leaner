@@ -31,13 +31,15 @@ pi=math.pi
 e=math.e
 sqrt=math.sqrt
 log=math.log
+
+def mult(lst): return reduce(lambda x,y: x*y,lst)
 ````
 
 ## Random stuff
 
 ````python
 r   = random.random
-seed= random.seed
+rseed= random.seed
 ask = random.choice
 
 def shuffle(lst): random.shuffle(lst); return lst
@@ -183,6 +185,9 @@ def xtile(lst,lo=0,hi=100,width=50,
 def go(d):
   doc= '# '+d.__doc__+"\n" if d.__doc__ else ""
   s='|'+'='*40 +'\n'
-  print('\n==| ' + d.func_name + ' ' + s+doc)
-  d()
+  print('\n==|',d.func_name + ' ' + s+doc)
+  try:
+    d()
+  except:
+    print('Demo function did not crash: False')
 ````
