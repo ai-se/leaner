@@ -594,10 +594,10 @@ scenario of _(kloc,badSmells,effort) = (0,1,1)_.
 
 """
 def goal1(kloc, badSmell, effort):
-  x = (0 - kloc    )**2 
-  y = (1 - badSmell)**2 
-  z = (1 - effort  )**2
-  d=sqrt(x + y + z) / sqrt(3)
+  x = 0 - kloc      #  hell is no code
+  y = 1 - badSmell  # and max badSmell
+  z = 1 - effort    # and max effort
+  d = sqrt(x**2 + y**2 + z**2) / sqrt(3)
   return d
 """
 
@@ -644,7 +644,7 @@ def kratio(d):
       out[(k,v)] = (out.get((k,v),0) + 1)/n
   return out
 
-def contrast1(better,worse):
+def bore(better,worse):
   out=[]
   for (k,v),s1 in better.items():
     s2 = worse.get(k,e)
@@ -659,7 +659,7 @@ def contrast(best,rest):
   worse  = kratio(rest)
   print(better)
   print(worse)
-  print(contrast1(better,worse))
+  print(bore(better,worse))
 
 
  
