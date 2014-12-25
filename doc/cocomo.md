@@ -537,8 +537,7 @@ To see why, we  collected 1000 samples from `osp` and looked at the main offende
 (those with scores worse than 25% of the worst score).
 
 ````python
-def whatStinks(project,seed=1,n=1000):
-  rseed(seed)
+def whatStinks(project,n=1000):
   log = {}
   for _ in xrange(n):
     settings,_ = complete(project)
@@ -624,8 +623,7 @@ def bestOrRest(log,score,enough=0.1):
   x = int(len(log) * enough)
   return log[:x],log[x:]
 
-def keys(project,seed=1,n=50,enough=0.75): 
-  rseed(seed)
+def keys(project,n=50,enough=0.75,goal=goal1): 
   log =  []
   for _ in xrange(n):
     settings,decisions  = complete(project)
@@ -634,7 +632,7 @@ def keys(project,seed=1,n=50,enough=0.75):
     kloc  = settings["kloc"]
     del  decisions["kloc"]
     log += [[decisions,kloc,smell,est]]
-  best,rest = bestOrRest(log,goal1)
+  best,rest = bestOrRest(log,goal)
   contrast(best,rest)
 
 def kratio(d):

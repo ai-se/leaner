@@ -57,6 +57,7 @@ def _stink():
 
 @go
 def _ospStinks():
+  rseed(1)
   for v,(x1,v1,x2,v2) in whatStinks(osp):
     print('stink = %.2f when' % v,x1,'=',v1,'and',x2,'=',v2)
 
@@ -64,6 +65,7 @@ def _ospStinks():
 keys(osp); exit()
 @go
 def _keys():
+  rseed(1)
   keys(osp)
 
 ````
