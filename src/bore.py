@@ -21,7 +21,7 @@ Output:
   that _(key,value)_ appears in best or rest.
 
 """
-ldef bestOrRest(log, enough=0.2, e=0.001):
+def bestOrRest(log, enough=0.2, e=0.001):
   n1 ,n2  = len(log[0].like), len(log[0].dislike)
   lo1,hi1 = [ 10**32] * n1, [-10**32] * n1
   lo2,hi2 = [ 10**32] * n2, [-10**32] * n2  

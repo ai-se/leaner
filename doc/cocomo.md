@@ -608,7 +608,7 @@ def step(project):
               like      = [kloc],
               dislike   = [smell,est])
 
-def run(project, n=50, enough=0.75): 
+def run(project, n=50, enough=0.2): 
   return bore([ step(project) for _ in xrange(n) ],
               enough=enough)
 
