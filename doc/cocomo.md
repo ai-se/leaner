@@ -127,22 +127,6 @@ _ = None;  Coc2tunings = dict(
   tool=[        1.17, 1.09, 1.00, 0.90, 0.78,    _]) 
 ````
 
-__LESSON 3__: There are so many ways to speed up or slow
-down a project. Each of the above attributes has a _max effect_
-(the highest divided by the lowest number). The next effect
-of all those max effects is...
-
-```
-11,022.4 = 3.53 * 2.38 * 1.63 * 1.54 * 1.53 * 1.52 * 1.51
-         * 1.51 * 1.5  * 1.49 * 1.46 * 1.43 * 1.43 * 1.43 * 1.42
-         * 1.4  * 1.39 * 1.33 * 1.31 * 1.29 * 1.32 * 1.26
-```
-
-That is, ignoring the exponential effect of code size, the other
-factors can change the effort of a project by three orders
-of magnitude.
-
-
 ## Defining Legal Ranges
 
 The above lets us define legal
@@ -238,17 +222,17 @@ def ground():
 def osp():
   "Orbital space plane. Flight guidance system."
   return dict(
-    Flex = [2,3,4,5], Pmat = [1,2,3,4],
-    Prec = [1,2],     Resl = [1,2,3],
-    Team = [2,3],     acap = [2,3],
-    aexp = [2,3],     cplx = [5,6],
-    data = [3],       docu = [2,3,4],
+    Flex = [2,3,4,5],     Pmat = [1,2,3,4],
+    Prec = [1,2],         Resl = [1,2,3],
+    Team = [2,3],         acap = [2,3],
+    aexp = [2,3],         cplx = [5,6],
+    data = [3],           docu = [2,3,4],
     kloc= xrange(75,125),
-    ltex = [2,3,4],   pcap = [3],
-    pcon = [2,3],     pexp = [3],
-    pvol = [2],       rely = [5],
-    ruse = [2,3,4],   sced = [1,2, 3],
-    site = [3],       stor = [3,4,5],
+    ltex = [2,3,4],       pcap = [3],
+    pcon = [2,3],         pexp = [3],
+    pvol = [2],           rely = [5],
+    ruse = [2,3,4],       sced = [1,2, 3],
+    site = [3],           stor = [3,4,5],
     tool = [2,3])
 
 @ok
@@ -257,18 +241,18 @@ def osp2():
   here than in osp version1 (since as a project
   develops, more things are set in stone)."""
   return dict(
-    docu = [3,4],    Flex = [3],
-    Pmat = [4,5],    Prec = [3,4, 5],
-    Resl = [4],      Team = [3],
-    acap = [4],      aexp = [4],
-    cplx = [4],      data = [4],
+    docu = [3,4],         Flex = [3],
+    Pmat = [4,5],         Prec = [3,4, 5],
+    Resl = [4],           Team = [3],
+    acap = [4],           aexp = [4],
+    cplx = [4],           data = [4],
     kloc= xrange(75,125),
-    ltex = [2,5],    pcap = [3],
-    pcon = [3],      pexp = [4],
-    pvol = [3],      rely = [5],
-    ruse = [4],      sced = [2,3,4],
-    site = [6],      stor = [3],
-    time = [3],      tool = [5])
+    ltex = [2,5],         pcap = [3],
+    pcon = [3],           pexp = [4],
+    pvol = [3],           rely = [5],
+    ruse = [4],           sced = [2,3,4],
+    site = [6],           stor = [3],
+    time = [3],           tool = [5])
 
 @ok
 def anything(): 
@@ -589,39 +573,46 @@ To guide this search we will run our projects 1000 times and then
 (to make a level playing field), normalize all the efforts, badSmells
 and kloc to 0..1 for min to max. Then we will score each project with a formula
 that gets _better_ the further we move from the worst case
-scenario of _(kloc,badSmells,effort) = (0,1,1)_.
+scenario of _(kloc,badSmells,effort) = (0,1,1)_. For that,
+we will add _kloc_ to a _likes_ list and _badSmells,effort_
+to a _dislikes_ list:
+
+```
+def fromHell(likes, dislikes):
+  n, all = 0, 0
+  for like in likes:
+    n   += 1
+    all += (0 - like)**2
+  for dislike in dislikes:
+    n   += 1
+    all += (1 - dislike)**2
+  return all**0.5 / n**5
+```
+
+(We divide by the square root of the number of
+dimensions, just for convenience-- the resulting
+score will be bounded 0 to 1 for worst to best.)
+
+Lastly, we divide our results in into the 100 _best_
+scores and the 900 _rest_ then look for decisions
+that are more common in _best_ than _rest_.
 
 ````python
-def goal1(kloc, badSmell, effort):
-  x = 0 - kloc      #  hell is no code
-  y = 1 - badSmell  # and max badSmell
-  z = 1 - effort    # and max effort
-  d = sqrt(x**2 + y**2 + z**2) / sqrt(3)
-  return d
-````
-
-(We divide by `sqrt(3)` just for convenience-- the resulting score will be
-bounded 0 to 1 for worst to best.)
-
-Lastly, we divide our results in into the 100 _best_ scores and the 900 _rest_
-then look for decisions that are more common in _best_ than _rest_.
-````python
-
-def keys(project,n=50,enough=0.75,goal=goal1): 
-  log =  []
-  for _ in xrange(n):
-    settings,decisions  = complete(project)
-    est   = COCOMO2(settings)
-    smell = badSmell(settings)
-    kloc  = settings["kloc"]
-    del  decisions["kloc"]
-    log += [o(decisions = decisions,
+def step(project):
+  settings,decisions = complete(project)
+  est   = COCOMO2(settings)
+  smell = badSmell(settings)
+  kloc  = settings["kloc"]
+  del  decisions["kloc"]
+  return o(decisions = decisions,
               like      = [kloc],
-              dislike   = [smell,est])]
-  return bore( log )
+              dislike   = [smell,est])
+
+def run(project, n=50, enough=0.75): 
+  return bore([ step(project) for _ in xrange(n) ],
+              enough=enough)
 
 #_coc(proj=demo2); exit()
-
 
 #exit()
 def COCONUT(training,          # list of projects
