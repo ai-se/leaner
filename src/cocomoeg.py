@@ -61,16 +61,15 @@ def _ospStinks():
   for v,(x1,v1,x2,v2) in whatStinks(osp):
     print('stink = %.2f when' % v,x1,'=',v1,'and',x2,'=',v2)
 
+
 @go
-def _step():
-  print(step(osp))
+def _run1():
+  print(run1(osp))
+
+@go
+def _run():   
+   for m in [osp,osp2,flight,ground]:
+      rseed(1)
+      run(m)
 
 
-def _run():
-   rseed(1)
-   for m in [osp,osp2,flight,ground,anything]:
-      lst = run(m)
-      print(m.__name__,len(lst),
-            map(second,lst[:5]))
-
-_run()

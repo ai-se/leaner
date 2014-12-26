@@ -198,43 +198,49 @@ at NASA.
 def flight():
   "JPL Flight systems"
   return dict(
+    kloc= xrange(7,418),
     Pmat = [2,3],         aexp = [2,3,4,5],
     cplx = [3,4,5,6],     data = [2,3],
-    kloc= xrange(7,418),
     ltex = [1,2,3,4],     pcap = [3,4,5],
     pexp = [1,2,3,4],     rely = [3,4,5],
-    sced = [3],           stor = [3,4],
-    time = [3,4],         tool = [2],
-    acap = [3,4,5])
+    stor = [3,4],         time = [3,4],         
+    acap = [3,4,5],
+    sced = [3],
+    tool = [2]) 
 
 @ok
 def ground():
   "JPL ground systems"
   return dict(
+    kloc=xrange(11,392),
     Pmat = [2,3],         acap = [3,4,5],
     aexp = [2,3,4,5],     cplx = [1,2,3,4],
-    data = [2,3],         kloc=xrange(11,392),
+    data = [2,3],         rely = [1,2,3,4],
     ltex = [1,2,3,4],     pcap = [3,4,5],
-    pexp = [1,2,3,4],     sced = [3],
-    stor = [3,4],         time = [3,4],
-    tool = [2],           rely = [1,2,3,4])
+    pexp = [1,2,3,4],     time = [3,4],
+    stor = [3,4],         
+    tool = [2],           
+    sced = [3])
 
 @ok
 def osp():
   "Orbital space plane. Flight guidance system."
   return dict(
+    kloc= xrange(75,125),
     Flex = [2,3,4,5],     Pmat = [1,2,3,4],
     Prec = [1,2],         Resl = [1,2,3],
     Team = [2,3],         acap = [2,3],
     aexp = [2,3],         cplx = [5,6],
-    data = [3],           docu = [2,3,4],
-    kloc= xrange(75,125),
-    ltex = [2,3,4],       pcap = [3],
-    pcon = [2,3],         pexp = [3],
-    pvol = [2],           rely = [5],
+    docu = [2,3,4],       ltex = [2,3,4],       
+    pcon = [2,3],         tool = [2,3],        
     ruse = [2,3,4],       sced = [1,2, 3],
-    site = [3],           stor = [3,4,5],
-    tool = [2,3])
+    stor = [3,4,5],
+    data = [3],
+    pcap = [3],
+    pexp = [3],
+    pvol = [2],
+    rely = [5],
+    site = [3])
 
 @ok
 def osp2():
@@ -242,18 +248,19 @@ def osp2():
   here than in osp version1 (since as a project
   develops, more things are set in stone)."""
   return dict(
-    docu = [3,4],         Flex = [3],
-    Pmat = [4,5],         Prec = [3,4, 5],
+    kloc= xrange(75,125),
+    docu = [3,4],         ltex = [2,5],
+    sced = [2,3,4],       Pmat = [4,5],         
+    Prec = [3,4, 5],
     Resl = [4],           Team = [3],
     acap = [4],           aexp = [4],
     cplx = [4],           data = [4],
-    kloc= xrange(75,125),
-    ltex = [2,5],         pcap = [3],
+    Flex = [3],           pcap = [3],
     pcon = [3],           pexp = [4],
     pvol = [3],           rely = [5],
-    ruse = [4],           sced = [2,3,4],
-    site = [6],           stor = [3],
-    time = [3],           tool = [5])
+    ruse = [4],           site = [6],           
+    stor = [3],           time = [3],           
+    tool = [5])
 
 @ok
 def anything(): 
@@ -302,6 +309,7 @@ def guess(d,tactics=None):
   return all,decisions
 
 """
+
 
 For example, here some code to generate projects that are consistent
 with what we know about `flight` projects:
@@ -608,14 +616,39 @@ def run1(project, tactics=None):
   kloc  = settings["kloc"]
   del  decisions["kloc"]
   return o(decisions = decisions,
-              good   = [kloc],
-              bad    = [smell,est])
+              good   = [],
+              bad    = [est])
 
-def run(project, n=1000, enough=0.5): 
-  log      = [ run1(project) for _ in xrange(n) ]
-  policies = bore(log,enough=enough)
-  return policies
-  
+def run(project, n=1000, enough=0.5):
+  print("")
+  baseline = [ run1(project) for _ in xrange(n) ]
+  report(baseline, project.__name__+"(baseline)",[], ['effort'])
+  policies = bore(baseline,enough=enough)
+  todo=[]
+  for _,(k,v) in policies:
+    todo += [(k,v)]
+    p  = {k1:v1 for k1,v1 in todo}
+    rx = [ run1(project,p) for _ in xrange(n) ]
+    report(rx, 
+           project.__name__+'('+str(len(todo)) +')'+(str((k,v))),
+           [], ['effort'])
+
+def report(log,what,goodis,badis):
+  bads  = [N() for _ in log[0].bad]
+  goods = [N() for _ in log[0].good]
+  for one in log:
+    for n,v in enumerate(one.bad):
+      bads[n].tell(v)
+    for n,v in enumerate(one.good):
+      goods[n].tell(v)
+  out=[what]
+  for x,v in zip(badis,bads)  : 
+    out += [x]
+    out += g(list(v.mediqr()))
+  for x,v in zip(goodis,goods): 
+    out += [x]
+    out += g(list(v.mediqr()))
+  print(out)
 
 #_coc(proj=demo2); exit()
 

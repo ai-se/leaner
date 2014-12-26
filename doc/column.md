@@ -9,12 +9,12 @@ from lib import *
 
 @setting
 def COL(**d): return o(
-    # Thresholds are from http://goo.gl/25bAh9
+# Thresholds are from http://goo.gl/25bAh9
     buffer = 128,
     m = 2,
     k = 1,
     missing='?'
-  ).update(**d)
+    ).update(**d)
 
 ````
 
@@ -111,6 +111,10 @@ class N(Column):
     return i.lo + r()*(i.hi - i.lo)
   def dist(i,x,y): 
     return i.norm(x) - i.norm(y)
+  def mediqr(i):
+    lst = i.kept()
+    q = int(len(lst)/4)
+    return lst[q*2], lst[q*3] - lst[q]
   def kept(i): 
     return sorted([x for x in i._kept if x is not None])
   def likely(i,x,prior=None):

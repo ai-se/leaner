@@ -140,7 +140,8 @@ Print list of numbers without too many decimal places.
 ````python
 def g(lst,n=3):
   for col,val in enumerate(lst):
-    if isinstance(val,float): val = round(val,n)
+    if isinstance(val,float): 
+      val = round(val,n) if n else int(val)
     lst[col] = val
   return lst
 ````
