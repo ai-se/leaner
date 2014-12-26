@@ -46,7 +46,6 @@ def sample(seed=1,n=1000,score=COCOMO2,what='effort'):
                  width=30,
                  show= "%5d"))
 
-
 @go
 def _coc(): 
   sample()
@@ -62,10 +61,16 @@ def _ospStinks():
   for v,(x1,v1,x2,v2) in whatStinks(osp):
     print('stink = %.2f when' % v,x1,'=',v1,'and',x2,'=',v2)
 
-
-keys(osp); exit()
 @go
-def _keys():
-  rseed(1)
-  keys(osp)
+def _step():
+  print(step(osp))
 
+
+def _run():
+   rseed(1)
+   for m in [osp,osp2,flight,ground,anything]:
+      lst = run(m)
+      print(m.__name__,len(lst),
+            map(second,lst[:5]))
+
+_run()

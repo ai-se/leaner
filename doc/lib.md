@@ -50,6 +50,16 @@ def normpdf(x, mu=0, sigma=1):
   return y
 ````
 
+List stuff
+
+````python
+def first(lst): return lst[0]
+def second(lst): return lst[1]
+def last(lst): return lst[-1]
+
+
+````
+
 #Misc stuff
 
 ````python

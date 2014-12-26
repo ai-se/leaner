@@ -258,7 +258,7 @@ def osp2():
 @ok
 def anything(): 
   "Anything goes."
-  return {}
+  return ranges()
 """
 
 ### Complete-ing
@@ -284,19 +284,22 @@ The following code:
 + The guesses from the project are then added to  `all`.
 
 """
-def complete(project):
+def complete(project, tactics=None):
   all    ,_          = guess(ranges())
-  guessed,decisions  = guess(project())
+  guessed,decisions  = guess(project(), 
+                             tactics or {})
   all.update(guessed)
   return all,decisions
  
-def guess(d):
-  all,some={},{}
+def guess(d,tactics=None):
+  tactics = tactics or {}
+  all,decisions={},{}
   for k,x in d.items():
-    y = ask(x)
-    if len(x) > 1: some[k] = y
+    y = tactics[k] if k in tactics else ask(x)
+    if len(x) > 1: 
+      decisions[k] = y
     all[k] = y
-  return all,some
+  return all,decisions
 
 """
 
@@ -518,8 +521,8 @@ Here's the bad smells seen in 1000 randomly generated projects. Note that
    ground, (- *--------    |              ),    0,     2,     4,     6,    20
 ```
 
-To see why, we  collected 1000 samples from `osp` and looked at the main offenders
-(those with scores worse than 25% of the worst score).
+To see why, we  collected 1000 samples from `osp` and looked at the 
+dozen worst  offenders.
 
 """
 def whatStinks(project,n=1000):
@@ -529,8 +532,7 @@ def whatStinks(project,n=1000):
     badSmell(settings,log)
   lst = sorted([(v/n,k) for k,v in log.items()],
                 reverse=True)
-  most = lst[0][0]
-  return [(v,k) for v,k in lst if v >= most*0.25]
+  return lst[:12]
 """
 
 The results showed that, with `osp`, there are many
@@ -579,39 +581,41 @@ we will add _kloc_ to a _likes_ list and _badSmells,effort_
 to a _dislikes_ list:
 
 ```
-def fromHell(likes, dislikes):
-  n, all = 0, 0
-  for like in likes:
-    n   += 1
-    all += (0 - like)**2
-  for dislike in dislikes:
-    n   += 1
-    all += (1 - dislike)**2
-  return all**0.5 / n**5
+def fromHell(goods,bads):
+    n, all = 0, 0
+    for v in goods:
+      n   += 1
+      all += (0 - v)**2
+    for v in bads:
+      n   += 1
+      all += (1 - v)**2
+    return all**0.5 / n**5
 ```
 
 (We divide by the square root of the number of
 dimensions, just for convenience-- the resulting
 score will be bounded 0 to 1 for worst to best.)
 
-Lastly, we divide our results in into the 100 _best_
-scores and the 900 _rest_ then look for decisions
+Lastly, we divide our results into the  _best_
+top-half scores and the _rest_ then look for decisions
 that are more common in _best_ than _rest_.
 
 """
-def step(project):
-  settings,decisions = complete(project)
+def run1(project, tactics=None):
+  settings,decisions = complete(project,tactics)    
   est   = COCOMO2(settings)
   smell = badSmell(settings)
   kloc  = settings["kloc"]
   del  decisions["kloc"]
   return o(decisions = decisions,
-              like      = [kloc],
-              dislike   = [smell,est])
+              good   = [kloc],
+              bad    = [smell,est])
 
-def run(project, n=50, enough=0.2): 
-  return bore([ step(project) for _ in xrange(n) ],
-              enough=enough)
+def run(project, n=1000, enough=0.5): 
+  log      = [ run1(project) for _ in xrange(n) ]
+  policies = bore(log,enough=enough)
+  return policies
+  
 
 #_coc(proj=demo2); exit()
 
