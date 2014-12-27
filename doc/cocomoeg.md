@@ -67,7 +67,7 @@ def _run1():
 
 @go
 def _run():   
-   for m in [osp,osp2,flight,ground]:
+   for m in [flight]: #osp,osp2,flight,ground]:
       rseed(1)
       run(m)
 

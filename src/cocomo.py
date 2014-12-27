@@ -616,22 +616,23 @@ def run1(project, tactics=None):
   kloc  = settings["kloc"]
   del  decisions["kloc"]
   return o(decisions = decisions,
-              good   = [],
-              bad    = [est])
+              good   = [kloc],
+              bad    = [est,smell])
 
-def run(project, n=1000, enough=0.5):
+def run(project, n=100000, enough=0.33):
   print("")
   baseline = [ run1(project) for _ in xrange(n) ]
-  report(baseline, project.__name__+"(baseline)",[], ['effort'])
+  report(baseline, project.__name__+"(baseline)",['kloc'], ['effort','smell'])
   policies = bore(baseline,enough=enough)
   todo=[]
+  print(len(policies))
   for _,(k,v) in policies:
     todo += [(k,v)]
     p  = {k1:v1 for k1,v1 in todo}
     rx = [ run1(project,p) for _ in xrange(n) ]
     report(rx, 
            project.__name__+'('+str(len(todo)) +')'+(str((k,v))),
-           [], ['effort'])
+           ['kloc'], ['effort','smell'])
 
 def report(log,what,goodis,badis):
   bads  = [N() for _ in log[0].bad]

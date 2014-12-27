@@ -44,6 +44,8 @@ def bestOrRest(log, enough=0.2, e=0.001):
   for one in log:
     lohi(one.good, lo1, hi1)
     lohi(one.bad, lo2, hi2)
+  print("good",lo1,hi1)
+  print("bad",lo2,hi2)
   for one in log:
     one.score= fromHell(norms(one.good,lo1,hi1),
                         norms(one.bad, lo2,hi2))
