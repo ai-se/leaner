@@ -619,7 +619,7 @@ def run1(project, tactics=None):
               good   = [kloc],
               bad    = [est,smell])
 
-def run(project, n=100000, enough=0.33):
+def run(project, n=1000, enough=0.33):
   print("")
   baseline = [ run1(project) for _ in xrange(n) ]
   report(baseline, project.__name__+"(baseline)",['kloc'], ['effort','smell'])
