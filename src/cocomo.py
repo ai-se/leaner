@@ -10,6 +10,7 @@ sys.dont_write_bytecode = True
 
 from columns import *
 from bore    import *
+from de      import *
 """
 
 ## Core COCOMO Equuation.
@@ -561,7 +562,6 @@ stink = 0.65 when sced = 1 and pexp = 3
 stink = 0.65 when sced = 1 and pcap = 3
 stink = 0.54 when cplx = 6 and tool = 3
 ```
-
 Another problem, that appears four times at the end of the list,
 is that we are rushing to complete the project using lower-end developers.
 
@@ -609,15 +609,19 @@ top-half scores and the _rest_ then look for decisions
 that are more common in _best_ than _rest_.
 
 """
-def run1(project, tactics=None):
-  settings,decisions = complete(project,tactics)    
+def eval1(settings):
   est   = COCOMO2(settings)
   smell = badSmell(settings)
   kloc  = settings["kloc"]
+  return [kloc],[est,smell]
+  
+def run1(project, tactics=None):
+  settings,decisions = complete(project,tactics)  
+  good,bad = eval1(settings)
   del  decisions["kloc"]
   return o(decisions = decisions,
-              good   = [kloc],
-              bad    = [est,smell])
+              good   = good,
+              bad    = bad)
 
 def run(project, n=1000, enough=0.33):
   print("")
@@ -634,6 +638,14 @@ def run(project, n=1000, enough=0.33):
            project.__name__+'('+str(len(todo)) +')'+(str((k,v))),
            ['kloc'], ['effort','smell'])
 
+def des(project,n=10,cf=0.3,f=0.5):
+  pop     =  [ run1(project) for _ in xrange(n*20) ]
+  good,bad = ['kloc'],['effort','smell']
+  report(pop, project.__name__+"(baseline)", good,bad)
+  for generation in range(n):
+    pop,log = de(pop,score=eval1,cf=cf,f=f)
+    report(pop, project.__name__+"("+str(geneeration+1)+")", good,bad)
+  
 def report(log,what,goodis,badis):
   bads  = [N() for _ in log[0].bad]
   goods = [N() for _ in log[0].good]

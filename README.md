@@ -23,6 +23,7 @@ you follow three simple rules:
 + [columneg](doc/columneg.md):  Column stuff (demos)
 + [columns](doc/columns.md):  Handling Columns of Data
 + [config](doc/config.md):  Configuration Control
++ [de](doc/de.md):  Simple Differential Evolution
 + [lib](doc/lib.md):  General stuff
 + [libeg](doc/libeg.md):  General stuff (demos)
 

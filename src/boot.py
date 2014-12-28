@@ -14,6 +14,7 @@ do not need methods.
 class o:
   def d(i)           : return i.__dict__
   def update(i,**d)  : i.d().update(**d); return i
+  def has(i,k)    : return k in i.d()
   def __init__(i,**d): i.update(**d)
   def __repr__(i)    :  
     keys = [k for k in sorted(i.d().keys()) 

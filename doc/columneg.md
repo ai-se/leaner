@@ -18,7 +18,7 @@ def _S():
 
 @go
 def _N():
-  rrseed(1)
+  rseed(1)
   n=N([x for x in xrange(100)])
   print(n.mu==49.5,n.sd(), n.lo==0,n.hi==99)
   l1=n.likely(49)
@@ -27,5 +27,4 @@ def _N():
   print("good 1 likely:" , round(l2,5)==0.00340)
   print('outlier less likely:',l1,l2,l2< l1)
   
-
 ````
