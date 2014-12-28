@@ -115,6 +115,10 @@ class N(Column):
     lst = i.kept()
     q = int(len(lst)/4)
     return lst[q*2], lst[q*3] - lst[q]
+  def q2q3(i): 
+    lst = i.kept()
+    q   = int(len(lst)/4)
+    return lst[q*2], lst[q*3]
   def kept(i): 
     return sorted([x for x in i._kept if x is not None])
   def likely(i,x,prior=None):

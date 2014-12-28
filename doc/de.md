@@ -9,7 +9,6 @@
 from column import *
 
 def de(pop,log=None,score=None,cf=0.3,f=0.5):
-  print(pop[:4])
   score = score or eval1
   def makeLog():
     nbad  = len(pop[0].bad)
@@ -29,14 +28,13 @@ def de(pop,log=None,score=None,cf=0.3,f=0.5):
       all += (1 - v)**2
     return all**0.5 / n**0.5
   def objScore(one):
-    print('d',one.decisions)
     if not one.has('score'):
       one.good, one.bad = score(one.decisions)
       for v,t in zip(one.good + one.bad,
                      log.good + log.bad):
         t.tell(v)
       
-      one.score = fromHell(one.decisions)
+      one.score = fromHell(one)
     return one.score
   def smear(d1,d2,d3):
     tmp={}
@@ -50,10 +48,9 @@ def de(pop,log=None,score=None,cf=0.3,f=0.5):
     return tmp
   pop = shuffle(pop)
   for n,old in enumerate(pop): 
-     
-    new= o(decisions = smear(ask(pop).decisions,
-                             ask(pop).decisions,
-                             ask(pop).decisions))
+    new  = o(decisions = smear(ask(pop).decisions,
+                               ask(pop).decisions,
+                               ask(pop).decisions))
     olds = objScore(old)
     news = objScore(new)
     if news > olds:

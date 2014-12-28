@@ -9,7 +9,7 @@
 
 from cocomo import *
 
-@go
+#@go
 def _range():
  for n in xrange(2):
     all,_ = complete(flight)
@@ -45,22 +45,22 @@ def sample(seed=1,n=1000,score=COCOMO2,what='effort'):
                  width=30,
                  show= "%5d"))
 
-@go
+#@go
 def _coc(): 
   sample()
 
-@go
+#@go
 def _stink(): 
   sample(score=badSmell,
          what="Bad smells")
 
-@go
+#@go
 def _ospStinks():
   rseed(1)
   for v,(x1,v1,x2,v2) in whatStinks(osp):
     print('stink = %.2f when' % v,x1,'=',v1,'and',x2,'=',v2)
 
-@go
+#@go
 def _run1():
   print(run1(osp))
 
@@ -70,8 +70,9 @@ def _run():
       run(m)
 
 def _de():
-    for m in [flight]:
+    for m in [flight,osp,osp2,ground,anything]:
       rseed(1)
+      print("\n",m.__name__)
       des(m)
       
 _de()

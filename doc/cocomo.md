@@ -637,13 +637,18 @@ def run(project, n=1000, enough=0.33):
            project.__name__+'('+str(len(todo)) +')'+(str((k,v))),
            ['kloc'], ['effort','smell'])
 
-def des(project,n=10,cf=0.3,f=0.5):
+def des(project,n=40,cf=0.3,f=0.5):
+  def complete1(one):
+    tmp = guess(ranges(),one)  
+    return eval1(tmp)
   pop     =  [ run1(project) for _ in xrange(n*20) ]
+  print(pop[0].decisions.keys())
   good,bad = ['kloc'],['effort','smell']
   report(pop, project.__name__+"(baseline)", good,bad)
   for generation in range(n):
-    pop,log = de(pop,score=eval1,cf=cf,f=f)
-    report(pop, project.__name__+"("+str(geneeration+1)+")", good,bad)
+    pop,log = de(pop,score=complete1,cf=cf,f=f)
+    if generation % 5 == 0:
+      report(pop, project.__name__+"("+str(generation+1)+")", good,bad)
   
 def report(log,what,goodis,badis):
   bads  = [N() for _ in log[0].bad]
@@ -656,10 +661,12 @@ def report(log,what,goodis,badis):
   out=[what]
   for x,v in zip(badis,bads)  : 
     out += [x]
-    out += g(list(v.mediqr()))
+    q2,q3 = v.q2q3()
+    out += g([q2,q3],n=0)
   for x,v in zip(goodis,goods): 
     out += [x]
-    out += g(list(v.mediqr()))
+    q2,q3 = v.q2q3()
+    out += g([q2,q3],n=0)
   print(out)
 
 #_coc(proj=demo2); exit()
