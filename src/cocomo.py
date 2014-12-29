@@ -9,13 +9,14 @@ sys.dont_write_bytecode = True
 """
 
 from columns import *
-from bore    import *
-from de      import *
+
 """
 
-## Core COCOMO Equuation.
+## Core COCOMO Equation.
 
-From the Boehm'00 book.
+From the Boehm'00 book [Software Cost Estimation with Cocomo II][boehm00].
+
+[boehm00]: http://goo.gl/kJE87M "Barry W. Boehm, Clark, Horowitz, Brown, Reifer, Chulani, Ray Madachy, and Bert Steece. 2000. Software Cost Estimation with Cocomo II (1st ed.). Prentice Hall"
 
 Take a dictionary whose keys describe COCOMO attributes.
 Look up the value of those keys in a array of tunings.
@@ -293,22 +294,16 @@ The following code:
 
 """
 def complete(project, tactics=None):
-  all    ,_          = guess(ranges())
-  guessed,decisions  = guess(project(), 
-                             tactics or {})
-  all.update(guessed)
-  return all,decisions
- 
-def guess(d,tactics=None):
   tactics = tactics or {}
-  all,decisions={},{}
-  for k,x in d.items():
-    y = tactics[k] if k in tactics else ask(x)
-    if len(x) > 1: 
-      decisions[k] = y
-    all[k] = y
-  return all,decisions
-
+  p = project()
+  for k,default in ranges().items():
+    if not k in p:
+      p[k] = default
+  for k,tactic in tactics.items():
+    overlap = list(set(p[k]) & set(tactic))
+    if overlap:
+        p[k] = overlap
+  return  {k: ask(x) for k,x in p.items()}
 """
 
 
@@ -534,12 +529,12 @@ To see why, we  collected 1000 samples from `osp` and looked at the
 dozen worst  offenders.
 
 """
-def whatStinks(project,n=1000):
+def whatStinks(project,n=1000,tactics=None):
   log = {}
   for _ in xrange(n):
-    settings,_ = complete(project)
+    settings = complete(project,tactics or {})
     badSmell(settings,log)
-  lst = sorted([(v/n,k) for k,v in log.items()],
+  lst = sorted([(v,k) for k,v in log.items()],
                 reverse=True)
   return lst[:12]
 """

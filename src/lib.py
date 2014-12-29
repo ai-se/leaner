@@ -21,8 +21,16 @@ def LIB(**d): return o(
 ## Type stuff
 
 """
-def ako(x,y)    : return isinstance(x,y)
-def identity(x) : return x
+def identity(x): return x
+def ako(x,y)   : return isinstance(x,y)
+def isList(x)  : 
+  return x if isinstance(x,list) else [x]
+def isSet(x): 
+  return x if isinstance(x,set) else set([x])
+def myIntersect(x,y):
+  if isinstance(x,(str,int,float)): x = [x]
+  if isinstance(y,(str,int,float)): y = [y]
+  return [val for val in x if val in y]
 """
 
 ## Math stuff
@@ -39,10 +47,12 @@ def mult(lst): return reduce(lambda x,y: x*y,lst)
 ## Random stuff
 
 """
-r   = random.random
-rseed= random.seed
-ask = random.choice
+r     = random.random
+rseed = random.seed
 
+def ask(x):
+  return random.choice(list(x))
+    
 def shuffle(lst): random.shuffle(lst); return lst
 
 def normpdf(x, mu=0, sigma=1):
@@ -202,3 +212,4 @@ def go(d):
     d()
   except:
     print('Demo function did not crash: False')
+  return d
