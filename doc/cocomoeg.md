@@ -89,6 +89,7 @@ _treat()
 
 ````
 "*" not in right place
+also, noeed to check treatments are actyually workinf
 3345.84795964 (- *  -----     |              ),    4,  1367,  3345,  5771, 12018 anything(reduceFunctionality),
 6177.82686741 (---    *   ----|-----------   ),    6,  2660,  6177, 10087, 24230 anything(improvePrecendentnessDevelopmentFlexibility),
 6849.67132806 (--   *   ------|---           ),   11,  2682,  6849, 11512, 24972 anything(increaseArchitecturalAnalysisRiskResolution),
