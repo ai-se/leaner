@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/columneg.py">columneg.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="column_stuff__demos_"></a><h1>Column stuff (demos)<a class="anchorlink" href="#column_stuff__demos_"></a></h1>
+<pre class="prettyprint">from column import *
+
+@go
+def _S():
+  s=S(list(&#39;from __future__ import division&#39;))
+  print(s.all,s.ent(),s.ask())
+  l1 = s.likely(&#39;i&#39;)
+  l2 = s.likely(&#39;f&#39;)
+  print(&#39;rare less likely:&#39;,l2&lt; l1)
+
+@go
+def _N():
+  rseed(1)
+  n=N([x for x in xrange(100)])
+  print(n.mu==49.5,n.sd(), n.lo==0,n.hi==99)
+  l1=n.likely(49)
+  l2=n.likely(1)
+  print(&quot;good 49 likely:&quot;, round(l1,5)==0.01375)
+  print(&quot;good 1 likely:&quot; , round(l2,5)==0.00340)
+  print(&#39;outlier less likely:&#39;,l1,l2,l2&lt; l1)</pre>
+
+    </article>
+  </body>
+</html>

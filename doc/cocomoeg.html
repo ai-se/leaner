@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/cocomoeg.py">cocomoeg.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="test_cases_for_cocomo"></a><h1>Test Cases for COCOMO<a class="anchorlink" href="#test_cases_for_cocomo"></a></h1>
+<pre class="prettyprint">from cocomo import *
+
+@go
+def _range():
+ for n in xrange(2):
+    all= complete(flight)
+    print(&quot;\n&quot;,n)
+    for k,v in all.items():
+      print(&quot;\t&quot;,k,v)
+
+
+def sample(seed=1,n=1000,tactics=None,
+           score=COCOMO2,what=&#39;effort&#39;):  
+  rseed(seed)
+  tactics = tactics or {}
+  projects=[anything,flight,ground,osp,osp2]
+  COL()
+  the.COL.buffer=n
+  logAll=N()
+  logs= {} 
+  for project in projects:
+    log = logs[project.__name__] = N()
+    for _ in xrange(n):
+      settings = complete(project,tactics or {})
+      x = score(settings)
+      log.tell(x)
+      logAll.tell(x)
+  print(&quot;\n\n---|&quot;,what,&quot;|---------------\n&quot;)
+  for project in projects:
+    name = project.__name__
+    log = logs[name]
+    print (&#39;%9s,&#39; % name,
+           xtile(log.kept(),
+                 lo=logAll.lo,
+                 hi=logAll.hi,
+                 chops=[0,0.25,0.5,0.75,0.999],
+                 marks=[&quot;-&quot;,&quot; &quot;,&quot; &quot;,&quot;-&quot;,&quot; &quot;],
+                 width=30,
+                 show= &quot;%5d&quot;))
+
+@go
+def _coc(): 
+  sample()
+
+
+@go
+def _stink(): 
+  sample(score=badSmell,
+         what=&quot;Bad smells&quot;)
+
+@go
+def _ospStinks(model=None,tactics=None):
+  rseed(1)
+  for v,(x1,v1,x2,v2) in \
+      whatStinks(model or osp, 
+                 tactics=tactics or \
+                         dict(cplx=[4],
+                              rely=[1,2,3,5])):
+    print(&#39;stink = %5s when&#39; % v,
+          x1,&#39;=&#39;,v1,&#39;and&#39;,x2,&#39;=&#39;,v2)</pre>
+
+    </article>
+  </body>
+</html>

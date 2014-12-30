@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/bore.py">bore.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="bore__best_or_rest_"></a><h1>BORE (best or rest)<a class="anchorlink" href="#bore__best_or_rest_"></a></h1>
+<p>Input:</p>
+<ul class="list">
+<li>A list of <em>o(loves,hates,decisions)</em>. </li>
+<li>Where <em>decisions</em> are a dictionary of <em>(key,value)</em>.</li>
+</ul>
+<p>Output:</p>
+<ul class="list">
+<li>The <em>(key,value)s</em>, sorted by the probablity
+that this <em>(key,vaue)</em> appears in the top
+<em>enough</em>  scoring items.</li>
+<li>The actually probability <em>p</em> is computed
+via <em>b**2/(b+r)</em> where <em>b,r</em> are the frequencies
+that <em>(key,value)</em> appears in best or rest.</li>
+</ul>
+<pre class="prettyprint">def bestOrRest(log, enough=0.2, e=0.001):
+  n1 ,n2  = len(log[0].good), len(log[0].bad)
+  lo1,hi1 = [ 10**32] * n1, [-10**32] * n1
+  lo2,hi2 = [ 10**32] * n2, [-10**32] * n2  
+  enough  = int(len(log) * enough)
+  def fromHell(goods,bads):
+    n, all = 0, 0
+    for v in goods:
+      n   += 1
+      all += (0 - v)**2
+    for v in bads:
+      n   += 1
+      all += (1 - v)**2
+    return all**0.5 / n**0.5
+  def norms(lst,lo,hi): 
+    return [ (v - lo[n]) / (hi[n] - lo[n] + e)
+             for n,v in enumerate(lst) ]
+  def lohi(lst,lo,hi):
+    for n,v in enumerate(lst):
+      lo[n] = min(v, lo[n])
+      hi[n] = max(v, hi[n])
+  for one in log:
+    lohi(one.good, lo1, hi1)
+    lohi(one.bad, lo2, hi2)
+  print(&quot;good&quot;,lo1,hi1)
+  print(&quot;bad&quot;,lo2,hi2)
+  for one in log:
+    one.score= fromHell(norms(one.good,lo1,hi1),
+                        norms(one.bad, lo2,hi2))
+  log = sorted(log, key = lambda one: one.score,
+               reverse=True)
+  return log[:enough],log[enough:]
+
+def bore(log, enough=0.25, e=0.00001):
+  best,rest = bestOrRest(log, enough=enough)
+  def kvCounts(lst):
+    cnts = {}
+    for one in lst:
+      for x in one.decisions.items():
+        cnts[x] = cnts.get(x,0) + 1
+    return cnts 
+  scores = []
+  nr, nb = len(rest), len(best)
+  better = kvCounts(best)
+  worse  = kvCounts(rest)
+  for k,s1 in better.items():
+    s2 = worse.get(k,e)
+    p1 = s1/nb * nb / (nr + nb)
+    p2 = s2/nr * nr / (nr + nb)
+    if p1 &gt; p2:
+       scores += [(p1**2 / (p1 + p2),k)]
+  return sorted(scores,reverse=True)</pre>
+
+    </article>
+  </body>
+</html>

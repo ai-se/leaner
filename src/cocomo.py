@@ -168,6 +168,7 @@ def ok(f):
   all    = ranges()
   prefix = f.__name__
   for k,some in f().items():
+    if k == 'nkloc': continue
     if not k in all:
       raise KeyError( '%s.%s' % (prefix,k))
     else:
@@ -293,15 +294,18 @@ The following code:
 + The guesses from the project are then added to  `all`.
 
 """
-def complete(project, tactics=None):
+def complete(project, tactics=None, allRanges=ranges()):
   tactics = tactics or {}
   p = project()
-  for k,default in ranges().items():
+  for k,default in allRanges.items():
     if not k in p:
       p[k] = default
   for k,tactic in tactics.items():
-    overlap = list(set(p[k]) & set(tactic))
-    if overlap:
+    if k == 'nkloc':
+        p['kloc'] = [ any(p['kloc']) * tactic[0] ]
+    else:
+      overlap = list(set(p[k]) & set(tactic))
+      if overlap:
         p[k] = overlap
   return  {k: ask(x) for k,x in p.items()}
 """
@@ -664,6 +668,52 @@ def report(log,what,goodis,badis):
     q2,q3 = v.q2q3()
     out += g([q2,q3],n=0)
   print(out)
+
+
+def policy(f=None,all={}):
+  if not f: 
+    return all
+  else:
+    all[f.__name__] = f 
+    return ok(f) 
+    
+@policy
+def improvePersonnel(): return dict(
+  acap=[5],pcap=[5],pcon=[5], aexp=[5], pexp=[5], ltex=[5])
+
+@policy
+def improveToolsTechniquesPlatform(): return dict(
+  time=[3],stor=[3],pvol=[2],tool=[5], site=[6])
+  
+@policy
+def improvePrecendentnessDevelopmentFlexibility(): return dict(
+  Prec=[5],Flex=[5])
+
+@policy
+def increaseArchitecturalAnalysisRiskResolution(): return dict(
+  Resl=[5])
+  
+@policy
+def relaxSchedule(): return dict(
+  sced = [5])
+  
+@policy
+def improveProcessMaturity(): return dict(
+  Pmat = [5])
+  
+@policy
+def reduceFunctionality(): return dict(
+  data = [2], nkloc=[0.5])
+  
+@policy
+def improveTeam(): return dict(
+  Team = [5])
+  
+@policy
+def reduceQuality():  return dict(
+  rely = [1], docu=[1], time = [3], cplx = [1])
+                                
+print(policy().keys())
 
 #_coc(proj=demo2); exit()
 

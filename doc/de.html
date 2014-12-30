@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/de.py">de.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="simple_differential_evolution"></a><h1>Simple Differential Evolution<a class="anchorlink" href="#simple_differential_evolution"></a></h1>
+<pre class="prettyprint">from column import *
+
+def de(pop,log=None,score=None,cf=0.3,f=0.5):
+  score = score or eval1
+  def makeLog():
+    nbad  = len(pop[0].bad)
+    ngood = len(pop[0].good) 
+    return o(good= [N() for _ in range(ngood)],
+             bad = [N() for _ in range(nbad)])
+  log = log or makeLog()
+  def fromHell(one):
+    n, all = 0, 0
+    for v,t in zip(one.good,log.good):
+      v    = t.norm(v)
+      n   += 1
+      all += (0 - v)**2
+    for v,t in zip(one.bad, log.bad):
+      v    = t.norm(v)
+      n   += 1
+      all += (1 - v)**2
+    return all**0.5 / n**0.5
+  def objScore(one):
+    if not one.has(&#39;score&#39;):
+      one.good, one.bad = score(one.decisions)
+      for v,t in zip(one.good + one.bad,
+                     log.good + log.bad):
+        t.tell(v)
+
+      one.score = fromHell(one)
+    return one.score
+  def smear(d1,d2,d3):
+    tmp={}
+    for k in d1:
+      v1 = d1[k]
+      if r() &lt; cf:
+        v2 = d2[k] if k in d2 else v1
+        v3 = d3[k] if k in d3 else v2
+        v1 = v2 if f &lt; r() else v3
+      tmp[k] = v1
+    return tmp
+  pop = shuffle(pop)
+  for n,old in enumerate(pop): 
+    new  = o(decisions = smear(ask(pop).decisions,
+                               ask(pop).decisions,
+                               ask(pop).decisions))
+    olds = objScore(old)
+    news = objScore(new)
+    if news &gt; olds:
+      pop[n] = new
+  return pop,log</pre>
+
+    </article>
+  </body>
+</html>

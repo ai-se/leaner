@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/table.py">table.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="handling_tables_of_data"></a><h1>Handling Tables of Data<a class="anchorlink" href="#handling_tables_of_data"></a></h1>
+<p>A table is a set of rows and  a header
+storing information about each column,</p>
+<p>Column headers are either <code>N</code> nums or <code>S</code>
+symbols objects. Columns are divided
+into independent and dependent variables.</p>
+<ul class="list">
+<li>Dependent symbolic columns are called <code>klasses</code>;</li>
+<li>Dependent numeric columns can be optionally
+tagged with a boolean <code>like</code> (and we want more
+ things with
+<code>like==True</code>).</li>
+</ul>
+<pre class="prettyprint">from cols import *
+import zipfile,re
+
+@setting
+def TBL(**d): return o(
+    # Thresholds are from http://goo.gl/25bAh9
+    skip=&quot;?&quot;,
+    num=&quot;{{content}}quot;,
+    sep  = &#39;,&#39;,
+    bad = r&#39;([&quot;\&#39; \t\r\n]|#.*)&#39;,
+    source = lambda f: unzip(&#39;../data/data.zip&#39;,f)
+  ).update(**d)
+
+def table(**d):
+  return o(indep=[], dep=[],rows=[]
+           ).update(**d)
+
+def unzip(zipped, want):
+  with zipfile.ZipFile(zipped,&#39;r&#39;) as archive:
+    for got in archive.namelist():
+      if got == want: 
+        for line in archive.open(got,&#39;r&#39;):
+          yield line
+        break
+
+def rows(file, source=open):
+  w = the.TBL
+  def reader(name):
+    return float if w.num in name else identity
+  def lines(): 
+    n,kept = 0,&quot;&quot;
+    for line in source(file):
+      now   = re.sub(w.bad,&quot;&quot;,line)
+      kept += now
+      if kept:
+        if not now[-1] == w.sep:
+          yield n, kept.split(w.sep)
+          n += 1
+          kept = &quot;&quot; 
+  todo = None
+  for n,line in lines():
+    if n == 0:
+      todo = [(n,reader(header))
+              for n,header in enumerate(line)
+              if not w.skip in header]
+    else:
+      yield n, [ read(line[col]) 
+                 for col,read in todo ]</pre>
+
+    </article>
+  </body>
+</html>

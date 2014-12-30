@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>example</title>
+    <link rel="stylesheet" href="assets/css/github-markdown.css">
+    <style>
+      body {
+        min-width: 200px;
+        max-width: 790px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="markdown-body">
+      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/boot.py">boot.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<a name="boot_code__stuff_needed_before_anything_else"></a><h1>Boot code: stuff needed before anything else<a class="anchorlink" href="#boot_code__stuff_needed_before_anything_else"></a></h1>
+<h2><code>o</code>: a Generic Holder for Names Slots</h2>
+<p>Useful when you want a bag of names things, that 
+do not need methods.</p>
+<pre class="prettyprint">class o:
+  def d(i)           : return i.__dict__
+  def update(i,**d)  : i.d().update(**d); return i
+  def has(i,k)    : return k in i.d()
+  def __init__(i,**d): i.update(**d)
+  def __repr__(i)    :  
+    keys = [k for k in sorted(i.d().keys()) 
+            if k[0] is not &quot;_&quot;]
+    show = [&#39;:%s %s&#39; % (k, name(i.d()[k])) 
+            for k in keys]
+    return &#39;{&#39;+&#39; &#39;.join(show)+&#39;}&#39;
+
+def name(x):
+  f = lambda x: x.__class__.__name__ == &#39;function&#39;
+  return x.__name__ if f(x) else x</pre>
+<h2><code>setting</code>: a Wrapper that Remembers the Settings</h2>
+<pre class="prettyprint">def setting(f):
+  def wrapper(**d):
+    tmp = the.d()[f.__name__] = f(**d)
+    return tmp
+  wrapper()
+  return wrapper</pre>
+<h2><code>the</code>: Where we Store the Globals</h2>
+<pre class="prettyprint">the=o()</pre>
+<p>Use the following to print the global settings</p>
+<pre class="prettyprint">def THAT(x=the,s=&quot;&quot;,pre=&quot;&quot;):
+  d = x.d()
+  say(pre)
+  for k in sorted(d.keys()):
+    if k[0] is not &quot;_&quot;:
+      say(s + (&#39;:%s &#39; % k))
+      y = d[k]
+      THAT(y,s+&quot;   &quot;,&quot;\n&quot;) if ako(y,o) else print(y)</pre>
+
+    </article>
+  </body>
+</html>
