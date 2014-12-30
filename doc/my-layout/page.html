@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>example</title>
+    <title>{{title}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style type="text/css">
 @font-face {
@@ -13,14 +13,14 @@
 </style>
 <link href='//fonts.googleapis.com/css?family=Andika|Cantarell:400,700,400italic' rel='stylesheet' type='text/css'>
 <link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
-<script src="assets/jquery-1.6.1.min.js"></script>
-<link type="text/css" rel="stylesheet" href="assets/style.css"/>
-<link type="text/css" rel="stylesheet" href="assets/assert.css"/>
-<link type="text/css" rel="stylesheet" href="assets/prettify.css"/>
-
-<script type="text/javascript" src="assets/prettify.js"></script>
+<script src="{{assetsRelative}}/jquery-1.6.1.min.js"></script>
+<link type="text/css" rel="stylesheet" href="{{assetsRelative}}/style.css"/>
+<link type="text/css" rel="stylesheet" href="{{assetsRelative}}/assert.css"/>
+<link type="text/css" rel="stylesheet" href="{{assetsRelative}}/prettify.css"/>
+{{styles}}
+<script type="text/javascript" src="{{assetsRelative}}/prettify.js"></script>
 <!-- Script runner -->
-<script type="text/javascript" src="assets/runner.js"></script>
+<script type="text/javascript" src="{{assetsRelative}}/runner.js"></script>
   </head>
 <body>
   <div id="wrapper">
@@ -36,18 +36,18 @@
       <div id="container">
         <div id="content" class="post">
 
-        
+        {{content}}
 
 
 <!--- div id="bottom_navi">
-  <a href=".html"> &lt; &lt; Previous Chapter</a> | <a href=".html">Next Chapter &gt; &gt;</a>
+  <a href="{{prev}}.html"> &lt; &lt; Previous Chapter</a> | <a href="{{next}}.html">Next Chapter &gt; &gt;</a>
 </div  --->
 
           </div>
         </div>
       </div>
       <div id="sidebar">
-        &lt;ul class=&quot;nav nav-list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#boot_code__stuff_needed_before_anything_else&quot;&gt;Boot code stuff needed before anything else&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+        {{toc}}
 
       </div>
     <div class="clear">

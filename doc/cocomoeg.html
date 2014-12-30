@@ -1,84 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>example</title>
-    <link rel="stylesheet" href="assets/css/github-markdown.css">
-    <style>
-      body {
-        min-width: 200px;
-        max-width: 790px;
-        margin: 0 auto;
-        padding: 30px;
-      }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.woff') format('woff');
+}
+</style>
+<link href='//fonts.googleapis.com/css?family=Andika|Cantarell:400,700,400italic' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script src="assets/jquery-1.6.1.min.js"></script>
+<link type="text/css" rel="stylesheet" href="assets/style.css"/>
+<link type="text/css" rel="stylesheet" href="assets/assert.css"/>
+<link type="text/css" rel="stylesheet" href="assets/prettify.css"/>
+
+<script type="text/javascript" src="assets/prettify.js"></script>
+<!-- Script runner -->
+<script type="text/javascript" src="assets/runner.js"></script>
   </head>
-  <body>
-    <article class="markdown-body">
-      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/cocomoeg.py">cocomoeg.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
-<a name="test_cases_for_cocomo"></a><h1>Test Cases for COCOMO<a class="anchorlink" href="#test_cases_for_cocomo"></a></h1>
-<pre class="prettyprint">from cocomo import *
+<body>
+  <div id="wrapper">
+    <div id="header">
+    </div>
+    <div class="clear">
+      <hr>
+    </div>
 
-@go
-def _range():
- for n in xrange(2):
-    all= complete(flight)
-    print(&quot;\n&quot;,n)
-    for k,v in all.items():
-      print(&quot;\t&quot;,k,v)
+     <!-- Main -->
 
+    <div id="main">
+      <div id="container">
+        <div id="content" class="post">
 
-def sample(seed=1,n=1000,tactics=None,
-           score=COCOMO2,what=&#39;effort&#39;):  
-  rseed(seed)
-  tactics = tactics or {}
-  projects=[anything,flight,ground,osp,osp2]
-  COL()
-  the.COL.buffer=n
-  logAll=N()
-  logs= {} 
-  for project in projects:
-    log = logs[project.__name__] = N()
-    for _ in xrange(n):
-      settings = complete(project,tactics or {})
-      x = score(settings)
-      log.tell(x)
-      logAll.tell(x)
-  print(&quot;\n\n---|&quot;,what,&quot;|---------------\n&quot;)
-  for project in projects:
-    name = project.__name__
-    log = logs[name]
-    print (&#39;%9s,&#39; % name,
-           xtile(log.kept(),
-                 lo=logAll.lo,
-                 hi=logAll.hi,
-                 chops=[0,0.25,0.5,0.75,0.999],
-                 marks=[&quot;-&quot;,&quot; &quot;,&quot; &quot;,&quot;-&quot;,&quot; &quot;],
-                 width=30,
-                 show= &quot;%5d&quot;))
-
-@go
-def _coc(): 
-  sample()
+        
 
 
-@go
-def _stink(): 
-  sample(score=badSmell,
-         what=&quot;Bad smells&quot;)
+<!--- div id="bottom_navi">
+  <a href=".html"> &lt; &lt; Previous Chapter</a> | <a href=".html">Next Chapter &gt; &gt;</a>
+</div  --->
 
-@go
-def _ospStinks(model=None,tactics=None):
-  rseed(1)
-  for v,(x1,v1,x2,v2) in \
-      whatStinks(model or osp, 
-                 tactics=tactics or \
-                         dict(cplx=[4],
-                              rely=[1,2,3,5])):
-    print(&#39;stink = %5s when&#39; % v,
-          x1,&#39;=&#39;,v1,&#39;and&#39;,x2,&#39;=&#39;,v2)</pre>
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        &lt;ul class=&quot;nav nav-list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#test_cases_for_cocomo&quot;&gt;Test Cases for COCOMO&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 
-    </article>
-  </body>
+      </div>
+    <div class="clear">
+    </div>
+
+    <div id="footer">
+      <p>CSS by <a href="http://mixu.net/">Mikito Takada</a>.</p>
+    </div>
+    </div>
+  </div>
+
+
+  </div>
+</body>
 </html>

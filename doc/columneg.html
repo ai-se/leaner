@@ -1,44 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>example</title>
-    <link rel="stylesheet" href="assets/css/github-markdown.css">
-    <style>
-      body {
-        min-width: 200px;
-        max-width: 790px;
-        margin: 0 auto;
-        padding: 30px;
-      }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.woff') format('woff');
+}
+</style>
+<link href='//fonts.googleapis.com/css?family=Andika|Cantarell:400,700,400italic' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script src="assets/jquery-1.6.1.min.js"></script>
+<link type="text/css" rel="stylesheet" href="assets/style.css"/>
+<link type="text/css" rel="stylesheet" href="assets/assert.css"/>
+<link type="text/css" rel="stylesheet" href="assets/prettify.css"/>
+
+<script type="text/javascript" src="assets/prettify.js"></script>
+<!-- Script runner -->
+<script type="text/javascript" src="assets/runner.js"></script>
   </head>
-  <body>
-    <article class="markdown-body">
-      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/columneg.py">columneg.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
-<a name="column_stuff__demos_"></a><h1>Column stuff (demos)<a class="anchorlink" href="#column_stuff__demos_"></a></h1>
-<pre class="prettyprint">from column import *
+<body>
+  <div id="wrapper">
+    <div id="header">
+    </div>
+    <div class="clear">
+      <hr>
+    </div>
 
-@go
-def _S():
-  s=S(list(&#39;from __future__ import division&#39;))
-  print(s.all,s.ent(),s.ask())
-  l1 = s.likely(&#39;i&#39;)
-  l2 = s.likely(&#39;f&#39;)
-  print(&#39;rare less likely:&#39;,l2&lt; l1)
+     <!-- Main -->
 
-@go
-def _N():
-  rseed(1)
-  n=N([x for x in xrange(100)])
-  print(n.mu==49.5,n.sd(), n.lo==0,n.hi==99)
-  l1=n.likely(49)
-  l2=n.likely(1)
-  print(&quot;good 49 likely:&quot;, round(l1,5)==0.01375)
-  print(&quot;good 1 likely:&quot; , round(l2,5)==0.00340)
-  print(&#39;outlier less likely:&#39;,l1,l2,l2&lt; l1)</pre>
+    <div id="main">
+      <div id="container">
+        <div id="content" class="post">
 
-    </article>
-  </body>
+        
+
+
+<!--- div id="bottom_navi">
+  <a href=".html"> &lt; &lt; Previous Chapter</a> | <a href=".html">Next Chapter &gt; &gt;</a>
+</div  --->
+
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        &lt;ul class=&quot;nav nav-list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#column_stuff__demos_&quot;&gt;Column stuff (demos)&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+
+      </div>
+    <div class="clear">
+    </div>
+
+    <div id="footer">
+      <p>CSS by <a href="http://mixu.net/">Mikito Takada</a>.</p>
+    </div>
+    </div>
+  </div>
+
+
+  </div>
+</body>
 </html>

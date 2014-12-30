@@ -1,83 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>example</title>
-    <link rel="stylesheet" href="assets/css/github-markdown.css">
-    <style>
-      body {
-        min-width: 200px;
-        max-width: 790px;
-        margin: 0 auto;
-        padding: 30px;
-      }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.woff') format('woff');
+}
+</style>
+<link href='//fonts.googleapis.com/css?family=Andika|Cantarell:400,700,400italic' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<script src="assets/jquery-1.6.1.min.js"></script>
+<link type="text/css" rel="stylesheet" href="assets/style.css"/>
+<link type="text/css" rel="stylesheet" href="assets/assert.css"/>
+<link type="text/css" rel="stylesheet" href="assets/prettify.css"/>
+
+<script type="text/javascript" src="assets/prettify.js"></script>
+<!-- Script runner -->
+<script type="text/javascript" src="assets/runner.js"></script>
   </head>
-  <body>
-    <article class="markdown-body">
-      <p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/columns.py">columns.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
-<a name="handling_columns_of_data"></a><h1>Handling Columns of Data<a class="anchorlink" href="#handling_columns_of_data"></a></h1>
-<p>Rows contain columns of data.
-Column headers are either <code>N</code> nums or <code>S</code>
-symbols objects. Columns are divided
-into independent and dependent variables.</p>
-<ul class="list">
-<li>Dependent symbolic columns are called <code>klasses</code>;</li>
-<li>Dependent numeric columns can be optionally
-tagged with a boolean <code>like</code> (and we want more
- things with
-<code>like==True</code>).</li>
-</ul>
-<pre class="prettyprint">from column import *
-import zipfile,re
+<body>
+  <div id="wrapper">
+    <div id="header">
+    </div>
+    <div class="clear">
+      <hr>
+    </div>
 
-@setting
-def COLS(**d): return o(
-    # Thresholds are from http://goo.gl/25bAh9
-    skip=&quot;?&quot;,
-    num=&quot;{{content}}quot;,
-    sep  = &#39;,&#39;,
-    bad = r&#39;([&quot;\&#39; \t\r\n]|#.*)&#39;,
-    source = lambda f: unzip(&#39;../data/data.zip&#39;,f)
-  ).update(**d)
+     <!-- Main -->
 
-def columns(**d):
-  return o(indep=[], dep=[],rows=[]
-           ).update(**d)
+    <div id="main">
+      <div id="container">
+        <div id="content" class="post">
 
-def unzip(zipped, want):
-  with zipfile.ZipFile(zipped,&#39;r&#39;) as archive:
-    for got in archive.namelist():
-      if got == want: 
-        for line in archive.open(got,&#39;r&#39;):
-          yield line
-        break
+        
 
-def rows(file, source=open):
-  w = the.COLS
-  def reader(name):
-    return float if w.num in name else identity
-  def lines(): 
-    n,kept = 0,&quot;&quot;
-    for line in source(file):
-      now   = re.sub(w.bad,&quot;&quot;,line)
-      kept += now
-      if kept:
-        if not now[-1] == w.sep:
-          yield n, kept.split(w.sep)
-          n += 1
-          kept = &quot;&quot; 
-  todo = None
-  for n,line in lines():
-    if n == 0:
-      todo = [(n,reader(header))
-              for n,header in enumerate(line)
-              if not w.skip in header]
-    else:
-      yield n, [ read(line[col]) 
-                 for col,read in todo ]</pre>
 
-    </article>
-  </body>
+<!--- div id="bottom_navi">
+  <a href=".html"> &lt; &lt; Previous Chapter</a> | <a href=".html">Next Chapter &gt; &gt;</a>
+</div  --->
+
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        &lt;ul class=&quot;nav nav-list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#handling_columns_of_data&quot;&gt;Handling Columns of Data&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+
+      </div>
+    <div class="clear">
+    </div>
+
+    <div id="footer">
+      <p>CSS by <a href="http://mixu.net/">Mikito Takada</a>.</p>
+    </div>
+    </div>
+  </div>
+
+
+  </div>
+</body>
 </html>
