@@ -294,17 +294,17 @@ The following code:
 + The guesses from the project are then added to  `all`.
 
 """
-def complete(project, tactics=None, allRanges=ranges()):
-  tactics = tactics or {}
+def complete(project, rx=None, allRanges=ranges()):
+  rx = rx or {}
   p = project()
   for k,default in allRanges.items():
     if not k in p:
       p[k] = default
-  for k,tactic in tactics.items():
+  for k,rx1 in rx.items():
     if k == 'nkloc':
-        p['kloc'] = [ any(p['kloc']) * tactic[0] ]
+        p['kloc'] = [ ask(p['kloc']) * rx1[0] ] 
     else:
-      overlap = list(set(p[k]) & set(tactic))
+      overlap = list(set(p[k]) & set(rx1))
       if overlap:
         p[k] = overlap
   return  {k: ask(x) for k,x in p.items()}
@@ -533,10 +533,10 @@ To see why, we  collected 1000 samples from `osp` and looked at the
 dozen worst  offenders.
 
 """
-def whatStinks(project,n=1000,tactics=None):
+def whatStinks(project,n=1000,rx=None):
   log = {}
   for _ in xrange(n):
-    settings = complete(project,tactics or {})
+    settings = complete(project,rx or {})
     badSmell(settings,log)
   lst = sorted([(v,k) for k,v in log.items()],
                 reverse=True)
@@ -614,8 +614,8 @@ def eval1(settings):
   kloc  = settings["kloc"]
   return [kloc],[est,smell]
   
-def run1(project, tactics=None):
-  settings,decisions = complete(project,tactics)  
+def run1(project, rx=None):
+  settings,decisions = complete(project,rx)  
   good,bad = eval1(settings)
   del  decisions["kloc"]
   return o(decisions = decisions,
@@ -669,55 +669,52 @@ def report(log,what,goodis,badis):
     out += g([q2,q3],n=0)
   print(out)
 
-
-def policy(f=None,all={}):
+def rx(f=None,all={}):
   if not f: 
     return all
   else:
     all[f.__name__] = f 
     return ok(f) 
     
-@policy
+@rx
+def doNothing(): return {}
+
+@rx
 def improvePersonnel(): return dict(
   acap=[5],pcap=[5],pcon=[5], aexp=[5], pexp=[5], ltex=[5])
 
-@policy
+@rx
 def improveToolsTechniquesPlatform(): return dict(
   time=[3],stor=[3],pvol=[2],tool=[5], site=[6])
   
-@policy
+@rx
 def improvePrecendentnessDevelopmentFlexibility(): return dict(
   Prec=[5],Flex=[5])
 
-@policy
+@rx
 def increaseArchitecturalAnalysisRiskResolution(): return dict(
   Resl=[5])
   
-@policy
+@rx
 def relaxSchedule(): return dict(
   sced = [5])
   
-@policy
+@rx
 def improveProcessMaturity(): return dict(
   Pmat = [5])
   
-@policy
+@rx
 def reduceFunctionality(): return dict(
   data = [2], nkloc=[0.5])
   
-@policy
+@rx
 def improveTeam(): return dict(
   Team = [5])
   
-@policy
+@rx
 def reduceQuality():  return dict(
   rely = [1], docu=[1], time = [3], cplx = [1])
-                                
-print(policy().keys())
-
-#_coc(proj=demo2); exit()
-
-#exit()
+           
 def COCONUT(training,          # list of projects
             a=10, b=1,         # initial  (a,b) guess
             deltaA    = 10,    # range of "a" guesses 

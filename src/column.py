@@ -112,14 +112,19 @@ class N(Column):
     return i.lo + r()*(i.hi - i.lo)
   def dist(i,x,y): 
     return i.norm(x) - i.norm(y)
-  def mediqr(i):
+  def q123(i):
     lst = i.kept()
     q = int(len(lst)/4)
-    return lst[q*2], lst[q*3] - lst[q]
+    return lst[q], lst[q*2], lst[q*3]  
+  def mediqr(i):
+    q1,q2,q3 = i.q123()
+    return q2, q3 - q1
   def q2q3(i): 
-    lst = i.kept()
-    q   = int(len(lst)/4)
-    return lst[q*2], lst[q*3]
+    q1,q2,q3 = i.q123()
+    return q2,q3
+  def median(i):
+    _,q2,_ = i.q123()
+    return q2
   def kept(i): 
     return sorted([x for x in i._kept if x is not None])
   def likely(i,x,prior=None):
