@@ -113,9 +113,10 @@ class N(Column):
   def dist(i,x,y): 
     return i.norm(x) - i.norm(y)
   def q123(i):
+    def r(x) : return int(round(x,0))
     lst = i.kept()
-    q = int(len(lst)/4)
-    return lst[q], lst[q*2], lst[q*3]  
+    q = len(lst)/4
+    return lst[r(q)], lst[r(q*2)], lst[r(q*3)]  
   def mediqr(i):
     q1,q2,q3 = i.q123()
     return q2, q3 - q1
@@ -142,7 +143,8 @@ class N(Column):
   def tell1(i,x):
     if i.lo is None: i.lo = x
     if i.hi is None: i.hi = x
-    i.lo, i.hi = min(i.lo,x), max(i.hi,x)
+    i.lo =  min(i.lo,x)
+    i.hi =  max(i.hi,x)
     delta = x - i.mu
     i.mu += delta/i.n
     i.m2 += delta*(x - i.mu)

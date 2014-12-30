@@ -132,7 +132,7 @@ def cliffsDelta(lst1,lst2,dull=None):
     while j <= (n - 1) and lst2[j] == x: 
       j += 1
     less += (n - j)*repeats
-  d= (more - less) / (m*n)
+  d= (more - less) / (m*n) 
   return abs(d)  > dull
 ````
 
@@ -143,6 +143,7 @@ Print one or more of anything (no new lines).
 ````python
 def say(*l):
   sys.stdout.write(', '.join(map(str,l))) 
+  sys.stdout.flush()
 ````
 
 Print list of numbers without too many decimal places.
@@ -180,9 +181,10 @@ def xtile(lst,lo=0,hi=100,width=50,
              chops=[0.1 ,0.3,0.5,0.7,0.9],
              marks=["-" ," "," ","-"," "],
              bar="|",star="*",show=" %3.0f"):
-  def pos(p)   : return ordered[int(len(lst)*p)]
+  def r(x)     : return int(round(x,0))
+  def pos(p)   : return ordered[r(len(lst)*p)]
   def place(x) : 
-    return int(width*float((x - lo))/(hi-lo+0.001))
+    return r(width*(x - lo)/(hi-lo+0.00001))
   def pretty(lst) : 
     return ', '.join([show % x for x in lst])
   ordered = sorted(lst)

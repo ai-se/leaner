@@ -17,47 +17,60 @@ def _range():
       print("\t",k,v)
 
 
-def sample(seed=1,n=1000,rx=doNothing,logAll=None,
+def sample(seed=1,n=1000,rxs=[doNothing], 
            score=COCOMO2,what='effort',
            projects=[anything,flight,ground,osp,osp2],
            ):  
   rseed(seed)
   COL()
-  the.COL.buffer=n
-  logAll=logAll or N()
-  logs= []
+  the.COL.buffer=n 
+  minMax=N()
+  logs={}
   for project in projects:
-    log = N()
-    logs += [log]
-    log.name = project.__name__
-    for _ in xrange(n):
-      settings = complete(project, rx() or {})
-      x = score(settings)
-      log.tell(x)
-      logAll.tell(x)
-  for log in sorted(logs, key = lambda log: log.median()) :
-    name = log.name
-    kept = log.kept()
-    mid = kept[int(len(kept)*0.5)]
-    yield (mid,
-           xtile(log.kept(),
-                 lo=logAll.lo,
-                 hi=logAll.hi,
-                 chops=[0,0.25,0.5,0.75,0.999],
-                 marks=["-"," "," ","-"," "],
-                 width=30,
-                 show= "%5d"),
-            '%s(%s),' % (name,rx.__name__))
+    say("|")
+    lst = logs[project.__name__] = []
+    for rx in rxs:
+      say(".")
+      log = N()
+      log.name =  rx.__name__
+      lst += [log]
+      for _ in xrange(n):
+        settings = complete(project, rx() or {})
+        x = score(settings)
+        log.tell(x)
+        minMax.tell(x)
+  print("")
+  for project in projects:
+    p = project.__name__
+    lst = logs[p]
+    lst = sorted(lst,
+                 key = lambda log: log.median())
+    if len(rxs) > 1: 
+      print("")
+    last=lst[0]
+    rank=1; 
+    for log in lst:
+      str = xtile(log.kept(),
+                 lo=minMax.lo,
+                 hi=minMax.hi, 
+                 chops=[ 0.1,0.3,0.5,0.7,0.9 ],
+                 marks=["-"," "," ","-" ],
+                 width=40,
+                 show= "%5d")
+      if cliffsDelta(log.kept(),last.kept()):
+        rank += 1
+      last = log
+      pre = '%3s,' % rank if len(rxs)> 1 else '    '
+      print(pre+str, ',%s,%s,' % (p,log.name))
 
 @go
-def _coc(): 
+def _efforts(): 
   sample()
  
 
 @go
-def _stink(): 
-  sample(score=badSmell,
-         what="Bad smells")
+def _badSmells(): 
+  sample(score=badSmell)
 
 @go
 def _ospStinks(model=None,rx=None):
@@ -70,22 +83,14 @@ def _ospStinks(model=None,rx=None):
     print('stink = %5s when' % v,
           x1,'=',v1,'and',x2,'=',v2)
 
- 
 @go
-def _treat(n=1000):
- logAll=N()
- for m in [anything,flight,ground,osp,osp2]:
-    print("")
-    all = [] 
-    for what,rx1 in rx().items():
-        for one in sample(m,logAll=logAll, 
-                     rx=rx1,projects=[m],
-                      what='%s(%s)' % (m.__name__,what)):
-            all += [one]
-    for a,b,c in sorted(all):
-      print(a,b,c)
+def _treatedProjectEffort():
+ sample(rxs=rx(),projects=[anything,flight,ground,osp,osp2]) 
 
-_treat()    
+@go
+def _treatedProjectSmell():
+ sample(rxs=rx(),score=badSmell,
+        projects=[anything,flight,ground,osp,osp2]) 
 
 ````
 "*" not in right place

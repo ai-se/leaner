@@ -669,11 +669,11 @@ def report(log,what,goodis,badis):
     out += g([q2,q3],n=0)
   print(out)
 
-def rx(f=None,all={}):
+def rx(f=None,all=[]):
   if not f: 
     return all
   else:
-    all[f.__name__] = f 
+    all += [f]
     return ok(f) 
     
 @rx
