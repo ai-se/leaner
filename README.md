@@ -15,17 +15,17 @@ you follow three simple rules:
 
 + [boot](doc/boot.md):  Boot code: stuff needed before anything else
 + [bore](doc/bore.md):  BORE (best or rest)
++ [cocomoeg](doc/cocomoeg.md):  Test Cases for COCOMO
 + [cocomo](doc/cocomo.md):  Software Effort and Risk Estimation
 + [cocomo](doc/cocomo.md):  vlow low nom high vhigh xhigh
-+ [cocomoeg](doc/cocomoeg.md):  Test Cases for COCOMO
++ [columneg](doc/columneg.md):  Column stuff (demos)
 + [column](doc/column.md):  Defining columns
 + [column](doc/column.md):  Thresholds are from http://goo.gl/25bAh9
-+ [columneg](doc/columneg.md):  Column stuff (demos)
 + [columns](doc/columns.md):  Handling Columns of Data
 + [config](doc/config.md):  Configuration Control
 + [de](doc/de.md):  Simple Differential Evolution
-+ [lib](doc/lib.md):  General stuff
 + [libeg](doc/libeg.md):  General stuff (demos)
++ [lib](doc/lib.md):  General stuff
 
 ## Installation
 
