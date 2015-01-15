@@ -28,8 +28,8 @@ q=int(m*0.25)
 sd0= Counts(map(lambda l:l[-1],d)).sd()
 
 for i in range(n):
-  r = ranges.sdiv(d,tiny=20,num1=lambda x:x[i])
-  print(sd0,map(lambda l: Counts(l).sd(),r[1]))
-  print(i,
-        len(r))
+  rs = ranges.sdiv(d,tiny=20,num1=lambda x:x[i])
+  sd1,l1=rs[0]
+  print(sd0,sd1,l1)
+  exit()
 
