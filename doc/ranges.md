@@ -58,7 +58,7 @@ def sdiv(lst, tiny=3,cohen=0.3,
   #----------------------------------------------
   def divide(this,small): #Find best divide of 'this'
     lhs,rhs = Counts(), Counts(num2(x) for x in this)
-    n0, least, cut = 1.0*rhs.n, rhs.sd(), None
+    n0, least, cut,mu = 1.0*rhs.n, rhs.sd(), None,rhs.mu
     for j,x  in enumerate(this): 
       if lhs.n > tiny and rhs.n > tiny: 
         maybe= lhs.n/n0*lhs.sd()+ rhs.n/n0*rhs.sd()
@@ -67,15 +67,15 @@ def sdiv(lst, tiny=3,cohen=0.3,
             cut,least = j,maybe
       rhs - num2(x)
       lhs + num2(x)    
-    return cut,least
+    return cut,least,mu
   #----------------------------------------------
   def recurse(this, small,cuts):
-    cut,sd = divide(this,small)
+    cut,sd,mu = divide(this,small)
     if cut: 
       recurse(this[:cut], small, cuts)
       recurse(this[cut:], small, cuts)
     else:   
-      cuts += [(sd,this)]
+      cuts += [(sd,this,mu)]
     return cuts
   #---| main |-----------------------------------
   small = Counts(num2(x) for x in lst).sd()*cohen

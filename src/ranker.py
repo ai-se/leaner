@@ -25,11 +25,16 @@ d=housing.data()["data"]
 n=len(d[0])
 m=len(d)
 q=int(m*0.25)
-sd0= Counts(map(lambda l:l[-1],d)).sd()
+b4=Counts(map(lambda l:l[-1],d))
 
 for i in range(n):
-  rs = ranges.sdiv(d,tiny=20,num1=lambda x:x[i])
-  sd1,l1=rs[0]
-  print(sd0,sd1,l1)
-  exit()
+  for sd1,l1,mu1 in sorted(ranges.sdiv(d,tiny=20,
+                                       num1=lambda x:x[i]),
+                           reverse=True,
+                           key=lambda x:x[2]):
+    if mu1 > b4.mu:
+      print(dict(i=i,b4=dict(mu=b4.mu,sd=b4.sd()),
+                 now=dict(mu=mu1,sd=sd1)))
+    break
+
 
