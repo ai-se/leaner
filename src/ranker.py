@@ -20,6 +20,9 @@ class Counts(): # Add/delete counts of numbers.
       i.mu += delta/(1.0*i.n)
       i.m2 += delta*(x - i.mu)
 
+def g(lst,n=0):
+  return map(lambda x:round(x,n),lst)
+  
 d=housing.data()["data"]
 
 n=len(d[0])
@@ -28,13 +31,10 @@ q=int(m*0.25)
 b4=Counts(map(lambda l:l[-1],d))
 
 for i in range(n):
-  for sd1,l1,mu1 in sorted(ranges.sdiv(d,tiny=20,
+  r = sorted(ranges.sdiv(d,tiny=20,
                                        num1=lambda x:x[i]),
                            reverse=True,
-                           key=lambda x:x[2]):
-    if mu1 > b4.mu:
-      print(dict(i=i,b4=dict(mu=b4.mu,sd=b4.sd()),
-                 now=dict(mu=mu1,sd=sd1)))
-    break
-
-
+                           key=lambda x:x[2])
+  sd0,l0,mu0=r[0]; sd0,mu0=g([sd0,mu0])
+  sd1,l1,mu1=r[1]; sd1,mu1=g([sd1,mu1])
+  print(i,dict(mu0=mu0,mu1=mu1,diff=mu0-mu1,rel=int(100*(mu0-mu1)/mu1),sd0=sd0,sd1=sd1))

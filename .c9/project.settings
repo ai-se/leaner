@@ -17,7 +17,7 @@
         "@instanceHighlight": "true",
         "@undeclaredVars": "true",
         "@unusedFunctionArgs": "false",
-        "@warnLevel": "info"
+        "@warnLevel": "error"
     },
     "run": {
         "@path": "/.c9/runners",

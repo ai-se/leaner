@@ -1,65 +1,675 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>example</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style type="text/css">
-@font-face {
-  font-family: 'Droid Sans';
-  font-style: normal;
-  font-weight: normal;
-  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.woff') format('woff');
-}
-</style>
-<link href='//fonts.googleapis.com/css?family=Andika|Cantarell:400,700,400italic' rel='stylesheet' type='text/css'>
-<link href='//fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
-<script src="assets/jquery-1.6.1.min.js"></script>
-<link type="text/css" rel="stylesheet" href="assets/style.css"/>
-<link type="text/css" rel="stylesheet" href="assets/assert.css"/>
-<link type="text/css" rel="stylesheet" href="assets/prettify.css"/>
-
-<script type="text/javascript" src="assets/prettify.js"></script>
-<!-- Script runner -->
-<script type="text/javascript" src="assets/runner.js"></script>
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>My Site - </title>
+</head>
 <body>
-  <div id="wrapper">
-    <div id="header">
-    </div>
-    <div class="clear">
-      <hr>
-    </div>
+<div id="TOC">
+<ul>
+<li><a href="#software-effort-and-risk-estimation">Software Effort and Risk Estimation</a><ul>
+<li><a href="#core-cocomo-equation.">Core COCOMO Equation.</a></li>
+<li><a href="#defining-legal-ranges">Defining Legal Ranges</a></li>
+<li><a href="#handling-uncertainty">Handling Uncertainty</a><ul>
+<li><a href="#complete-ing">Complete-ing</a></li>
+</ul></li>
+<li><a href="#putting-it-all-together">Putting It All Together</a></li>
+<li><a href="#bad-smells">Bad Smells</a></li>
+<li><a href="#what-to-do">What to Do?</a></li>
+</ul></li>
+</ul>
+</div>
+<p><small><em>This file is part of LEANER. To know more, view the source code <a href="../src/cocomo.py">cocomo.py</a> or read our <a href="https://github.com/ai-se/leaner">home</a> page.</em></small></p>
+<h1 id="software-effort-and-risk-estimation"><a href="#software-effort-and-risk-estimation">Software Effort and Risk Estimation</a></h1>
+<pre class="sourceCode python"><code class="sourceCode python">
+<span class="ch">from</span> columns <span class="ch">import</span> *</code></pre>
+<h2 id="core-cocomo-equation."><a href="#core-cocomo-equation.">Core COCOMO Equation.</a></h2>
+<p>From the Boehm’00 book <a href="http://goo.gl/kJE87M" title="Barry W. Boehm, Clark, Horowitz, Brown, Reifer, Chulani, Ray Madachy, and Bert Steece. 2000. Software Cost Estimation with Cocomo II (1st ed.). Prentice Hall">Software Cost Estimation with Cocomo II</a>.</p>
+<p>Take a dictionary whose keys describe COCOMO attributes. Look up the value of those keys in a array of tunings.</p>
+<p>Using the above, generate some estimates, measured in terms of <em>development months</em> where one month is 152 hours work by one developer (and includes development and management hours). For example, if <em>effort</em>=100, then according to COCOMO, five developers would finish the project in 20 <em>months</em>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> COCOMO2(project, t=<span class="ot">None</span>,a=<span class="fl">2.94</span>, b=<span class="fl">0.91</span>):
+  t=t or Coc2tunings
+  sfs, ems, kloc = <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">10</span>
+  <span class="kw">for</span> k,setting in project.items():
+    <span class="kw">if</span> k == <span class="st">&#39;kloc&#39;</span>:
+      kloc = setting
+    <span class="kw">else</span>:
+      values = t[k]
+      value  = values[setting - <span class="dv">1</span>]
+      <span class="kw">if</span> k[<span class="dv">0</span>].isupper: sfs += value 
+      <span class="kw">else</span>           : ems *= value
+  <span class="kw">return</span> a * ems * kloc**(b + <span class="fl">0.01</span> * sfs)</code></pre>
+<p><strong>LESSON 1</strong>: According to Boehm, development effort is exponential on lines of code But there is more to it that just size. Effort is changed linearly by a set of <em>effort multipliers</em> (<code>em</code>) and exponentially by some <em>scale factors</em> (<code>sf</code>).</p>
+<pre><code>scale          | Prec |  have we done this before?
+factors        | Flex |  development flexibility 
+(exponentially | Resl |  any risk resolution activities?
+ decrease      | Team |  team cohesion
+ effort)       | Pmat |  process maturity
+------------------------------------------------------------
+upper          | acap |  analyst capability
+(linearly      | pcap |  programmer capability
+ decrease      | pcon |  programmer continuity
+ effort)       | aexp |  analyst experience
+               | pexp |  programmer experience
+               | ltex |  language and tool experience
+               | tool |  use of tools
+               | site |  multiple site development
+               | sced |  length of schedule   
+-----------------------------------------------------------
+lower          | rely |  required reliability  
+(linearly      | data |  secondary memory  storage requirements
+ increase      | cplx |  program complexity
+ effort)       | ruse |  software reuse
+               | docu |  documentation requirements
+               | time |  runtime pressure
+               | stor |  main memory requirements
+               | pvol |  platform volatility  </code></pre>
+<p><strong>LESSON 2</strong> : The factors that effect delivery are not just what code is being developed. The above factors divide into:</p>
+<ul>
+<li>Product attributes: <em>what </em> is being developed (rely, data, clx, ruse, doco);</li>
+<li>Platform attributes: <em>where</em> is it being developed (time, stor, pvol);</li>
+<li>Personnel attributes: <em>who</em> is doing the work (acap, pcal, pcon, aexp, pexp, ltex);</li>
+<li>Project attributes: <em>how</em> is it being developed (tools, site, sced).</li>
+<li>And the <em>misc</em> scale factors: Prec, Flex, Resl, Team, Pmat.</li>
+</ul>
+<p>The <code>COCOMO2</code> code uses the following set of tunings that Boehm learned, sort of, from 161 projects from commercial, aerospace, government, and non-profit organizations– mostly from the period 1990 to 2000 (I saw “sort of” cause Boehm actually “fiddled” with these numbers, here and there, using his domain knowledge).</p>
+<p>Here are the actual tunings. The variables can range from very low to extremely high. The first few variables decrease effort exponentially and to distinguish those <em>scale factors</em>, we will start them with an upper case letter.</p>
+<pre class="sourceCode python"><code class="sourceCode python">_ = <span class="ot">None</span>;  Coc2tunings = <span class="dt">dict</span>(
+<span class="co">#              vlow  low   nom   high  vhigh  xhigh   </span>
+  Flex=[        <span class="fl">5.07</span>, <span class="fl">4.05</span>, <span class="fl">3.04</span>, <span class="fl">2.03</span>, <span class="fl">1.01</span>,    _],
+  Pmat=[        <span class="fl">7.80</span>, <span class="fl">6.24</span>, <span class="fl">4.68</span>, <span class="fl">3.12</span>, <span class="fl">1.56</span>,    _],
+  Prec=[        <span class="fl">6.20</span>, <span class="fl">4.96</span>, <span class="fl">3.72</span>, <span class="fl">2.48</span>, <span class="fl">1.24</span>,    _],
+  Resl=[        <span class="fl">7.07</span>, <span class="fl">5.65</span>, <span class="fl">4.24</span>, <span class="fl">2.83</span>, <span class="fl">1.41</span>,    _],
+  Team=[        <span class="fl">5.48</span>, <span class="fl">4.38</span>, <span class="fl">3.29</span>, <span class="fl">2.19</span>, <span class="fl">1.01</span>,    _],
+  acap=[        <span class="fl">1.42</span>, <span class="fl">1.19</span>, <span class="fl">1.00</span>, <span class="fl">0.85</span>, <span class="fl">0.71</span>,    _],
+  aexp=[        <span class="fl">1.22</span>, <span class="fl">1.10</span>, <span class="fl">1.00</span>, <span class="fl">0.88</span>, <span class="fl">0.81</span>,    _],
+  cplx=[        <span class="fl">0.73</span>, <span class="fl">0.87</span>, <span class="fl">1.00</span>, <span class="fl">1.17</span>, <span class="fl">1.34</span>, <span class="fl">1.74</span>],
+  data=[           _, <span class="fl">0.90</span>, <span class="fl">1.00</span>, <span class="fl">1.14</span>, <span class="fl">1.28</span>,    _],
+  docu=[        <span class="fl">0.81</span>, <span class="fl">0.91</span>, <span class="fl">1.00</span>, <span class="fl">1.11</span>, <span class="fl">1.23</span>,    _],
+  ltex=[        <span class="fl">1.20</span>, <span class="fl">1.09</span>, <span class="fl">1.00</span>, <span class="fl">0.91</span>, <span class="fl">0.84</span>,    _],
+  pcap=[        <span class="fl">1.34</span>, <span class="fl">1.15</span>, <span class="fl">1.00</span>, <span class="fl">0.88</span>, <span class="fl">0.76</span>,    _], 
+  pcon=[        <span class="fl">1.29</span>, <span class="fl">1.12</span>, <span class="fl">1.00</span>, <span class="fl">0.90</span>, <span class="fl">0.81</span>,    _],
+  pexp=[        <span class="fl">1.19</span>, <span class="fl">1.09</span>, <span class="fl">1.00</span>, <span class="fl">0.91</span>, <span class="fl">0.85</span>,    _], 
+  pvol=[           _, <span class="fl">0.87</span>, <span class="fl">1.00</span>, <span class="fl">1.15</span>, <span class="fl">1.30</span>,    _],
+  rely=[        <span class="fl">0.82</span>, <span class="fl">0.92</span>, <span class="fl">1.00</span>, <span class="fl">1.10</span>, <span class="fl">1.26</span>,    _],
+  ruse=[           _, <span class="fl">0.95</span>, <span class="fl">1.00</span>, <span class="fl">1.07</span>, <span class="fl">1.15</span>, <span class="fl">1.24</span>],
+  sced=[        <span class="fl">1.43</span>, <span class="fl">1.14</span>, <span class="fl">1.00</span>, <span class="fl">1.00</span>, <span class="fl">1.00</span>,    _], 
+  site=[        <span class="fl">1.22</span>, <span class="fl">1.09</span>, <span class="fl">1.00</span>, <span class="fl">0.93</span>, <span class="fl">0.86</span>, <span class="fl">0.80</span>], 
+  stor=[           _,    _, <span class="fl">1.00</span>, <span class="fl">1.05</span>, <span class="fl">1.17</span>, <span class="fl">1.46</span>],
+  time=[           _,    _, <span class="fl">1.00</span>, <span class="fl">1.11</span>, <span class="fl">1.29</span>, <span class="fl">1.63</span>],
+  tool=[        <span class="fl">1.17</span>, <span class="fl">1.09</span>, <span class="fl">1.00</span>, <span class="fl">0.90</span>, <span class="fl">0.78</span>,    _]) </code></pre>
+<h2 id="defining-legal-ranges"><a href="#defining-legal-ranges">Defining Legal Ranges</a></h2>
+<p>The above lets us define legal range for inputs to the COCOMO model. For example:</p>
+<ul>
+<li>For <code>tool</code>, those legal values are 1,2,3,4,5 (cause the most-right-hand-side value is empty.</li>
+<li>For <code>site</code>, those legal values are 1,2,3,4,5,6.</li>
+</ul>
+<p>We use this later as part of some routines to explore options with software projects.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> ranges(t=<span class="ot">None</span>):
+  t = t or Coc2tunings
+  out= {k:[n<span class="dv">+1</span> <span class="kw">for</span> n,v in <span class="dt">enumerate</span>(lst) <span class="kw">if</span> v]
+        <span class="kw">for</span> k,lst in t.items()}
+  out[<span class="st">&quot;kloc&quot;</span>] = <span class="dt">xrange</span>(<span class="dv">2</span>,<span class="dv">1001</span>)
+  <span class="kw">return</span> out</code></pre>
+<p>(Note that I slipped in the range of value <code>kloc</code> values into <code>ranges</code> (2 to 1000).)</p>
+<p>Using <code>ranges</code>, we can do a little defensive programming. Suppose a function describes a project by return a dictionary whose keys are meant to be valid COCOMO variables and whose values are meant to be numbers for legal COCOMO ranges. The following decorator calls that function at load time and compile time and checks that all its keys and values are valid. For an example of its usage, see below (the functions describing JPL projects).</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> ok(f):
+  <span class="dt">all</span>    = ranges()
+  prefix = f.<span class="ot">__name__</span>
+  <span class="kw">for</span> k,some in f().items():
+    <span class="kw">if</span> k == <span class="st">&#39;nkloc&#39;</span>: <span class="kw">continue</span>
+    <span class="kw">if</span> not k in <span class="dt">all</span>:
+      <span class="kw">raise</span> <span class="ot">KeyError</span>( <span class="st">&#39;</span><span class="ot">%s</span><span class="st">.</span><span class="ot">%s</span><span class="st">&#39;</span> % (prefix,k))
+    <span class="kw">else</span>:
+      possible   = <span class="dt">all</span>[k]
+      impossible = <span class="dt">set</span>(some) - <span class="dt">set</span>(possible)
+      <span class="kw">if</span> impossible:
+        <span class="kw">raise</span> <span class="ot">IndexError</span>( <span class="st">&#39;</span><span class="ot">%s</span><span class="st">.</span><span class="ot">%s</span><span class="st">=</span><span class="ot">%s</span><span class="st">&#39;</span> % 
+                          (prefix,k,impossible))
+  <span class="kw">return</span> f</code></pre>
+<h2 id="handling-uncertainty"><a href="#handling-uncertainty">Handling Uncertainty</a></h2>
+<p>In practice, we rarely know all the exact COCOMO factors for any project with 100% certainty. So the real game with effort estimation is study estimates across a <em>space of possibilities</em>.</p>
+<p>For example, after talking to some experts at NASA’s Jet Propulsion Laboratory, here are some descriptors of various NASA projects. Some of these are point values (for example, for flight guidance systems, reliabilty must be as high as possible so we set it to its maximum value of 5). However, many other variables are really <em>ranges</em> of values representing the space of options within certain software being built at NASA.</p>
+<pre class="sourceCode python"><code class="sourceCode python">
+<span class="ot">@ok</span>
+<span class="kw">def</span> flight():
+  <span class="co">&quot;JPL Flight systems&quot;</span>
+  <span class="kw">return</span> <span class="dt">dict</span>(
+    kloc= <span class="dt">xrange</span>(<span class="dv">7</span>,<span class="dv">418</span>),
+    Pmat = [<span class="dv">2</span>,<span class="dv">3</span>],         aexp = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    cplx = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>],     data = [<span class="dv">2</span>,<span class="dv">3</span>],
+    ltex = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],     pcap = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    pexp = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],     rely = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    stor = [<span class="dv">3</span>,<span class="dv">4</span>],         time = [<span class="dv">3</span>,<span class="dv">4</span>],         
+    acap = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    sced = [<span class="dv">3</span>],
+    tool = [<span class="dv">2</span>]) 
 
-     <!-- Main -->
+<span class="ot">@ok</span>
+<span class="kw">def</span> ground():
+  <span class="co">&quot;JPL ground systems&quot;</span>
+  <span class="kw">return</span> <span class="dt">dict</span>(
+    kloc=<span class="dt">xrange</span>(<span class="dv">11</span>,<span class="dv">392</span>),
+    Pmat = [<span class="dv">2</span>,<span class="dv">3</span>],         acap = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    aexp = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],     cplx = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],
+    data = [<span class="dv">2</span>,<span class="dv">3</span>],         rely = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],
+    ltex = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],     pcap = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    pexp = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],     time = [<span class="dv">3</span>,<span class="dv">4</span>],
+    stor = [<span class="dv">3</span>,<span class="dv">4</span>],         
+    tool = [<span class="dv">2</span>],           
+    sced = [<span class="dv">3</span>])
 
-    <div id="main">
-      <div id="container">
-        <div id="content" class="post">
+<span class="ot">@ok</span>
+<span class="kw">def</span> osp():
+  <span class="co">&quot;Orbital space plane. Flight guidance system.&quot;</span>
+  <span class="kw">return</span> <span class="dt">dict</span>(
+    kloc= <span class="dt">xrange</span>(<span class="dv">75</span>,<span class="dv">125</span>),
+    Flex = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],     Pmat = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],
+    Prec = [<span class="dv">1</span>,<span class="dv">2</span>],         Resl = [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>],
+    Team = [<span class="dv">2</span>,<span class="dv">3</span>],         acap = [<span class="dv">2</span>,<span class="dv">3</span>],
+    aexp = [<span class="dv">2</span>,<span class="dv">3</span>],         cplx = [<span class="dv">5</span>,<span class="dv">6</span>],
+    docu = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],       ltex = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],       
+    pcon = [<span class="dv">2</span>,<span class="dv">3</span>],         tool = [<span class="dv">2</span>,<span class="dv">3</span>],        
+    ruse = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],       sced = [<span class="dv">1</span>,<span class="dv">2</span>, <span class="dv">3</span>],
+    stor = [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],
+    data = [<span class="dv">3</span>],
+    pcap = [<span class="dv">3</span>],
+    pexp = [<span class="dv">3</span>],
+    pvol = [<span class="dv">2</span>],
+    rely = [<span class="dv">5</span>],
+    site = [<span class="dv">3</span>])
 
-        
+<span class="ot">@ok</span>
+<span class="kw">def</span> osp2():
+  <span class="co">&quot;&quot;&quot;Osp, version 2. Note there are more restrictions</span>
+<span class="co">  here than in osp version1 (since as a project</span>
+<span class="co">  develops, more things are set in stone).&quot;&quot;&quot;</span>
+  <span class="kw">return</span> <span class="dt">dict</span>(
+    kloc= <span class="dt">xrange</span>(<span class="dv">75</span>,<span class="dv">125</span>),
+    docu = [<span class="dv">3</span>,<span class="dv">4</span>],         ltex = [<span class="dv">2</span>,<span class="dv">5</span>],
+    sced = [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>],       Pmat = [<span class="dv">4</span>,<span class="dv">5</span>],         
+    Prec = [<span class="dv">3</span>,<span class="dv">4</span>, <span class="dv">5</span>],
+    Resl = [<span class="dv">4</span>],           Team = [<span class="dv">3</span>],
+    acap = [<span class="dv">4</span>],           aexp = [<span class="dv">4</span>],
+    cplx = [<span class="dv">4</span>],           data = [<span class="dv">4</span>],
+    Flex = [<span class="dv">3</span>],           pcap = [<span class="dv">3</span>],
+    pcon = [<span class="dv">3</span>],           pexp = [<span class="dv">4</span>],
+    pvol = [<span class="dv">3</span>],           rely = [<span class="dv">5</span>],
+    ruse = [<span class="dv">4</span>],           site = [<span class="dv">6</span>],           
+    stor = [<span class="dv">3</span>],           time = [<span class="dv">3</span>],           
+    tool = [<span class="dv">5</span>])
 
+<span class="ot">@ok</span>
+<span class="kw">def</span> anything(): 
+  <span class="co">&quot;Anything goes.&quot;</span>
+  <span class="kw">return</span> ranges()</code></pre>
+<h3 id="complete-ing"><a href="#complete-ing">Complete-ing</a></h3>
+<p>Note that some of these descriptions are more detailed than others. For example:</p>
+<ul>
+<li>For <em>flight systems</em>, we just do not know the range of possibilities for (e.g.) <em>site</em>.</li>
+<li>For the last function (<code>anything</code>), nothing is mentioned at all so an <code>anything</code> project samples across the entire range of everything.</li>
+</ul>
+<p>To complete these partial descriptions, we need to <em>complete</em> them. Any value missing from these descriptions is assumed to range over its full range (min to max). The following code:</p>
+<ul>
+<li><code>ranges()</code> looks up the ranges for <code>all</code> COCOMO values</li>
+<li><code>project()</code> makes some <code>decisions</code> by selecting one value for each range of a particular project.</li>
+<li><code>guess()</code> replaces a range with one value, picked at random</li>
+<li>The guesses from the project are then added to <code>all</code>.</li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> complete(project, rx=<span class="ot">None</span>, allRanges=ranges()):
+  rx = rx or {}
+  p = project()
+  <span class="kw">for</span> k,default in allRanges.items():
+    <span class="kw">if</span> not k in p:
+      p[k] = default
+  <span class="kw">for</span> k,rx1 in rx.items():
+    <span class="kw">if</span> k == <span class="st">&#39;nkloc&#39;</span>:
+        p[<span class="st">&#39;kloc&#39;</span>] = [ ask(p[<span class="st">&#39;kloc&#39;</span>]) * rx1[<span class="dv">0</span>] ] 
+    <span class="kw">else</span>:
+      overlap = <span class="dt">list</span>(<span class="dt">set</span>(p[k]) &amp; <span class="dt">set</span>(rx1))
+      <span class="kw">if</span> overlap:
+        p[k] = overlap
+  <span class="kw">return</span>  {k: ask(x) <span class="kw">for</span> k,x in p.items()}</code></pre>
+<p>For example, here some code to generate projects that are consistent with what we know about <code>flight</code> projects:</p>
+<pre><code>all,_ = complete(flight)
+for k,v in all.items():
+       print(&quot;\t&quot;,k,v)
 
-<!--- div id="bottom_navi">
-  <a href=".html"> &lt; &lt; Previous Chapter</a> | <a href=".html">Next Chapter &gt; &gt;</a>
-</div  --->
+     Flex 3
+     Pmat 2
+     Prec 3
+     Resl 2
+     Team 5
+     acap 4
+     aexp 3
+     cplx 6
+     data 3
+     docu 3
+     kloc 385
+     ltex 3
+     pcap 4
+     pcon 4
+     pexp 3
+     pvol 4
+     rely 3
+     ruse 3
+     site 6
+     stor 3
+     time 4
+     tool 2
+    sced 3</code></pre>
+<h2 id="putting-it-all-together"><a href="#putting-it-all-together">Putting It All Together</a></h2>
+<p>Using the above, we can generate (say) 1000 projects at random that conform to the constraints of <code>fight</code>, <code>ground</code>, <code>osp</code>, <code>osp2</code> and study their effort estimates.</p>
+<p>The generated distributions are as follows. Note that the anything/osp2 projects have the largest/smallest ranges since they have the least/most constraints.</p>
+<pre><code>                                               min  25-th  50-th  75-th  max
+                                             =====  =====  =====  =====  ====
+ anything, (--    *  ------|------------- ),    7,  3778,  8716, 13892, 41697
+   flight, (- *---         |              ),   32,  1433,  2888,  4721,  9729
+   ground, ( *----         |              ),   57,  1051,  2387,  3975,  8665
+      osp, (*              |              ),  718,  1092,  1294,  1521,  2146
+     osp2, (*              |              ),  515,   683,   816,   924,  1151</code></pre>
+<p>In the effort estimation literature, it is usual to report the 50 to 75th percentile as the estimate.</p>
+<h2 id="bad-smells"><a href="#bad-smells">Bad Smells</a></h2>
+<p>The concept of a <em>bad smell</em> has been widely discussed by <a href="http://v.gd/QglBdv" title="Fowler, M. and K. Beck, Refactoring: improving the design of existing code . 1999: Addison Wesley Professional.">Fowler and Beck</a>, <a href="http://www.jot.fm/issues/issue_2012_08/article5.pdf" title="Fontana, F.A. and Braione, P. and Zanoni, M. Automatic detection of bad smells in code: An experimental assessment Journal of Object Technology, Vol.11 No.2, 2012.">Fontana et al.</a>, and <a href="http://en.wikipedia.org/wiki/Code_smell" title="Web Reference for code smell">others</a>. Such <em>bad smells</em> are an indicator of problems within a software project. They are characteristics of projects that may indicate a problem that makes software hard to evolve and maintain, may trigger refactoring of code, or delivering code late and over budget.</p>
+<p>More generally, in software engineering, bad smells are any symptom in a program that possibly indicates a deeper problem. Such bad smells may not always come from actual problems. Instead, they indicate some weakness in some aspect of the project that may be slowing down development or increasing the risk of bugs or failures in the future.</p>
+<p><a href="http://v.gd/zyX09Q" title="Raymond J. Madachy, Heuristic Risk Assessment Using Cost Factors, IEEE Software, vol. 14, no. 3, pp. 51-59, May/June, 1997">Madachy and his students</a> have worked through combinations of COCOMO parameters to offer a <em>bad smell</em> detector for software projects. For example, here is a bad smell:</p>
+<ul>
+<li>The schedule is tight ;</li>
+<li>And we are building very complex software;<br /></li>
+<li>Or we are building software that runs in tight execution time constraints,</li>
+</ul>
+<p>That is modeled the first table shown below. Tight schedule means the first few rows of <code>sced</code> and (e.g.) high complexity are the right-hand side columns of <code>cplx</code>:</p>
+<pre class="sourceCode python"><code class="sourceCode python">
+Stink={}
 
-          </div>
-        </div>
-      </div>
-      <div id="sidebar">
-        &lt;ul class=&quot;nav nav-list&quot;&gt;&lt;li&gt;&lt;a href=&quot;#software_effort_and_risk_estimation&quot;&gt;Software Effort and Risk Estimation&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#core_cocomo_equation_&quot;&gt;Core COCOMO Equation.&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#defining_legal_ranges&quot;&gt;Defining Legal Ranges&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#handling_uncertainty&quot;&gt;Handling Uncertainty&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#complete_ing&quot;&gt;Complete-ing&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#putting_it_all_together&quot;&gt;Putting It All Together&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#bad_smells&quot;&gt;Bad Smells&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;#what_to_do_&quot;&gt;What to Do?&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;cplx&#39;</span>)] = Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;time&#39;</span>)] = [
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]</code></pre>
+<p>The rest of the tables have the same form: there is one corner of the table where the stink is worse (rises to “2”). And if the stink is really bad, the smell goes up to “4”. Note that these numbers are not precise values; rather they are qualitative indicators of subjective human opinion. But see if you disagree with any of the following:</p>
+<pre class="sourceCode python"><code class="sourceCode python">
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;rely&#39;</span>)] =  Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;pvol&#39;</span>)] = [
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
 
-      </div>
-    <div class="clear">
-    </div>
+Stink[(<span class="st">&#39;ltex&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = \
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;pexp&#39;</span>)] = Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = \
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;aexp&#39;</span>)] = [
+ [<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
 
-    <div id="footer">
-      <p>CSS by <a href="http://mixu.net/">Mikito Takada</a>.</p>
-    </div>
-    </div>
-  </div>
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;tool&#39;</span>)] = Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;ltex&#39;</span>)] = \
+Stink[(<span class="st">&#39;sced&#39;</span>,<span class="st">&#39;Pmat&#39;</span>)] = Stink[(<span class="st">&#39;Pmat&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = \
+Stink[(<span class="st">&#39;tool&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = Stink[(<span class="st">&#39;tool&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = \
+Stink[(<span class="st">&#39;tool&#39;</span>,<span class="st">&#39;Pmat&#39;</span>)] = Stink[(<span class="st">&#39;Team&#39;</span>,<span class="st">&#39;aexp&#39;</span>)] = \
+Stink[(<span class="st">&#39;Team&#39;</span>,<span class="st">&#39;sced&#39;</span>)] = Stink[(<span class="st">&#39;Team&#39;</span>,<span class="st">&#39;site&#39;</span>)] = [
+ [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
 
+Stink[(<span class="st">&#39;rely&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = Stink[(<span class="st">&#39;rely&#39;</span>,<span class="st">&#39;Pmat&#39;</span>)] = \
+Stink[(<span class="st">&#39;rely&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = [
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
 
-  </div>
+Stink[(<span class="st">&#39;cplx&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = Stink[(<span class="st">&#39;cplx&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = \
+Stink[(<span class="st">&#39;cplx&#39;</span>,<span class="st">&#39;tool&#39;</span>)] = Stink[(<span class="st">&#39;stor&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = \
+Stink[(<span class="st">&#39;time&#39;</span>,<span class="st">&#39;acap&#39;</span>)] = Stink[(<span class="st">&#39;ruse&#39;</span>,<span class="st">&#39;aexp&#39;</span>)] = \
+Stink[(<span class="st">&#39;ruse&#39;</span>,<span class="st">&#39;ltex&#39;</span>)] = Stink[(<span class="st">&#39;Pmat&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = \
+Stink[(<span class="st">&#39;stor&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = Stink[(<span class="st">&#39;time&#39;</span>,<span class="st">&#39;pcap&#39;</span>)] = [
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
+
+Stink[(<span class="st">&#39;pvol&#39;</span>,<span class="st">&#39;pexp&#39;</span>)] = [
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+ [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]
+
+Stink[(<span class="st">&#39;time&#39;</span>,<span class="st">&#39;tool&#39;</span>)] = [
+  [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+  [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+  [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+  [<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+  [<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>],
+  [<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>]]</code></pre>
+<p>Using these <code>Stink</code> tables, we can check how bad our projects smell.</p>
+<pre class="sourceCode python"><code class="sourceCode python">
+<span class="kw">def</span> badSmell(project,log=<span class="ot">None</span>):
+  stink = <span class="dv">0</span>
+  <span class="kw">for</span> (x1,x2),m in Stink.items():
+      v1     = project[x1] 
+      v2     = project[x2]
+      inc    = m[v1 - <span class="dv">1</span>][v2 - <span class="dv">2</span>]
+      <span class="kw">if</span> inc and not log is <span class="ot">None</span>:
+         key = (x1,v1,x2,v2)
+         log[key] = log.get(key,<span class="dv">0</span>) + inc 
+      stink += inc
+  <span class="kw">return</span> stink</code></pre>
+<p>Here’s the bad smells seen in 1000 randomly generated projects. Note that <code>osp</code> really stinks.</p>
+<pre><code>      osp, (    -------   *|  ----------  ),    8,    19,    25,    32,    49
+ anything, (--   *  -------|-------       ),    0,     5,     9,    15,    40
+   flight, (--  * ------   |              ),    0,     5,     8,    11,    22
+     osp2, (  *-           |              ),    4,     4,     5,     6,     8
+   ground, (- *--------    |              ),    0,     2,     4,     6,    20</code></pre>
+<p>To see why, we collected 1000 samples from <code>osp</code> and looked at the dozen worst offenders.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> whatStinks(project,n=<span class="dv">1000</span>,rx=<span class="ot">None</span>):
+  log = {}
+  <span class="kw">for</span> _ in <span class="dt">xrange</span>(n):
+    settings = complete(project,rx or {})
+    badSmell(settings,log)
+  lst = <span class="dt">sorted</span>([(v,k) <span class="kw">for</span> k,v in log.items()],
+                reverse=<span class="ot">True</span>)
+  <span class="kw">return</span> lst[:<span class="dv">12</span>]</code></pre>
+<p>The results showed that, with <code>osp</code>, there are many times we are trying to build highly reliable or highly complex software using lower-end developers.</p>
+<pre><code>stink = 2.13 when rely = 5 and acap = 2
+stink = 2.00 when rely = 5 and pcap = 3
+stink = 1.08 when cplx = 6 and acap = 2
+stink = 1.05 when rely = 5 and Pmat = 2
+stink = 0.99 when cplx = 6 and pcap = 3
+stink = 0.94 when rely = 5 and acap = 3
+stink = 0.89 when cplx = 6 and tool = 2
+stink = 0.71 when sced = 1 and acap = 2
+stink = 0.65 when sced = 1 and aexp = 2
+stink = 0.65 when sced = 1 and pexp = 3
+stink = 0.65 when sced = 1 and pcap = 3
+stink = 0.54 when cplx = 6 and tool = 3</code></pre>
+<p>Another problem, that appears four times at the end of the list, is that we are rushing to complete the project using lower-end developers.</p>
+<h2 id="what-to-do"><a href="#what-to-do">What to Do?</a></h2>
+<p>So now we know that if we specify the range of possibilities in a project, and sample across that range, that projects can have widely varying estimates and, sometimes, can really smell really bad.</p>
+<p>What to do? How to find project settings that let us deliver most code, with least effort, while incurring fewest smells? Formally this is an <em>optimization</em> problem of the form <em>(decisions,objectives)</em> where</p>
+<ul>
+<li><em>Decisions</em> are some values selected from the ranges of of our projects (e.g. <code>flight</code>, <code>ground</code>, <code>osp</code>, etc);</li>
+<li>The <em>objectives</em> are to minimize <em>effort</em>, <em>badSmells</em> while maximizing <em>kloc</em></li>
+</ul>
+<p>To guide this search we will run our projects 1000 times and then (to make a level playing field), normalize all the efforts, badSmells and kloc to 0..1 for min to max. Then we will score each project with a formula that gets <em>better</em> the further we move from the worst case scenario of <em>(kloc,badSmells,effort) = (0,1,1)</em>. For that, we will add <em>kloc</em> to a <em>likes</em> list and <em>badSmells,effort</em> to a <em>dislikes</em> list:</p>
+<pre><code>def fromHell(goods,bads):
+    n, all = 0, 0
+    for v in goods:
+      n   += 1
+      all += (0 - v)**2
+    for v in bads:
+      n   += 1
+      all += (1 - v)**2
+    return all**0.5 / n**5</code></pre>
+<p>(We divide by the square root of the number of dimensions, just for convenience– the resulting score will be bounded 0 to 1 for worst to best.)</p>
+<p>Lastly, we divide our results into the <em>best</em> top-half scores and the <em>rest</em> then look for decisions that are more common in <em>best</em> than <em>rest</em>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> eval1(settings):
+  est   = COCOMO2(settings)
+  smell = badSmell(settings)
+  kloc  = settings[<span class="st">&quot;kloc&quot;</span>]
+  <span class="kw">return</span> [kloc],[est,smell]
+  
+<span class="kw">def</span> run1(project, rx=<span class="ot">None</span>):
+  settings,decisions = complete(project,rx)  
+  good,bad = eval1(settings)
+  <span class="kw">del</span>  decisions[<span class="st">&quot;kloc&quot;</span>]
+  <span class="kw">return</span> o(decisions = decisions,
+              good   = good,
+              bad    = bad)
+
+<span class="kw">def</span> run(project, n=<span class="dv">1000</span>, enough=<span class="fl">0.33</span>):
+  <span class="dt">print</span>(<span class="st">&quot;&quot;</span>)
+  baseline = [ run1(project) <span class="kw">for</span> _ in <span class="dt">xrange</span>(n) ]
+  report(baseline, project.<span class="ot">__name__</span>+<span class="st">&quot;(baseline)&quot;</span>,[<span class="st">&#39;kloc&#39;</span>], [<span class="st">&#39;effort&#39;</span>,<span class="st">&#39;smell&#39;</span>])
+  policies = bore(baseline,enough=enough)
+  todo=[]
+  <span class="dt">print</span>(<span class="dt">len</span>(policies))
+  <span class="kw">for</span> _,(k,v) in policies:
+    todo += [(k,v)]
+    p  = {k1:v1 <span class="kw">for</span> k1,v1 in todo}
+    rx = [ run1(project,p) <span class="kw">for</span> _ in <span class="dt">xrange</span>(n) ]
+    report(rx, 
+           project.<span class="ot">__name__</span>+<span class="st">&#39;(&#39;</span>+<span class="dt">str</span>(<span class="dt">len</span>(todo)) +<span class="st">&#39;)&#39;</span>+(<span class="dt">str</span>((k,v))),
+           [<span class="st">&#39;kloc&#39;</span>], [<span class="st">&#39;effort&#39;</span>,<span class="st">&#39;smell&#39;</span>])
+
+<span class="kw">def</span> des(project,n=<span class="dv">40</span>,cf=<span class="fl">0.3</span>,f=<span class="fl">0.5</span>):
+  <span class="kw">def</span> complete1(one):
+    tmp = guess(ranges(),one)  
+    <span class="kw">return</span> eval1(tmp)
+  pop     =  [ run1(project) <span class="kw">for</span> _ in <span class="dt">xrange</span>(n*<span class="dv">20</span>) ]
+  <span class="dt">print</span>(pop[<span class="dv">0</span>].decisions.keys())
+  good,bad = [<span class="st">&#39;kloc&#39;</span>],[<span class="st">&#39;effort&#39;</span>,<span class="st">&#39;smell&#39;</span>]
+  report(pop, project.<span class="ot">__name__</span>+<span class="st">&quot;(baseline)&quot;</span>, good,bad)
+  <span class="kw">for</span> generation in <span class="dt">range</span>(n):
+    pop,log = de(pop,score=complete1,cf=cf,f=f)
+    <span class="kw">if</span> generation % <span class="dv">5</span> == <span class="dv">0</span>:
+      report(pop, project.<span class="ot">__name__</span>+<span class="st">&quot;(&quot;</span>+<span class="dt">str</span>(generation<span class="dv">+1</span>)+<span class="st">&quot;)&quot;</span>, good,bad)
+  
+<span class="kw">def</span> report(log,what,goodis,badis):
+  bads  = [N() <span class="kw">for</span> _ in log[<span class="dv">0</span>].bad]
+  goods = [N() <span class="kw">for</span> _ in log[<span class="dv">0</span>].good]
+  <span class="kw">for</span> one in log:
+    <span class="kw">for</span> n,v in <span class="dt">enumerate</span>(one.bad):
+      bads[n].tell(v)
+    <span class="kw">for</span> n,v in <span class="dt">enumerate</span>(one.good):
+      goods[n].tell(v)
+  out=[what]
+  <span class="kw">for</span> x,v in <span class="dt">zip</span>(badis,bads)  : 
+    out += [x]
+    q2,q3 = v.q2q3()
+    out += g([q2,q3],n=<span class="dv">0</span>)
+  <span class="kw">for</span> x,v in <span class="dt">zip</span>(goodis,goods): 
+    out += [x]
+    q2,q3 = v.q2q3()
+    out += g([q2,q3],n=<span class="dv">0</span>)
+  <span class="dt">print</span>(out)
+
+<span class="kw">def</span> rx(f=<span class="ot">None</span>,<span class="dt">all</span>=[]):
+  <span class="kw">if</span> not f: 
+    <span class="kw">return</span> <span class="dt">all</span>
+  <span class="kw">else</span>:
+    <span class="dt">all</span> += [f]
+    <span class="kw">return</span> ok(f) 
+    
+<span class="ot">@rx</span>
+<span class="kw">def</span> doNothing(): <span class="kw">return</span> {}
+
+<span class="ot">@rx</span>
+<span class="kw">def</span> improvePersonnel(): <span class="kw">return</span> <span class="dt">dict</span>(
+  acap=[<span class="dv">5</span>],pcap=[<span class="dv">5</span>],pcon=[<span class="dv">5</span>], aexp=[<span class="dv">5</span>], pexp=[<span class="dv">5</span>], ltex=[<span class="dv">5</span>])
+
+<span class="ot">@rx</span>
+<span class="kw">def</span> improveToolsTechniquesPlatform(): <span class="kw">return</span> <span class="dt">dict</span>(
+  time=[<span class="dv">3</span>],stor=[<span class="dv">3</span>],pvol=[<span class="dv">2</span>],tool=[<span class="dv">5</span>], site=[<span class="dv">6</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> improvePrecendentnessDevelopmentFlexibility(): <span class="kw">return</span> <span class="dt">dict</span>(
+  Prec=[<span class="dv">5</span>],Flex=[<span class="dv">5</span>])
+
+<span class="ot">@rx</span>
+<span class="kw">def</span> increaseArchitecturalAnalysisRiskResolution(): <span class="kw">return</span> <span class="dt">dict</span>(
+  Resl=[<span class="dv">5</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> relaxSchedule(): <span class="kw">return</span> <span class="dt">dict</span>(
+  sced = [<span class="dv">5</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> improveProcessMaturity(): <span class="kw">return</span> <span class="dt">dict</span>(
+  Pmat = [<span class="dv">5</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> reduceFunctionality(): <span class="kw">return</span> <span class="dt">dict</span>(
+  data = [<span class="dv">2</span>], nkloc=[<span class="fl">0.5</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> improveTeam(): <span class="kw">return</span> <span class="dt">dict</span>(
+  Team = [<span class="dv">5</span>])
+  
+<span class="ot">@rx</span>
+<span class="kw">def</span> reduceQuality():  <span class="kw">return</span> <span class="dt">dict</span>(
+  rely = [<span class="dv">1</span>], docu=[<span class="dv">1</span>], time = [<span class="dv">3</span>], cplx = [<span class="dv">1</span>])
+           
+<span class="kw">def</span> COCONUT(training,          <span class="co"># list of projects</span>
+            a=<span class="dv">10</span>, b=<span class="dv">1</span>,         <span class="co"># initial  (a,b) guess</span>
+            deltaA    = <span class="dv">10</span>,    <span class="co"># range of &quot;a&quot; guesses </span>
+            deltaB    = <span class="fl">0.5</span>,   <span class="co"># range of &quot;b&quot; guesses</span>
+            depth     = <span class="dv">10</span>,    <span class="co"># max recursive calls</span>
+            constricting=<span class="fl">0.66</span>):<span class="co"># next time,guess less</span>
+  <span class="kw">if</span> depth &gt; <span class="dv">0</span>:
+    useful,a1,b1= GUESSES(training,a,b,deltaA,deltaB)
+    <span class="kw">if</span> useful: <span class="co"># only continue if something useful</span>
+      <span class="kw">return</span> COCONUT(training, 
+                     a1, b1,  <span class="co"># our new next guess</span>
+                     deltaA * constricting,
+                     deltaB * constricting,
+                     depth - <span class="dv">1</span>)
+  <span class="kw">return</span> a,b
+
+<span class="kw">def</span> GUESSES(training, a,b, deltaA, deltaB,
+           repeats=<span class="dv">20</span>): <span class="co"># number of guesses</span>
+  useful, a1,b1,least,n = <span class="ot">False</span>, a,b, <span class="dv">10</span>**<span class="dv">32</span>, <span class="dv">0</span>
+  <span class="kw">while</span> n &lt; repeats:
+    n += <span class="dv">1</span>
+    aGuess = a1 - deltaA + <span class="dv">2</span> * deltaA * rand()
+    bGuess = b1 - deltaB + <span class="dv">2</span> * deltaB * rand()
+    error  = ASSESS(training, aGuess, bGuess)
+    <span class="kw">if</span> error &lt; least: <span class="co"># found a new best guess</span>
+      useful,a1,b1,least = <span class="ot">True</span>,aGuess,bGuess,error
+  <span class="kw">return</span> useful,a1,b1
+
+<span class="kw">def</span> ASSESS(training, aGuess, bGuess):
+   error = <span class="fl">0.0</span>
+   <span class="kw">for</span> project in training: <span class="co"># find error on training</span>
+     predicted = COCOMO2(project, aGuess, bGuess)
+     actual    = effort(project)
+     error    += <span class="dt">abs</span>(predicted - actual) / actual
+   <span class="kw">return</span> error / <span class="dt">len</span>(training) <span class="co"># mean training error</span>
+
+<span class="kw">def</span> nasa93():
+  vl=<span class="dv">1</span>;l=<span class="dv">2</span>;n=<span class="dv">3</span>;h=<span class="dv">4</span>;vh=<span class="dv">5</span>;xh=<span class="dv">6</span>
+  <span class="kw">return</span> <span class="dt">dict</span>(
+    sfem=<span class="dv">21</span>,
+    kloc=<span class="dv">22</span>,
+    effort=<span class="dv">23</span>,
+    names= [ 
+     <span class="co"># 0..8</span>
+     <span class="st">&#39;Prec&#39;</span>, <span class="st">&#39;Flex&#39;</span>, <span class="st">&#39;Resl&#39;</span>, <span class="st">&#39;Team&#39;</span>, <span class="st">&#39;Pmat&#39;</span>, <span class="st">&#39;rely&#39;</span>, <span class="st">&#39;data&#39;</span>, <span class="st">&#39;cplx&#39;</span>, <span class="st">&#39;ruse&#39;</span>,
+     <span class="co"># 9 .. 17</span>
+     <span class="co">&#39;docu&#39;</span>, <span class="st">&#39;time&#39;</span>, <span class="st">&#39;stor&#39;</span>, <span class="st">&#39;pvol&#39;</span>, <span class="st">&#39;acap&#39;</span>, <span class="st">&#39;pcap&#39;</span>, <span class="st">&#39;pcon&#39;</span>, <span class="st">&#39;aexp&#39;</span>, <span class="st">&#39;plex&#39;</span>,  
+     <span class="co"># 18 .. 25</span>
+     <span class="co">&#39;ltex&#39;</span>, <span class="st">&#39;tool&#39;</span>, <span class="st">&#39;site&#39;</span>, <span class="st">&#39;sced&#39;</span>, <span class="st">&#39;kloc&#39;</span>, <span class="st">&#39;effort&#39;</span>, <span class="st">&#39;?defects&#39;</span>, <span class="st">&#39;?months&#39;</span>],
+    projects=[
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">25.9</span>,<span class="fl">117.6</span>,<span class="dv">808</span>,<span class="fl">15.3</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">24.6</span>,<span class="fl">117.6</span>,<span class="dv">767</span>,<span class="fl">15.0</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">7.7</span>,<span class="fl">31.2</span>,<span class="dv">240</span>,<span class="fl">10.1</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">8.2</span>,<span class="dv">36</span>,<span class="dv">256</span>,<span class="fl">10.4</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">9.7</span>,<span class="fl">25.2</span>,<span class="dv">302</span>,<span class="fl">11.0</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">2.2</span>,<span class="fl">8.4</span>,<span class="dv">69</span>,<span class="fl">6.6</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">3.5</span>,<span class="fl">10.8</span>,<span class="dv">109</span>,<span class="fl">7.8</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">66.6</span>,<span class="fl">352.8</span>,<span class="dv">2077</span>,<span class="fl">21.0</span>],
+    [h,h,h,vh,h,h,l,h,n,n,xh,xh,l,h,h,n,h,n,h,h,n,n,<span class="fl">7.5</span>,<span class="dv">72</span>,<span class="dv">226</span>,<span class="fl">13.6</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,vh,n,vh,n,h,n,n,n,<span class="dv">20</span>,<span class="dv">72</span>,<span class="dv">566</span>,<span class="fl">14.4</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,h,n,vh,n,h,n,n,n,<span class="dv">6</span>,<span class="dv">24</span>,<span class="dv">188</span>,<span class="fl">9.9</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,vh,n,vh,n,h,n,n,n,<span class="dv">100</span>,<span class="dv">360</span>,<span class="dv">2832</span>,<span class="fl">25.2</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,n,n,vh,n,l,n,n,n,<span class="fl">11.3</span>,<span class="dv">36</span>,<span class="dv">456</span>,<span class="fl">12.8</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,h,h,h,n,h,l,vl,n,n,n,<span class="dv">100</span>,<span class="dv">215</span>,<span class="dv">5434</span>,<span class="fl">30.1</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,h,n,vh,n,h,n,n,n,<span class="dv">20</span>,<span class="dv">48</span>,<span class="dv">626</span>,<span class="fl">15.1</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,n,n,n,n,vl,n,n,n,<span class="dv">100</span>,<span class="dv">360</span>,<span class="dv">4342</span>,<span class="fl">28.0</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,xh,l,h,vh,n,vh,n,h,n,n,n,<span class="dv">150</span>,<span class="dv">324</span>,<span class="dv">4868</span>,<span class="fl">32.5</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,h,n,h,n,h,n,n,n,<span class="fl">31.5</span>,<span class="dv">60</span>,<span class="dv">986</span>,<span class="fl">17.6</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,h,h,n,vh,n,h,n,n,n,<span class="dv">15</span>,<span class="dv">48</span>,<span class="dv">470</span>,<span class="fl">13.6</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,xh,l,h,n,n,h,n,h,n,n,n,<span class="fl">32.5</span>,<span class="dv">60</span>,<span class="dv">1276</span>,<span class="fl">20.8</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">19.7</span>,<span class="dv">60</span>,<span class="dv">614</span>,<span class="fl">13.9</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">66.6</span>,<span class="dv">300</span>,<span class="dv">2077</span>,<span class="fl">21.0</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">29.5</span>,<span class="dv">120</span>,<span class="dv">920</span>,<span class="fl">16.0</span>],
+    [h,h,h,vh,n,h,n,n,n,n,h,n,n,n,h,n,h,n,n,n,n,n,<span class="dv">15</span>,<span class="dv">90</span>,<span class="dv">575</span>,<span class="fl">15.2</span>],
+    [h,h,h,vh,n,h,n,h,n,n,n,n,n,n,h,n,h,n,n,n,n,n,<span class="dv">38</span>,<span class="dv">210</span>,<span class="dv">1553</span>,<span class="fl">21.3</span>],
+    [h,h,h,vh,n,n,n,n,n,n,n,n,n,n,h,n,h,n,n,n,n,n,<span class="dv">10</span>,<span class="dv">48</span>,<span class="dv">427</span>,<span class="fl">12.4</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">15.4</span>,<span class="dv">70</span>,<span class="dv">765</span>,<span class="fl">14.5</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">48.5</span>,<span class="dv">239</span>,<span class="dv">2409</span>,<span class="fl">21.4</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">16.3</span>,<span class="dv">82</span>,<span class="dv">810</span>,<span class="fl">14.8</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">12.8</span>,<span class="dv">62</span>,<span class="dv">636</span>,<span class="fl">13.6</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">32.6</span>,<span class="dv">170</span>,<span class="dv">1619</span>,<span class="fl">18.7</span>],
+    [h,h,h,vh,h,n,vh,h,n,n,vh,vh,l,vh,n,n,h,l,h,n,n,l,<span class="fl">35.5</span>,<span class="dv">192</span>,<span class="dv">1763</span>,<span class="fl">19.3</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">5.5</span>,<span class="dv">18</span>,<span class="dv">172</span>,<span class="fl">9.1</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">10.4</span>,<span class="dv">50</span>,<span class="dv">324</span>,<span class="fl">11.2</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="dv">14</span>,<span class="dv">60</span>,<span class="dv">437</span>,<span class="fl">12.4</span>],
+    [h,h,h,vh,n,h,n,h,n,n,n,n,n,n,n,n,n,n,n,n,n,n,<span class="fl">6.5</span>,<span class="dv">42</span>,<span class="dv">290</span>,<span class="fl">12.0</span>],
+    [h,h,h,vh,n,n,n,h,n,n,n,n,n,n,n,n,n,n,n,n,n,n,<span class="dv">13</span>,<span class="dv">60</span>,<span class="dv">683</span>,<span class="fl">14.8</span>],
+    [h,h,h,vh,h,n,n,h,n,n,n,n,n,n,h,n,n,n,h,h,n,n,<span class="dv">90</span>,<span class="dv">444</span>,<span class="dv">3343</span>,<span class="fl">26.7</span>],
+    [h,h,h,vh,n,n,n,h,n,n,n,n,n,n,n,n,n,n,n,n,n,n,<span class="dv">8</span>,<span class="dv">42</span>,<span class="dv">420</span>,<span class="fl">12.5</span>],
+    [h,h,h,vh,n,n,n,h,n,n,h,n,n,n,n,n,n,n,n,n,n,n,<span class="dv">16</span>,<span class="dv">114</span>,<span class="dv">887</span>,<span class="fl">16.4</span>],
+    [h,h,h,vh,h,n,h,h,n,n,vh,h,l,h,h,n,n,l,h,n,n,l,<span class="fl">177.9</span>,<span class="dv">1248</span>,<span class="dv">7998</span>,<span class="fl">31.5</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,h,n,n,n,n,n,n,n,<span class="dv">302</span>,<span class="dv">2400</span>,<span class="dv">8543</span>,<span class="fl">38.4</span>],
+    [h,h,h,vh,h,n,h,l,n,n,n,n,h,h,n,n,h,n,n,h,n,n,<span class="fl">282.1</span>,<span class="dv">1368</span>,<span class="dv">9820</span>,<span class="fl">37.3</span>],
+    [h,h,h,vh,h,h,h,l,n,n,n,n,n,h,n,n,h,n,n,n,n,n,<span class="fl">284.7</span>,<span class="dv">973</span>,<span class="dv">8518</span>,<span class="fl">38.1</span>],
+    [h,h,h,vh,n,h,h,n,n,n,n,n,l,n,h,n,h,n,h,n,n,n,<span class="dv">79</span>,<span class="dv">400</span>,<span class="dv">2327</span>,<span class="fl">26.9</span>],
+    [h,h,h,vh,l,l,n,n,n,n,n,n,l,h,vh,n,h,n,h,n,n,n,<span class="dv">423</span>,<span class="dv">2400</span>,<span class="dv">18447</span>,<span class="fl">41.9</span>],
+    [h,h,h,vh,h,n,n,n,n,n,n,n,l,h,vh,n,vh,l,h,n,n,n,<span class="dv">190</span>,<span class="dv">420</span>,<span class="dv">5092</span>,<span class="fl">30.3</span>],
+    [h,h,h,vh,h,n,n,h,n,n,n,h,n,h,n,n,h,n,h,n,n,n,<span class="fl">47.5</span>,<span class="dv">252</span>,<span class="dv">2007</span>,<span class="fl">22.3</span>],
+    [h,h,h,vh,l,vh,n,xh,n,n,h,h,l,n,n,n,h,n,n,h,n,n,<span class="dv">21</span>,<span class="dv">107</span>,<span class="dv">1058</span>,<span class="fl">21.3</span>],
+    [h,h,h,vh,l,n,h,h,n,n,vh,n,n,h,h,n,h,n,h,n,n,n,<span class="dv">78</span>,<span class="fl">571.4</span>,<span class="dv">4815</span>,<span class="fl">30.5</span>],
+    [h,h,h,vh,l,n,h,h,n,n,vh,n,n,h,h,n,h,n,h,n,n,n,<span class="fl">11.4</span>,<span class="fl">98.8</span>,<span class="dv">704</span>,<span class="fl">15.5</span>],
+    [h,h,h,vh,l,n,h,h,n,n,vh,n,n,h,h,n,h,n,h,n,n,n,<span class="fl">19.3</span>,<span class="dv">155</span>,<span class="dv">1191</span>,<span class="fl">18.6</span>],
+    [h,h,h,vh,l,h,n,vh,n,n,h,h,l,h,n,n,n,h,h,n,n,n,<span class="dv">101</span>,<span class="dv">750</span>,<span class="dv">4840</span>,<span class="fl">32.4</span>],
+    [h,h,h,vh,l,h,n,h,n,n,h,h,l,n,n,n,h,n,n,n,n,n,<span class="dv">219</span>,<span class="dv">2120</span>,<span class="dv">11761</span>,<span class="fl">42.8</span>],
+    [h,h,h,vh,l,h,n,h,n,n,h,h,l,n,n,n,h,n,n,n,n,n,<span class="dv">50</span>,<span class="dv">370</span>,<span class="dv">2685</span>,<span class="fl">25.4</span>],
+    [h,h,h,vh,h,vh,h,h,n,n,vh,vh,n,vh,vh,n,vh,n,h,h,n,l,<span class="dv">227</span>,<span class="dv">1181</span>,<span class="dv">6293</span>,<span class="fl">33.8</span>],
+    [h,h,h,vh,h,n,h,vh,n,n,n,n,l,h,vh,n,n,l,n,n,n,l,<span class="dv">70</span>,<span class="dv">278</span>,<span class="dv">2950</span>,<span class="fl">20.2</span>],
+    [h,h,h,vh,h,h,l,h,n,n,n,n,l,n,n,n,n,n,h,n,n,l,<span class="fl">0.9</span>,<span class="fl">8.4</span>,<span class="dv">28</span>,<span class="fl">4.9</span>],
+    [h,h,h,vh,l,vh,l,xh,n,n,xh,vh,l,h,h,n,vh,vl,h,n,n,n,<span class="dv">980</span>,<span class="dv">4560</span>,<span class="dv">50961</span>,<span class="fl">96.4</span>],
+    [h,h,h,vh,n,n,l,h,n,n,n,n,l,vh,vh,n,n,h,h,n,n,n,<span class="dv">350</span>,<span class="dv">720</span>,<span class="dv">8547</span>,<span class="fl">35.7</span>],
+    [h,h,h,vh,h,h,n,xh,n,n,h,h,l,h,n,n,n,h,h,h,n,n,<span class="dv">70</span>,<span class="dv">458</span>,<span class="dv">2404</span>,<span class="fl">27.5</span>],
+    [h,h,h,vh,h,h,n,xh,n,n,h,h,l,h,n,n,n,h,h,h,n,n,<span class="dv">271</span>,<span class="dv">2460</span>,<span class="dv">9308</span>,<span class="fl">43.4</span>],
+    [h,h,h,vh,n,n,n,n,n,n,n,n,l,h,h,n,h,n,h,n,n,n,<span class="dv">90</span>,<span class="dv">162</span>,<span class="dv">2743</span>,<span class="fl">25.0</span>],
+    [h,h,h,vh,n,n,n,n,n,n,n,n,l,h,h,n,h,n,h,n,n,n,<span class="dv">40</span>,<span class="dv">150</span>,<span class="dv">1219</span>,<span class="fl">18.9</span>],
+    [h,h,h,vh,n,h,n,h,n,n,h,n,l,h,h,n,h,n,h,n,n,n,<span class="dv">137</span>,<span class="dv">636</span>,<span class="dv">4210</span>,<span class="fl">32.2</span>],
+    [h,h,h,vh,n,h,n,h,n,n,h,n,h,h,h,n,h,n,h,n,n,n,<span class="dv">150</span>,<span class="dv">882</span>,<span class="dv">5848</span>,<span class="fl">36.2</span>],
+    [h,h,h,vh,n,vh,n,h,n,n,h,n,l,h,h,n,h,n,h,n,n,n,<span class="dv">339</span>,<span class="dv">444</span>,<span class="dv">8477</span>,<span class="fl">45.9</span>],
+    [h,h,h,vh,n,l,h,l,n,n,n,n,h,h,h,n,h,n,h,n,n,n,<span class="dv">240</span>,<span class="dv">192</span>,<span class="dv">10313</span>,<span class="fl">37.1</span>],
+    [h,h,h,vh,l,h,n,h,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">144</span>,<span class="dv">576</span>,<span class="dv">6129</span>,<span class="fl">28.8</span>],
+    [h,h,h,vh,l,n,l,n,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">151</span>,<span class="dv">432</span>,<span class="dv">6136</span>,<span class="fl">26.2</span>],
+    [h,h,h,vh,l,n,l,h,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">34</span>,<span class="dv">72</span>,<span class="dv">1555</span>,<span class="fl">16.2</span>],
+    [h,h,h,vh,l,n,n,h,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">98</span>,<span class="dv">300</span>,<span class="dv">4907</span>,<span class="fl">24.4</span>],
+    [h,h,h,vh,l,n,n,h,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">85</span>,<span class="dv">300</span>,<span class="dv">4256</span>,<span class="fl">23.2</span>],
+    [h,h,h,vh,l,n,l,n,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">20</span>,<span class="dv">240</span>,<span class="dv">813</span>,<span class="fl">12.8</span>],
+    [h,h,h,vh,l,n,l,n,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">111</span>,<span class="dv">600</span>,<span class="dv">4511</span>,<span class="fl">23.5</span>],
+    [h,h,h,vh,l,h,vh,h,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">162</span>,<span class="dv">756</span>,<span class="dv">7553</span>,<span class="fl">32.4</span>],
+    [h,h,h,vh,l,h,h,vh,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">352</span>,<span class="dv">1200</span>,<span class="dv">17597</span>,<span class="fl">42.9</span>],
+    [h,h,h,vh,l,h,n,vh,n,n,n,vh,l,h,h,n,h,h,h,n,n,l,<span class="dv">165</span>,<span class="dv">97</span>,<span class="dv">7867</span>,<span class="fl">31.5</span>],
+    [h,h,h,vh,h,h,n,vh,n,n,h,h,l,h,n,n,n,h,h,n,n,n,<span class="dv">60</span>,<span class="dv">409</span>,<span class="dv">2004</span>,<span class="fl">24.9</span>],
+    [h,h,h,vh,h,h,n,vh,n,n,h,h,l,h,n,n,n,h,h,n,n,n,<span class="dv">100</span>,<span class="dv">703</span>,<span class="dv">3340</span>,<span class="fl">29.6</span>],
+    [h,h,h,vh,n,h,vh,vh,n,n,xh,xh,h,n,n,n,n,l,l,n,n,n,<span class="dv">32</span>,<span class="dv">1350</span>,<span class="dv">2984</span>,<span class="fl">33.6</span>],
+    [h,h,h,vh,h,h,h,h,n,n,vh,xh,h,h,h,n,h,h,h,n,n,n,<span class="dv">53</span>,<span class="dv">480</span>,<span class="dv">2227</span>,<span class="fl">28.8</span>],
+    [h,h,h,vh,h,h,l,vh,n,n,vh,xh,l,vh,vh,n,vh,vl,vl,h,n,n,<span class="dv">41</span>,<span class="dv">599</span>,<span class="dv">1594</span>,<span class="fl">23.0</span>],
+    [h,h,h,vh,h,h,l,vh,n,n,vh,xh,l,vh,vh,n,vh,vl,vl,h,n,n,<span class="dv">24</span>,<span class="dv">430</span>,<span class="dv">933</span>,<span class="fl">19.2</span>],
+    [h,h,h,vh,h,vh,h,vh,n,n,xh,xh,n,h,h,n,h,h,h,n,n,n,<span class="dv">165</span>,<span class="fl">4178.2</span>,<span class="dv">6266</span>,<span class="fl">47.3</span>],
+    [h,h,h,vh,h,vh,h,vh,n,n,xh,xh,n,h,h,n,h,h,h,n,n,n,<span class="dv">65</span>,<span class="fl">1772.5</span>,<span class="dv">2468</span>,<span class="fl">34.5</span>],
+    [h,h,h,vh,h,vh,h,vh,n,n,xh,xh,n,h,h,n,h,h,h,n,n,n,<span class="dv">70</span>,<span class="fl">1645.9</span>,<span class="dv">2658</span>,<span class="fl">35.4</span>],
+    [h,h,h,vh,h,vh,h,xh,n,n,xh,xh,n,h,h,n,h,h,h,n,n,n,<span class="dv">50</span>,<span class="fl">1924.5</span>,<span class="dv">2102</span>,<span class="fl">34.2</span>],
+    [h,h,h,vh,l,vh,l,vh,n,n,vh,xh,l,h,n,n,l,vl,l,h,n,n,<span class="fl">7.25</span>,<span class="dv">648</span>,<span class="dv">406</span>,<span class="fl">15.6</span>],
+    [h,h,h,vh,h,vh,h,vh,n,n,xh,xh,n,h,h,n,h,h,h,n,n,n,<span class="dv">233</span>,<span class="dv">8211</span>,<span class="dv">8848</span>,<span class="fl">53.1</span>],
+    [h,h,h,vh,n,h,n,vh,n,n,vh,vh,h,n,n,n,n,l,l,n,n,n,<span class="fl">16.3</span>,<span class="dv">480</span>,<span class="dv">1253</span>,<span class="fl">21.5</span>],
+    [h,h,h,vh,n,h,n,vh,n,n,vh,vh,h,n,n,n,n,l,l,n,n,n,  <span class="fl">6.2</span>, <span class="dv">12</span>,<span class="dv">477</span>,<span class="fl">15.4</span>],
+    [h,h,h,vh,n,h,n,vh,n,n,vh,vh,h,n,n,n,n,l,l,n,n,n,  <span class="fl">3.0</span>, <span class="dv">38</span>,<span class="dv">231</span>,<span class="fl">12.0</span>],
+    ])</code></pre>
 </body>
 </html>
