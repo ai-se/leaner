@@ -13,7 +13,7 @@ test:
 tests:
 	@$(make)  tests
 
-typo: publish
+typo: publish gitting
 	- git status
 	- git commit -am "stuff"
 	- git push origin master
