@@ -18,7 +18,7 @@ typo: publish
 	- git commit -am "stuff"
 	- git push origin master
 
-commit: publish
+commit: publish gitting
 	- git status
 	- git commit -a
 	- git push origin master
@@ -28,6 +28,10 @@ update:
 
 status:
 	- git status
+	
+gitting:
+	git config --global credential.helper cache
+	git config credential.helper 'cache --timeout=3600'
 
 doc/%.md : src/%.py
 	@bash etc/py2md $<  "$(url)" > $@
