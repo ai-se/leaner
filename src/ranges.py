@@ -27,31 +27,11 @@ All rights reserved.
 from __future__ import division,print_function
 import sys,random
 sys.dont_write_bytecode = True
+from rangesLib import *
 
 def sdiv(lst, tiny=3,cohen=0.3,
          num1=lambda x:x[0], num2=lambda x:x[-1]):
   "Divide lst of (num1,num2) using variance of num2."
-  #----------------------------------------------
-  class Counts(): # Add/delete counts of numbers.
-    def __init__(i,inits=[]):
-      i.zero()
-      for number in inits: i + number 
-    def zero(i): i.n = i.mu = i.m2 = 0.0
-    def sd(i)  : 
-      if i.n < 2: return i.mu
-      else:       
-        return (max(0,i.m2)*1.0/(i.n - 1))**0.5
-    def __add__(i,x):
-      i.n  += 1
-      delta = x - i.mu
-      i.mu += delta/(1.0*i.n)
-      i.m2 += delta*(x - i.mu)
-    def __sub__(i,x):
-      if i.n < 2: return i.zero()
-      i.n  -= 1
-      delta = x - i.mu
-      i.mu -= delta/(1.0*i.n)
-      i.m2 -= delta*(x - i.mu)    
   #----------------------------------------------
   def divide(this,small): #Find best divide of 'this'
     lhs,rhs = Counts(), Counts(num2(x) for x in this)
