@@ -46,10 +46,12 @@ class Row:
 
 class Range:
   def __init__(items,attr,val=lambda x:x[0]):
-    i.items = sorted(items,key=lambda x:val(x)) 
+    ordered = sorted([Row[x] for x in list(items)],
+                     key=lambda x:val(x))
+    i.lo = val(ordered[0])
+    i.hi = val(ordered[-1])
+    i.items = set(ordered)
     i.attr, i.val = attr,val
-    i.lo = val(i.items[0])
-    i.hi = val(i.items[-1])
   def __ror__(i,j):
     if i.attr==j.attr:
       return Range(set(i.items) | set(j.items),i.attr,i.val)
@@ -63,7 +65,7 @@ class Ranges:
       i.attr={}
       i.items=[]
       for x in lstOfRanges:
-        old = i.attr[x] if x in i.attr else []
+        if i.attr[x] if x in i.attr else []
         new = old | x
 def g(lst,n=0):
   return map(lambda x:round(x,n),lst)
