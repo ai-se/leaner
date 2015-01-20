@@ -41,6 +41,7 @@ class Row:
     i.cells=cells
   def __getitem__(i,n): return i.cells[n]
   def __setitem__(i,n,x): i.cells[n] = x; return x
+  def __hash__(i) : return i._id
   def __repr__(i):
     return 'Row'+str(i.cells)
 
@@ -52,11 +53,11 @@ class Range:
     i.hi = val(ordered[-1])
     i.items = set(ordered)
     i.attr, i.val = attr,val
-  def __ror__(i,j):
+  def __plus__(i,j):
     if i.attr==j.attr:
       return Range(set(i.items) | set(j.items),i.attr,i.val)
     else:
-      raise(AttributeError('attribute names do not match'))
+      return Range(set(i.items) & set(j.items),i.attr,i.val)
   def __repr__(i):
     return '%s=[%s..%s]' % (i.attr.i.lo,i.hi)
 
