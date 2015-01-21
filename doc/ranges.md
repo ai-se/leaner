@@ -32,7 +32,7 @@ import sys,random
 sys.dont_write_bytecode = True
 from rangesLib import *
 
-def sdiv(lst, tiny=3,cohen=0.3,
+def sdiv(lst, attr=None,tiny=3,cohen=0.3,cuts=None,
          num1=lambda x:x[0], num2=lambda x:x[-1]):
   "Divide lst of (num1,num2) using variance of num2."
   #----------------------------------------------
@@ -47,20 +47,28 @@ def sdiv(lst, tiny=3,cohen=0.3,
             cut,least = j,maybe
       rhs - num2(x)
       lhs + num2(x)    
-    return cut,least,mu
+    return cut,mu,least,this
   #----------------------------------------------
   def recurse(this, small,cuts):
-    cut,sd,mu = divide(this,small)
+    cut,mu,sd,part0 = divide(this,small)
     if cut: 
       recurse(this[:cut], small, cuts)
       recurse(this[cut:], small, cuts)
     else:   
-      cuts += [(sd,this,mu)]
+      cuts += [o(lo  = num1(this[0]), #breaks in x
+                 hi  = num1(this[-1]),
+                 attr= attr,
+                 mu  = mu,            # score of y
+                 sd=sd,
+                 n   = len(this),
+                 rows= set([Row(x) for x in this]))]
     return cuts
   #---| main |-----------------------------------
   small = Counts(num2(x) for x in lst).sd()*cohen
+  if cuts is None: cuts=[]
   if lst: 
-    return recurse(sorted(lst,key=num1),small,[])
+    return recurse(sorted(lst,key=num1),small,
+                    cuts )
 
 def _sdiv():
   "Demo code to test the above."

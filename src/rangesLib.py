@@ -61,13 +61,7 @@ class Range:
   def __repr__(i):
     return '%s=[%s..%s]' % (i.attr.i.lo,i.hi)
 
-class Ranges:
-    def __init__(lstOfRanges):
-      i.attr={}
-      i.items=[]
-      for x in lstOfRanges:
-        if i.attr[x] if x in i.attr else []
-        new = old | x
+
 def g(lst,n=0):
   return map(lambda x:round(x,n),lst)
   
