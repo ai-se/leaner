@@ -25,13 +25,12 @@ def _rangeLib():
     if one.y.mu > (b4.mu + b4.sd()): 
       print(one.attr, 
         one.x.lo, one.x.hi,g(one.y.mu),g(one.y.sd),g(b4.mu),g(b4.sd()),sep=",")
-  #exit()      
+  #exit()   
+  rules =map(lambda r:Rule([r],r.rows))
   for _ in range(20):
       print("")
-      row1  = random.choice(r)
-      row2  = random.choice(r)
-      rule1 = Rule([row1],row1.rows)
-      rule2 = Rule([row2],row2.rows)
+      rule1  = random.choice(rules)
+      rule2  = random.choice(rules) 
       show(1,rule1)
       show(2,rule2)
       rule3 = rule1+rule2
