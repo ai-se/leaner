@@ -16,7 +16,7 @@ class Row:
         i.cells=lst
     def __hash__(i): return id(i)
     
-all =  [Row([int(r()*10) for _ in xrange(100)] )
+all =  [tuple([int(r()*5) for _ in xrange(10)] )
        for _ in xrange(10000)]
        
 some1 = anys(all, 50)
@@ -24,7 +24,10 @@ some2 = anys(all, 50)
 
  
 def fand(l1,l2):
-    return set(l1) & set(map(l2)
+    return set(l1) & set(l2)
+    
+def frands(l):
+    return reduce(lst,fans)
    
 
     
