@@ -5,6 +5,8 @@ sys.dont_write_bytecode = True
 import housing,ranges
 from rangesLib import *
 
+def g(x): return ('%g' % x)
+
 t=housing.data()
 d= t["data"]
 n= t["names"]
@@ -16,8 +18,11 @@ b4=Counts(map(lambda l:l[-1],d))
 r=[]
 for i,name in zip(range(n),t["names"]):
   ranges.sdiv(d,attr=name,tiny=20,
-            num1=lambda x:x[i],cuts=r)
-r = sorted(r,key=lambda x :x.mu*-1)
-for one in r[:5]:
-    print(one.attr,
-      one.lo, one.hi,one.mu,b4.mu)
+            x=lambda z:z[i],cuts=r)
+r = sorted(r,key=lambda z :z.y.mu*-1)
+for one in r:
+    if one.y.mu <= (b4.mu + b4.sd()):
+      print(".",end="")
+    else:
+      print(one.attr, 
+        one.x.lo, one.x.hi,g(one.y.mu),g(one.y.sd),g(b4.mu),g(b4.sd()),sep=",")
