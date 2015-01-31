@@ -5,8 +5,25 @@ sys.dont_write_bytecode = True
 import housing,ranges
 from rangesLib import *
 
+# add in scorerd. abcd mre, lift
+
 def g(x): return ('%g' % x)
 
+def dands(ranges): 
+  ranges = set(sorted(ranges,key=lambda x:x.attr)) # dumps repeats
+  b4  = ranges[0] 
+  out = b4.rows
+  for now in ranges[1:]:
+      if now.attr == b4.attr
+        out = out | now.rows
+      else:
+        out = out & now.rows 
+      if not out: 
+          break
+      b4 = now
+  return ranges,out
+      
+    
 t=housing.data()
 d= t["data"]
 n= t["names"]

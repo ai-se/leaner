@@ -34,34 +34,23 @@ class Counts(): # Add/delete counts of numbers.
       i.mu -= delta/(1.0*i.n)
       i.m2 -= delta*(x - i.mu)    
 
-class Row:
-  id=-1
-  def __init__(i,cells):
-    Row.id = i._id = Row.id + 1
-    i.cells=cells
-  def __getitem__(i,n): return i.cells[n]
-  def __setitem__(i,n,x): i.cells[n] = x; return x
-  def __hash__(i) : return i._id
-  def __repr__(i):
-    return 'Row'+str(i.cells)
-
+class Span:
+    def __init__(i,x,lo,hi):
+        i.x,i.lo,i.hi=x,lo,hi
+        i.key=hash(x,lo,hi)
+    def __hash__(i) : return i.key
+    def __repr__(i) : return '%s <= %s <= %s' % (lo,x,hi)
+        
 class Range:
-  def __init__(items,attr,val=lambda x:x[0]):
-    ordered = sorted([Row[x] for x in list(items)],
-                     key=lambda x:val(x))
-    i.lo = val(ordered[0])
-    i.hi = val(ordered[-1])
-    i.items = set(ordered)
-    i.attr, i.val = attr,val
-  def __plus__(i,j):
-    if i.attr==j.attr:
-      return Range(set(i.items) | set(j.items),i.attr,i.val)
-    else:
-      return Range(set(i.items) & set(j.items),i.attr,i.val)
-  def __repr__(i):
-    return '%s=[%s..%s]' % (i.attr.i.lo,i.hi)
-
-
+    def __init__(x=x,attr=attr,y=y,rows=rows):
+        i.n     = len(rows)
+        i.rows  = set(rows)
+        i.attr  = attr
+        i.x,i.y = x,y
+        i.key   = Span(attr,x.lo,x.hi) 
+    def __hash__(i): 
+        return i.key.__hash__()
+ 
 def g(lst,n=0):
   return map(lambda x:round(x,n),lst)
   

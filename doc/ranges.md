@@ -55,11 +55,10 @@ def sdiv(lst, attr=None,tiny=3,cohen=0.3,cuts=None,
       recurse(this[:cut], small, cuts)
       recurse(this[cut:], small, cuts)
     else:   
-      cuts += [o(x = o(lo=x(this[0]), hi=x(this[-1])),
-                 attr= attr,
-                 y = o(mu=mu, sd=sd),
-                 n   = len(this),
-                 rows= set([Row(z) for z in this]))]
+      cuts += [Range(attr = attr,
+                     x    = o(lo=x(this[0]), hi=x(this[-1])),
+                     y    = o(mu=mu, sd=sd),
+                     rows = this)]
     return cuts
   #---| main |-----------------------------------
   small = Counts(y(z) for z in lst).sd()*cohen

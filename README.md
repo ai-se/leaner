@@ -26,6 +26,7 @@ you follow three simple rules:
 + [de](doc/de.md):  Simple Differential Evolution
 + [lib](doc/lib.md):  General stuff
 + [libeg](doc/libeg.md):  General stuff (demos)
++ [ranker](doc/ranker.md):  add in scorerd. abcd mre, lift
 
 ## Installation
 
