@@ -1,10 +1,10 @@
-import sys
+import sys,rangesLib
 sys.dont_write_bytecode = True
 
 
-def data(): return dict(
+def housing(): return rangesLib.data(
   names=['crim','zone','indus','chas','nox','rm','age','dis',
-         'rad','tax','ptration','bm','lstat','medv'],
+         'rad','tax','ptration','bm','lstat','>medv'],
   data =[
 (0.00632,18.00,2.310,0,0.5380,6.5750,65.20,4.0900,1,296.0,15.30,396.90,4.98,24.00),
 (0.02731,0.00,7.070,0,0.4690,6.4210,78.90,4.9671,2,242.0,17.80,396.90,9.14,21.60),
