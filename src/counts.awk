@@ -1,0 +1,1 @@
+BEGIN { names='crim,zone,indus,chas,nox,rm,age,dis,rad,tax','ptration','bm','lstat','>medv'],

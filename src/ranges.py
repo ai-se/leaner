@@ -29,22 +29,22 @@ import sys,random
 sys.dont_write_bytecode = True
 from rangesLib import *
 
-def sdiv(lst, attr=None,tiny=3,cohen=0.3,cuts=None,
-         x=lambda z:z[0], y=lambda z:z[-1]):
+def sdiv(lst, attr=None,tiny=3,cohen=0.3,small=None,
+         x=lambda z:z[0], y=lambda z:z[-1],better=gt):
   "Divide lst of (x,y) using variance of y."
   #----------------------------------------------
   def divide(this,small): #Find best divide of 'this'
     lhs,rhs = Counts(), Counts(y(z) for z in this)
-    n0, least, cut,mu = 1.0*rhs.n, rhs.sd(), None,rhs.mu
+    n0, score, cut,mu = 1.0*rhs.n, rhs.sd(), None,rhs.mu
     for j,one  in enumerate(this): 
       if lhs.n > tiny and rhs.n > tiny: 
         maybe= lhs.n/n0*lhs.sd()+ rhs.n/n0*rhs.sd()
-        if maybe < least :  
+        if better(maybe,score) :  
           if abs(lhs.mu - rhs.mu) >= small:
-            cut,least = j,maybe
+            cut,score = j,maybe
       rhs - y(one)
       lhs + y(one)    
-    return cut,mu,least,this
+    return cut,mu,score,this
   #----------------------------------------------
   def recurse(this, small,cuts):
     cut,mu,sd,part0 = divide(this,small)
@@ -58,11 +58,9 @@ def sdiv(lst, attr=None,tiny=3,cohen=0.3,cuts=None,
                      rows = this)]
     return cuts
   #---| main |-----------------------------------
-  small = Counts(y(z) for z in lst).sd()*cohen
-  if cuts is None: cuts=[]
+  small = small or Counts(y(z) for z in lst).sd()*cohen
   if lst: 
-    return recurse(sorted(lst,key=x),small,
-                    cuts )
+    return recurse(sorted(lst,key=x),small, [] )
 
 def _sdiv():
   "Demo code to test the above."
