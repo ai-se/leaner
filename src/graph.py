@@ -32,7 +32,7 @@ class V:
   def __isub__(i,(obj,rate)): 
     Flow(sink=obj,src=i,rate=rate)
     return i
-    
+
 a,b,c=V("a",10),V("b",20),V("c",30)
 
 a += b*3
