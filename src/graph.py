@@ -3,43 +3,40 @@ import sys,random
 sys.dont_write_bytecode = True
  
 class Model:
-    def __init__(i):
-      i.flows,i.stocks,i.flows=[],[],[]
-    def has(i,**d):
-      for name, init in d.items(): ### XXX need a way to inclide zeros, hi, lo
-        s=Stock(name,init,g=i) 
-      
+  def __init__(i):
+    i.nflows = i.nstocks = 0
+    i.flows,i.stocks,i.aux= [],{},{}
+    i.spec()
+  def spec(i): pass
+  def one(i,x,init):
+    tmp = i.stocks[x] = i.stocks[x] \
+            if x in i.stocks else Stock(x,i,init)
+    return tmp
+  def has(i,**d):
+    return [i.one(one,x,init)
+            for x, init in d.items()]
+
 class Flow:
-  flows=[]
-  def __init__(i,src=None,sink=None,rate=1,times=None):
+  def __init__(i,model,src=None,sink=None,rate=1,times=None):
+    i.model = model
     i.src, i.sink, i.rate,i.times = src,sink,rate,times
-    Flow.flows += [i]
+    i.model.flows += [i]
   def step(i,b4,now):
-    amount = i.rate
+    delta = i.rate
     if i.times:
-      amount *= b4[i.times.id]
-    amount = min(amount,now[i.src.id])
+      delta *= b4[i.times.id] 
+    gap   = i.sink.hi - now[i.sink.id]
+    delta = min(delta, gap, now[i.src.id])
     now[i.src.id ] = b4[i.src.id ] - amount
     now[i.sink.id] = b4[i.sink.id] + amount
   def __repr__(i):
     return '%s ==> %s * %s' % (i.src,i.sink,i.rate)
 
-class Stocks:
-  def __init__(i,x): i.contents = [x]
-  def __plus__(i,x): i.contents += [x]
-  
-class Part:
-  def __init__(i):
-      i.parts=[]
-
 class Stock:
-  id=0
-  nodes={}
-  def __init__(i,name,zero=0,lo=0,hi=10**32,g=None):
-    Stock.id = i.id = Stock.id + 1
-    i.g=g
+  def __init__(i,name,model,zero,lo=0,hi=10**32):
+    model.nstocks =  i.id = model.nstocks + 1
+    i.model = model
     i.name,i.lo,i.hi,i.zero = name,lo,hi,zero
-    Stock.nodes[i.id] = i
   def __repr__(i)  : return 'Stock(%s)' % i.name
   def __mul__(i,n) : return (i,n)
   def __rmul__(i,z): return i.__mul__(z)
@@ -52,15 +49,11 @@ class Stock:
 
 S = Stock
 
-def stocks(**d):
-  return [S(k,v) for k,v in d.items()]
-  
-a,b,c=stocks(a=10, b=20, c=30)
-
-a += 3*b
-a -= 2*c
-
-print(Flow.flows)
+class Model1(Model):
+  def spec(i):
+    a,b,c = i.has(a=10, b=20, c=30)
+    a += 3*b
+    a -= 2*c 
 
 def run(steps=10):
   b4 = {}
