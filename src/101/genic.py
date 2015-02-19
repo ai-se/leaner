@@ -1,78 +1,126 @@
-from __future__ import division,print_function
-import sys,random,re
-sys.dont_write_bytecode =True
-
 """
 
+# Lib.py
 
+## Printable Style
+
+Written to be included into a two column paper:
+
++ No line longer than 52 characters.  
++ _Self_ replaced with "_i_".
++ Indented with two characters.
++ All comments written in multiline strings and in 
+  Pandoc style markdown.
+
+## Standard Headers
+
+Using Python 2.7 (cause of compatability issues).
+Adopt the future `print` and `division`
+functions. Do not write spurious _.pyc_ files.
+
+"""
+from __future__ import division,print_function
+import sys,re,random
+sys.dont_write_bytecode =True
+"""
+
+## The Container Pattern
+
+Just a place to store and update named slots.
+When printed, any slot starting with "_"
+is not shown. Any slot that is a function
+name is displayed using it's function name.
 
 """
 class o:
-  def __init__(i,**d): i.add(**d)
-  def add(i,**d)     : i.__dict__.update(**d); return i
-  def __repr__(i)   : 
-    def name(x): return x.__name__ if fun(x) else x
+  def __init__(i,**d) : i.add(**d)
+  def add(i,**d) : i.__dict__.update(**d); return i
+  def __repr__(i) :
+    f = lambda z: z.__class__.__name__ == 'function'
+    name   = lambda z: z.__name__ if f(z) else z
+    public = lambda z: not "_" is z[0]
     d    = i.__dict__
     show = [':%s=%s' % (k,name(d[k])) 
-            for k in sorted(d.keys() ) 
-            if k[0] is not "_"]
+            for k in sorted(d.keys()) if public[k]]
     return '{'+' '.join(show)+'}'
-    
+"""
+
+## The Settings Pattern
+
++ All  settings are stored in some global space so 
+     + Optimizers have one place to go to adjust settings;
+     + We have one place to go and print the options;
++ These settings can be set from multiple places all over the code
+  using  a function decorated with "_@setting_".
+
+"""
 the=o()
 
-def the(f=None,cache={}):
-  "To keep the options, cache their last setting."
-  if not f: 
-    return cache
+def setting(f):
   def wrapper(**d):
-    tmp = cache[f.__name__] = f(**d)
+    tmp = the[f.__name__] = f(**d)
     return tmp
   return wrapper
 
 @the
-def genic0(**d): 
-  def halfEraDivK(w): 
-    return w.opt.era/w.opt.k/2
+def GENIC(**d): 
+  def halfEraDivK(z): 
+    return z.opt.era/z.opt.k/2
   return o(
-    k=10,
-    era=1000,
+    k     = 10,
+    era   = 1000,
     buffer= 500,
-    tiny= halfEraDivK,
-    num='$',
-    klass='=',
-    seed=1).update(**d)
+    tiny  = halfEraDivK,
+    num   = '$',
+    klass = '=',
+    seed  = 1).add(**d)
 
-@cached
-def rows0(**d): return o(
+@the
+def ROWS(**d): return o(
   skip="?",
   sep  = ',',
   bad = r'(["\' \t\r\n]|#.*)'
-  ).update(**d)
+  ).add(**d)
+"""
 
+## Misc stuff
+
+### Random Stuff 
+
+"""
 rand= random.random
-seed= random.seed
+rseed= random.seed
 
 def shuffle(lst): random.shuffle(lst); return lst
+"""
 
-def say(c): sys.stdout.write(str(c))
+### Print Stuff
+
+`Say` prints without new lines.
+
+"""
+def say(**lst): print(', '.join(map(str,lst)),end="")
+"""
+
+`G` prints long numbers with just a few decimal places.
  
-def fun(x): 
-  return x.__class__.__name__ == 'function'
-
+"""
 def g(lst,n=3):
   for col,val in enumerate(lst):
     if isinstance(val,float): val = round(val,n)
     lst[col] = val
   return lst
+"""
 
+`Printm` 
+
+"""
 def printm(matrix):
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
   fmt = ' | '.join('{{:{}}}'.format(x) for x in lens)
   for row in [fmt.format(*row) for row in s]:
     print(row)
-
-
 
 def data(w,row):
   for col in w.num:
