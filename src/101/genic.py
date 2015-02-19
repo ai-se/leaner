@@ -1,35 +1,70 @@
 from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode =True
+
+# Copyright (c) <year>, <copyright holder>
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#    * Neither the name of the <organization> nor the
+#      names of its contributors may be used to endorse or promote products
+#      derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 # Lib.py
 
-## Printable  
+## Standards
 
-Written to be included into a two column paper:
+### Readable
+
+Comments tell a story. Describe each function in terms
+of some idiom (small thing) or pattern (larger thing)
+describing something that someone else other than
+the programmer might actually care about
+
+Code written to be included into a two column paper:
 
 + All comments written in multiline strings and in 
   Pandoc style markdown.
       + File contains only one H1 header.
-+ No line longer than 52 characters.  
-+ _Self_ replaced with "_i_".
-+ Indented with two characters.
++ No line longer than 52 characters.  Which means
+  for a language like Python:
+    + _Self_ replaced with "_i_".
+    + Indented with two characters.
 
-## Shareable
+### Shareable
 
 Code starts with some open source license statement.
 
-## Sensible
+Code stored in a public Github repo.
+
+Code it all using a widely used language.
+
+### Sensible
 
 Using Python 2.7 (cause of compatability issues).
 Adopt the future `print` and `division`
 functions. Do not write spurious _.pyc_ files.
 For examples of the use of these idioms, see top of this file.
 
-
-
-## Demo-able
+### Demo-able
 
 A code file X.py may have an associated file Xeg.py
 containing examples, demo, litle tutorials on how to use X.py.
@@ -52,7 +87,9 @@ def go(f,ignoreErrors=True):
   return f
 """
 
-## The Container Idiom
+## Misc Utilities
+
+### The Container Idiom
 
 Just a place to store and update named slots.
 When printed, any slot starting with "_"
