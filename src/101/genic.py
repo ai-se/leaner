@@ -30,7 +30,7 @@ sys.dont_write_bytecode =True
 
 # Lib.py
 
-## Standards
+## Principles
 
 ### Shareable
 
@@ -40,6 +40,13 @@ sys.dont_write_bytecode =True
   on-line tutorialsl e.g. [Stackoverflow.com](http://stackoverflow.com/questions/tagged/python).
 
 ### Readable
+
+#### Succinct
+
+Not arcane, but lots of little short and useful code snippets.
+
+
+#### Commented
 
 Comments tell a story. Describe each function in terms
 of some idiom (small thing) or pattern (larger thing)
@@ -55,7 +62,6 @@ Code written to be included into a two column paper:
   for a language like Python:
     + _Self_ replaced with "_i_".
     + Indented with two characters.
-
 
 ### Sensible
 
