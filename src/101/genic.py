@@ -1,27 +1,55 @@
+from __future__ import division,print_function
+import sys
+sys.dont_write_bytecode =True
 """
 
 # Lib.py
 
-## Printable Idiom
+## Printable  
 
 Written to be included into a two column paper:
 
++ All comments written in multiline strings and in 
+  Pandoc style markdown.
+      + File contains only one H1 header.
 + No line longer than 52 characters.  
 + _Self_ replaced with "_i_".
 + Indented with two characters.
-+ All comments written in multiline strings and in 
-  Pandoc style markdown.
 
-## Standard Idioms
+## Shareable
+
+Code starts with some open source license statement.
+
+## Sensible
 
 Using Python 2.7 (cause of compatability issues).
 Adopt the future `print` and `division`
 functions. Do not write spurious _.pyc_ files.
+For examples of the use of these idioms, see top of this file.
+
+
+
+## Demo-able
+
+A code file X.py may have an associated file Xeg.py
+containing examples, demo, litle tutorials on how to use X.py.
+If functions in Xeg.py are decorated with  `@go`, then
+those functions will run just as a side-effect of loading that code. 
+And if those functions print True and False then you can generate the world's
+smallest test suite just by counting the percent True and Falses
 
 """
-from __future__ import division,print_function
-import sys,re,random
-sys.dont_write_bytecode =True
+def go(f,ignoreErrors=True):
+  doc= '# '+f.__doc__+"\n" if f.__doc__ else ""
+  s='|'+'='*40 +'\n'
+  print('\n==|',f.func_name + ' ' + s+doc)
+  if ignoreErrors:
+    try:
+      f()
+    except:
+      print('Demo function',f,' did not crash: False')
+  else: f()
+  return f
 """
 
 ## The Container Idiom
@@ -61,8 +89,14 @@ def setting(f):
     tmp = the[f.__name__] = f(**d)
     return tmp
   return wrapper
+"""
 
-@the
+For example, my code can now contain functions decorated by @setting
+and all their values can be accessed via (e.g.) `the.GENIC.k`'or updated 
+via (e.g.) `GENIC(k=100)`.
+
+"""
+@setting
 def GENIC(**d): 
   def halfEraDivK(z): 
     return z.opt.era/z.opt.k/2
@@ -74,6 +108,7 @@ def GENIC(**d):
     num   = '$',
     klass = '=',
     seed  = 1).add(**d)
+"""
 
 @the
 def ROWS(**d): return o(
