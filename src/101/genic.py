@@ -43,8 +43,24 @@ sys.dont_write_bytecode =True
 
 #### Succinct
 
-Not arcane, but lots of little short and useful code snippets.
+Not arcane, but lots of little short and useful code snippets. 
 
+#### Abstract
+
+Heavy use of abstraction to simplify processing of low-level details.
+
+#### Succinct
+
+Deliver features, not code. N-1 lines of code better than N. Write your code then cut it in half. YAGNI! YAGNI!
+
+#### Functional more Object-Oriented
+
+_(BEGIN PERSONNEL BIAS)_
+
+N-1 classes better than N. Give us this day our daily lambda. 
+
+Why? Well functional programemers can define and code a dozen useful patterns in the time it
+takes a pure-OO guy to code one class.
 
 #### Commented
 
