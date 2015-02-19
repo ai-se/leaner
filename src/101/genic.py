@@ -32,6 +32,13 @@ sys.dont_write_bytecode =True
 
 ## Standards
 
+### Shareable
+
++ Code starts with some open source license statement.
++ Code stored in some downloadable public space (e.g. Github).
++ Coded in some widely used language (e.g. Python) with extensive 
+  on-line tutorialsl e.g. [Stackoverflow.com](http://stackoverflow.com/questions/tagged/python).
+
 ### Readable
 
 Comments tell a story. Describe each function in terms
@@ -49,13 +56,6 @@ Code written to be included into a two column paper:
     + _Self_ replaced with "_i_".
     + Indented with two characters.
 
-### Shareable
-
-Code starts with some open source license statement.
-
-Code stored in a public Github repo.
-
-Code it all using a widely used language.
 
 ### Sensible
 
