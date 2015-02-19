@@ -2,7 +2,7 @@
 
 # Lib.py
 
-## Printable Style
+## Printable Idiom
 
 Written to be included into a two column paper:
 
@@ -12,7 +12,7 @@ Written to be included into a two column paper:
 + All comments written in multiline strings and in 
   Pandoc style markdown.
 
-## Standard Headers
+## Standard Idioms
 
 Using Python 2.7 (cause of compatability issues).
 Adopt the future `print` and `division`
@@ -24,7 +24,7 @@ import sys,re,random
 sys.dont_write_bytecode =True
 """
 
-## The Container Pattern
+## The Container Idiom
 
 Just a place to store and update named slots.
 When printed, any slot starting with "_"
@@ -45,7 +45,7 @@ class o:
     return '{'+' '.join(show)+'}'
 """
 
-## The Settings Pattern
+## The Settings Idiom
 
 + All  settings are stored in some global space so 
      + Optimizers have one place to go to adjust settings;
@@ -112,7 +112,7 @@ def g(lst,n=3):
   return lst
 """
 
-`Printm` 
+`Printm` prings a list of lists, aligning each column.
 
 """
 def printm(matrix):
@@ -122,32 +122,58 @@ def printm(matrix):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
-def data(w,row):
+def data(row):
   for col in w.num:
     val = row[col]
     w.min[col] = min(val, w.min.get(col,val))
     w.max[col] = max(val, w.max.get(col,val))
 
-def table(file,w):
+"""
+
+## The Era Pattern
+
+Run over the data using a window of size _era_.  For
+each era, shuffle the data order. Return one row at
+a time. Flag if this is the first row. Return 
+at least _want_ number of rows.
+
+"""
+def era(file, n=0):
   def chunks():
     chunk = []
-    for m,row in rows(file):
-      if m==0:
-        header(w,row)
-      else:
-        chunk += [row]
-        if len(chunk) > w.opt.buffer: 
-          yield chunk
-          chunk=[]
+    for row in rows(file):
+      chunk += [row]
+      if len(chunk) > the.ERA.size:
+        yield chunk
+        chunk=[]
     if chunk: yield chunk
-  n=0
   for chunk in chunks():
     for row in shuffle(chunk):
       n += 1
-      data(w,row)
-      yield n,row
+      yield n==0,row
+      if n > the.ERA.want: return
+  if n < the.ERA.want:
+    for first,row in era(file,n):
+      yield first,row
+"""
 
-def header(w,row):
+## The Table Pattern
+
+The first row contains header info. All other rows are data.
+Yield all rows, after updating header and row data information.
+
+"""
+
+def table(file):
+  t= t or o(nums=[],sym[],ords=[])
+  for first, row in era(file):
+    if first:
+      header(row,t)
+    else:
+      data(row,t)
+      yield t,row
+
+def header(row,t):
   def numOrSym(val):
     return w.num if w.opt.num in val else w.sym
   def indepOrDep(val):
@@ -162,8 +188,8 @@ def indep(w,cols):
   for col in cols:
     if col in w.indep: yield col
 
-def rows(file,w=None):
-  w = w or rows0()
+def rows(file):
+  o = the.Rows
   def atom(x):
     try : return int(x)
     except ValueError:
