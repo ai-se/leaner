@@ -12,7 +12,7 @@ class Sample :
     map(i.__iadd__,init)
   def __iadd__(i,x):
     i.n += 1
-    now = len(i.all)
+    now  = len(i.all)
     if now < i.max:
       i.all += [x]
     elif r() <= now/i.n:
