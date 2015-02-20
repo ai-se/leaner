@@ -2,22 +2,31 @@ from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode=True
 
-#  _   _                 _          _                   
-# | | | | _____      __ | |_ ___   | |__   ___    __ _  
-# | |_| |/ _ \ \ /\ / / | __/ _ \  | '_ \ / _ \  / _` | 
-# |  _  | (_) \ V  V /  | || (_) | | |_) |  __/ | (_| | 
-# |_| |_|\___/ \_/\_/    \__\___/  |_.__/ \___|  \__,_| 
-#  ____         __ _                                    
-# / ___|  ___  / _| |___      ____ _ _ __ ___           
-# \___ \ / _ \| |_| __\ \ /\ / / _` | '__/ _ \          
-#  ___) | (_) |  _| |_ \ V  V / (_| | | |  __/          
-# |____/ \___/|_|  \__| \_/\_/ \__,_|_|  \___|          
-#  ____       _            _   _     _                  
-# / ___|  ___(_) ___ _ __ | |_(_)___| |_                
-# \___ \ / __| |/ _ \ '_ \| __| / __| __|               
-#  ___) | (__| |  __/ | | | |_| \__ \ |_                
-# |____/ \___|_|\___|_| |_|\__|_|___/\__|               
+#  __                              __
+# / _\_   _ _ __  _ __   ___  _ __| |_     
+# \ \| | | | '_ \| '_ \ / _ \| '__| __|    
+# _\ \ |_| | |_) | |_) | (_) | |  | |_     
+# \__/\__,_| .__/| .__/ \___/|_|   \__|    
+#          |_|   |_|                       
+#    ___                                   
+#   /___\_ __   ___ _ __                   
+#  //  // '_ \ / _ \ '_ \                  
+# / \_//| |_) |  __/ | | |                 
+# \___/ | .__/ \___|_| |_|                 
+#       |_|                                
+#  __        __ _                          
+# / _\ ___  / _| |___      ____ _ _ __ ___ 
+# \ \ / _ \| |_| __\ \ /\ / / _` | '__/ _ \
+# _\ \ (_) |  _| |_ \ V  V / (_| | | |  __/
+# \__/\___/|_|  \__| \_/\_/ \__,_|_|  \___|
+                                         
+#  __      _            _   _     _        
+# / _\ ___(_) ___ _ __ | |_(_)___| |_      
+# \ \ / __| |/ _ \ '_ \| __| / __| __|     
+# _\ \ (__| |  __/ | | | |_| \__ \ |_      
+# \__/\___|_|\___|_| |_|\__|_|___/\__|            
 #     
+#
 # Copyright (c) 2015, Tim Menzies, tim.menzies@gmail.com
 # All rights reserved.
 #
@@ -46,42 +55,53 @@ sys.dont_write_bytecode=True
 
 """# Lib.py
 
-This file defines a basic set of tools
-to be used by  a
-"software scientist".   
+This file defines basic conventions and low-level
+code to support "open software science" (OpeSS).
 
-The world we live
-in today is much more a man-made,1 or
-artificial, world than it is a natural
-world. Almost every element in our
-environment shows evidence of human
-artifice.
+An open software scientist analyzes and shares
+software artifacts with the goal of generating
+libraries of trusted software tools.  Their
+conclusions are repeatable, improvable and
+refutable.
 
-Because of its abstract character and
-its symbol manipulating generality, the
-digital computer has greatly extended
-the range of systems whose behavior can
-be imitated. Generally we now call the
-imitation "simulation," and we try to
-understand the imitated system by
-testing the simulation in a variety of
-simulated, or imitated, environments.
-Artificial systems and adaptive systems
-have properties that make them
-particularly susceptible to simulation
-via simplified models.
+Tools, not just opions..
 
-A frequently asked question is how can a
-simulation ever tell us anything that we
-do not already know?  The obvious point
-is that, even when we have correct
-premises, it may be very difficult to
-discover what they imply. All correct
-reasoning is a grand system of
-tautologies, but only God can make
-direct use of that fact. The rest of us
-must painstakingly and fallibly tease
-out the consequences of our assumptions.
+Open software scientists use literature
+programming. Their code comments describe
+experiments (simulation, data mining, etc) that
+execute within their code.  That code does not just
+run, it reports opinions.  It comments on whether X
+is better than Y.
+
+To encourage sharing and an open analysis of all concluions,
+OpeSS uses open source tools. All work is stored on-line
+in repositories that support commenting, forking, and merging.
+
+The world we live in today is much more a man-made,
+or artificial, world than it is a natural
+world. Almost every element in our environment shows
+evidence of human artifice.
+
+Because of its abstract character and its symbol
+manipulating generality, the digital computer has
+greatly extended the range of systems whose behavior
+can be imitated. Generally we now call the imitation
+"simulation," and we try to understand the imitated
+system by testing the simulation in a variety of
+simulated, or imitated, environments.  Artificial
+systems and adaptive systems have properties that
+make them particularly susceptible to simulation via
+simplified models.
+
+A frequently asked question is how can a simulation
+ever tell us anything that we do not already know?
+The obvious point is that, even when we have correct
+premises, it may be very difficult to discover what
+they imply. All correct reasoning is a grand system
+of tautologies, but only God can make direct use of
+that fact. The rest of us must painstakingly and
+fallibly tease out the consequences of our
+assumptions.
 
 In science and engineering the study of
 "systems" is an increasingly popular
@@ -95,8 +115,6 @@ popularity is to be more than a fad,
 necessity will have to mother invention
 and provide substance to go with the
 name.
-
-
 
 
 ## Principles
@@ -238,7 +256,7 @@ def GENIC(**d):
 @setting
 def TABLE(**d): return o(
     num   = '$',
-    ord   = "<',
+    ord   = '<',
     klass = '='
   ).add(**d)
 
@@ -255,6 +273,7 @@ def ROWS(**d): return o(
 ### Random Stuff 
 
 """
+import random
 rand= random.random
 rseed= random.seed
 
@@ -291,6 +310,57 @@ def printm(matrix):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
+
+import math
+
+class S(): 
+  def __init__(i,inits=[]):
+    i.n,i.count,i._also = 0, {}, None
+    for number in inits: i += number 
+  def __iadd__(i,z): return i.inc(z,  1)
+  def __isub__(i,z): return i.inc(z, -1)
+  def inc(i,z):
+    i._also = None
+    i.n += n
+    i.counts[z] = i.counts.get(z,0) + n
+    return i
+  def most(i): return i.also().most
+  def mode(i): return i.also().mode
+  def ent(i) : return i.also().e
+  def also():
+    if not i._also:
+      e,most.mode = 0,0,None
+      for z in i.counts:
+        if i.counts[z] > most:
+          most,mode = i.counts[z],z
+        p = i.counts[z]/i.n
+        if p: 
+          e -= p*math.log(p,2)
+        i._also = o(most=most,mode=mode,e=e)
+    return i._also
+  
+class N(): 
+  def __init__(i,inits=[]):
+    i.n = i.mu = i.m2 = i.sd = 0
+    for number in inits: i += number 
+  def _sd(i)  :
+    if i.n > 1 :
+      i.sd = (max(0,i.m2)*1.0/(i.n - 1))**0.5
+    return i
+  def __iadd__(i,x):
+    i.n  += 1
+    delta = x - i.mu
+    i.mu += delta/(1.0*i.n)
+    i.m2 += delta*(x - i.mu)
+    return i._also()
+  def __isub__(i,x):
+    i.n  -= 1
+    delta = x - i.mu
+    i.mu -= delta/(1.0*i.n)
+    i.m2 -= delta*(x - i.mu)
+    return i._also()
+  
+  
 def data(row):
   for col in w.num:
     val = row[col]
