@@ -6,7 +6,7 @@ import random
 r = random.random
 rseed=random.seed
 
-class Sample :
+class Sample:
   def __init__(i,init=[],size=128):
     i.max, i.all, i.n = size, [], 0
     map(i.__iadd__,init)
