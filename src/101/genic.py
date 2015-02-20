@@ -1,12 +1,29 @@
 from __future__ import division,print_function
 import sys
-sys.dont_write_bytecode =True
+sys.dont_write_bytecode=True
 
-# Copyright (c) <year>, <copyright holder>
+#  _   _                 _          _                   
+# | | | | _____      __ | |_ ___   | |__   ___    __ _  
+# | |_| |/ _ \ \ /\ / / | __/ _ \  | '_ \ / _ \  / _` | 
+# |  _  | (_) \ V  V /  | || (_) | | |_) |  __/ | (_| | 
+# |_| |_|\___/ \_/\_/    \__\___/  |_.__/ \___|  \__,_| 
+#  ____         __ _                                    
+# / ___|  ___  / _| |___      ____ _ _ __ ___           
+# \___ \ / _ \| |_| __\ \ /\ / / _` | '__/ _ \          
+#  ___) | (_) |  _| |_ \ V  V / (_| | | |  __/          
+# |____/ \___/|_|  \__| \_/\_/ \__,_|_|  \___|          
+#  ____       _            _   _     _                  
+# / ___|  ___(_) ___ _ __ | |_(_)___| |_                
+# \___ \ / __| |/ _ \ '_ \| __| / __| __|               
+#  ___) | (__| |  __/ | | | |_| \__ \ |_                
+# |____/ \___|_|\___|_| |_|\__|_|___/\__|               
+#     
+# Copyright (c) 2015, Tim Menzies, tim.menzies@gmail.com
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
+
 #    * Redistributions of source code must retain the above copyright
 #      notice, this list of conditions and the following disclaimer.
 #    * Redistributions in binary form must reproduce the above copyright
@@ -15,7 +32,7 @@ sys.dont_write_bytecode =True
 #    * Neither the name of the <organization> nor the
 #      names of its contributors may be used to endorse or promote products
 #      derived from this software without specific prior written permission.
-#
+
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,9 +43,12 @@ sys.dont_write_bytecode =True
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 """
 
 # Lib.py
+
+This file defines a workbench for the software scientist. 
 
 ## Principles
 
@@ -164,12 +184,16 @@ def GENIC(**d):
     era   = 1000,
     buffer= 500,
     tiny  = halfEraDivK,
-    num   = '$',
-    klass = '=',
     seed  = 1).add(**d)
-"""
 
-@the
+@setting
+def TABLE(**d): return o(
+    num   = '$',
+    ord   = "<',
+    klass = '='
+  ).add(**d)
+
+@setting
 def ROWS(**d): return o(
   skip="?",
   sep  = ',',
@@ -186,6 +210,8 @@ rand= random.random
 rseed= random.seed
 
 def shuffle(lst): random.shuffle(lst); return lst
+
+def noop(x): return x
 """
 
 ### Print Stuff
@@ -257,7 +283,6 @@ The first row contains header info. All other rows are data.
 Yield all rows, after updating header and row data information.
 
 """
-
 def table(file):
   t= t or o(nums=[],sym[],ords=[])
   for first, row in era(file):
@@ -283,12 +308,10 @@ def indep(w,cols):
     if col in w.indep: yield col
 
 def rows(file):
-  o = the.Rows
-  def atom(x):
-    try : return int(x)
-    except ValueError:
-       try : return float(x)
-       except ValueError : return x
+  def what(z):
+    if the.TABLE.num in z: return float
+    if the.TABLE.int in z: return int
+    return noop
   def lines(): 
     n,kept = 0,""
     for line in open(file):
@@ -301,10 +324,11 @@ def rows(file):
           kept = "" 
   todo = None
   for n,line in lines():
-    todo = todo or [col for col,name 
+    todo = todo or [col,what(name) for col,name 
                     in enumerate(line) 
                     if not w.skip in name]
-    yield n, [ line[col] for col in todo ]
+    yield n,[ comp(line[col])
+              for col,comp in todo ]
 
 def fuse(w,new,n):
   u0,u,dob,old = w.centroids[n]
