@@ -310,7 +310,6 @@ def printm(matrix):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
-
 import math
 
 class S(): 
