@@ -43,7 +43,7 @@ def _samples(n=1000,exps=128):
       truth = []
       for _ in xrange(n):
         sample1(truth,f,alpha,beta)
-      approximation = Sample(truth,size=size).all()
+      approximation = Sample(truth,size=size).all
       out += [ldiff(truth, approximation)]
     print(exps,'times i approximated',n,'values from a',f.__name__,'distribution in a cache of size and got ',size,q(out),'% error')
 
