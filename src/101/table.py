@@ -12,10 +12,13 @@ def TABLE(**d): return o(
     klass = '=',
     skip  = "?",
     sep   = ',',
+    more  = '>',
+    less  = '<',
     bad   =  r'(["\' \t\r\n]|#.*)',
-    era   = 256,
-    want  = 1000
+    era   = 256
   ).add(**d)
+
+### continuations are not at the thing level
 
 import re
 def rows(file):
@@ -23,7 +26,7 @@ def rows(file):
     if the.TABLE.num in z: return float
     if the.TABLE.int in z: return int
     return noop
-  def whats(line):
+  def todos(line):
     return [(col,what(name)) for col,name 
             in enumerate(line) 
             if not the.TABLE.skip in name]
@@ -40,10 +43,10 @@ def rows(file):
   todo = None
   for line in lines():
     if todo:
-      yield [ comp(line[col]) for col,comp in todo ]
+      line = [ comp(line[col]) for col,comp in todo ]
     else:
-      todo = whats(line)
-      yield line
+      todo = todos(line)
+    yield line
 """
 
 ## The Era Pattern
@@ -54,14 +57,14 @@ a time. Flag if this is the first row. Return
 at least _want_ number of rows.
 
 """
-def era(file,t,n=0):
+def era(file,t):
   def chunks():
     chunk = []
     for row in rows(file):
       if not t.all:
-        header(row,t)
+        header(t,row)
       else:
-        data(row,t)
+        tell(t,row)
         chunk += [row]
         if len(chunk) >= the.TABLE.era:
           yield chunk
@@ -69,12 +72,11 @@ def era(file,t,n=0):
     if chunk: yield chunk
   for chunk in chunks():
     for row in shuffle(chunk):
-      n += 1
       yield row
-      if n >= the.TABLE.want: return
-  if n < the.TABLE.want:
-    for row in era(file,t,n):
-      yield row
+
+def tell(t,row):
+  for one,x in zip(t.all,row): one += x
+  return row
 """
 
 ## The Table Pattern
@@ -84,34 +86,34 @@ Yield all rows, after updating header and row data information.
 
 """
 def table0():
-  return o(num=[],sym=[],ord=[],
+  return o(num=[],sym=[],ord=[],spec=[],
            more=[],less=[],
            name={},index={},
            indep=[],dep=[],all=[])
 
-def data(row,t):
-  for about,cell in zip(t.all,row):
-    about += cell
-  return row
-
-def header(row,t):
+def header(t,row):
   tbl = the.TABLE
+  t.spec = row
   def what(z):
-    return (N,t.num) if tbl.num in z else (S,t.sym)
-  def depOrindep(z,header):
-    where  = t.dep if tbl.klass in z else t.indep
-    where += [header]
-  def moreOrLess(z,header,t):
-    if tbl.more in z : t.more.append(header)
-    if tbl.less in z : t.less.append(header)
-  for col,name in enumerate(row):
-    t.name[col]  = name
-    t.index[name] = col
-    print(col,name)
-    header, where = what(name)
-    header.name   = name
-    where        += [header]
-    depOrindep(name,header)
-    moreOrLess(name,header,t)
+    if tbl.num in txt:
+      return N(), t.num
+    else:
+      return S(), t.sym
+  def dep(z) :
+    if tbl.klass in z: return True
+    if tbl.less  in z: return True
+    if tbl.more  in z: return True
+    return False
+  for col,txt in enumerate(row):
+    t.name[col]  = txt
+    t.index[txt] = col
+    header, at1 = what(txt)
+    header.name = txt
+    header.col  = col
+    at1  += [header]
+    at2   = t.dep if dep(z) else t.indep
+    at2  += [header]
+    if tbl.more in txt : t.more += [header]
+    if tbl.less in txt : t.less += [header]
     t.all += [header]
   return t

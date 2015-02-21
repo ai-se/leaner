@@ -44,9 +44,11 @@ class S():
     i.n += n
     i.counts[z] = i.counts.get(z,0) + n
     return i
+  def norm(i,x): return x
   def most(i): return i.also().most
   def mode(i): return i.also().mode
   def ent(i) : return i.also().e
+  def __repr__(i): return str(i.also())
   def also(i):
     if not i._also:
       e,most,mode = 0,0,None
@@ -56,7 +58,8 @@ class S():
         p = i.counts[z]/i.n
         if p: 
           e -= p*math.log(p,2)
-        i._also = o(most=most,mode=mode,e=e)
+        i._also = o(counts=i.counts,
+                    most=most,mode=mode,e=e)
     return i._also
   
 class N(): 
@@ -71,24 +74,27 @@ class N():
   def norm(i,x):
     return (x - i.lo()) / (i.hi() - i.lo() +0.0001)
   def __iadd__(i,x):
-    i._also = None
+    i._also   = None
     i.sample += x
-    i.n  += 1
-    delta = x - i.mu
-    i.mu += delta/i.n
-    i.m2 += delta*(x - i.mu)
+    i.n      += 1
+    delta     = x - i.mu
+    i.mu     += delta/i.n
+    i.m2     += delta*(x - i.mu)
     return i
   def __isub__(i,x):
-    i._also=None
-    i.n  -= 1
-    delta = x - i.mu
-    i.mu -= delta/i.n
-    i.m2 -= delta*(x - i.mu)
+    i._also = None
+    i.n    -= 1
+    delta   = x - i.mu
+    i.mu   -= delta/i.n
+    i.m2   -= delta*(x - i.mu)
     return i
+  def __repr__(i): return str(i.also())
   def also(i):
     if not i._also:
       i.sample.all.sort()
       i._also = o(
+        n  = i.n,
+        mu = i.mu,
         sd = (max(0,i.m2)/(i.n - 1))**0.5,
         lo = i.sample.all[ 0],
         hi = i.sample.all[-1])
@@ -134,4 +140,3 @@ def ranked(lsts,tiles=None):
     lst[0]  = rank
     lst[-1] = ntiles(lst[-1],tiles)
   return lsts
-    

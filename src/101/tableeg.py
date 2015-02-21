@@ -15,9 +15,9 @@ def _rows():
 @go
 def _era():
   the.TABLE.era = 10
-  the.TABLE.want = 50
   t=table0()
-  print(t)
   for row in era("housing.csv",t):
     print(row)
+  for indep in t.indep:
+    print(indep)
 

@@ -77,13 +77,14 @@ name is displayed using it's function name.
 """
 class o:
   def __init__(i,**d) : i.add(**d)
-  def add(i,**d) : i.__dict__.update(**d); return i
-  def __setitem__(i,k,v): i.__dict__[k] = v
+  def has(i): return i.__dict__
+  def add(i,**d) : i.has().update(**d); return i
+  def __setitem__(i,k,v): i.has()[k] = v
   def __repr__(i) :
     f = lambda z: z.__class__.__name__ == 'function'
     name   = lambda z: z.__name__ if f(z) else z
     public = lambda z: not "_" is z[0]
-    d    = i.__dict__
+    d    = i.has()
     show = [':%s=%s' % (k,name(d[k])) 
             for k in sorted(d.keys()) if public(k)]
     return '{'+' '.join(show)+'}'
