@@ -20,15 +20,14 @@ def _say():
  say(1,2,'b',say)
 
  @go
- def _g():
-   lst = [r() for _ in xrange(10)]
+ def _prettyPringNumbers():
+   lst = [r() for _ in xrange(5)]
    print(lst)
    print(g(lst))
 
 @go
 def _printm():
-  header=[["name","age","shoesize"],
-          ["----","---","--------"]]
+  header=[["name","age","shoesize"]]
   data = [["Usually what is the dumpster?",
            "Denver dumpster is a metal container",
            "that is utilized for waste"],
@@ -40,5 +39,5 @@ def _printm():
           ["container on the other hand is",
            "basically a dumpster media blast",
            "Hobucken NC with an open top" ]]
-  printm(header+data)
+  printm(header+data,underline=True)
   

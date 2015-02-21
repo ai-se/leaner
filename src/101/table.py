@@ -2,30 +2,48 @@ from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode=True
 
+from lib import *
+from counts import *
+
 @setting
 def TABLE(**d): return o(
     num   = '$',
-    ord   = '<',
-    klass = '='
+    int   = '!',
+    klass = '=',
+    skip  = "?",
+    sep   = ',',
+    bad   =  r'(["\' \t\r\n]|#.*)',
+    era   = 256,
+    want  = 1000
   ).add(**d)
 
-@setting
-def ROWS(**d): return o(
-  skip="?",
-  sep  = ',',
-  bad = r'(["\' \t\r\n]|#.*)'
-  ).add(**d)
-
-
-def data(row):
-  for col in w.num:
-    val = row[col]
-    w.min[col] = min(val, w.min.get(col,val))
-    w.max[col] = max(val, w.max.get(col,val))
-
-
-
-    
+import re
+def rows(file):
+  def what(z):
+    if the.TABLE.num in z: return float
+    if the.TABLE.int in z: return int
+    return noop
+  def whats(line):
+    return [(col,what(name)) for col,name 
+            in enumerate(line) 
+            if not the.TABLE.skip in name]
+  def lines(): 
+    kept = ""
+    for line in open(file):
+      now   = re.sub(the.TABLE.bad,"",line)
+      if now:
+        kept += now
+        if kept:
+          if not now[-1] == the.TABLE.sep:
+            yield kept.split(the.TABLE.sep)
+            kept = "" 
+  todo = None
+  for line in lines():
+    if todo:
+      yield [ comp(line[col]) for col,comp in todo ]
+    else:
+      todo = whats(line)
+      yield line
 """
 
 ## The Era Pattern
@@ -36,23 +54,27 @@ a time. Flag if this is the first row. Return
 at least _want_ number of rows.
 
 """
-def era(file, n=0):
+def era(file,t,n=0):
   def chunks():
     chunk = []
     for row in rows(file):
-      chunk += [row]
-      if len(chunk) > the.ERA.size:
-        yield chunk
-        chunk=[]
+      if not t.all:
+        header(row,t)
+      else:
+        data(row,t)
+        chunk += [row]
+        if len(chunk) >= the.TABLE.era:
+          yield chunk
+          chunk=[]
     if chunk: yield chunk
   for chunk in chunks():
     for row in shuffle(chunk):
       n += 1
-      yield n==0,row
-      if n > the.ERA.want: return
-  if n < the.ERA.want:
-    for first,row in era(file,n):
-      yield first,row
+      yield row
+      if n >= the.TABLE.want: return
+  if n < the.TABLE.want:
+    for row in era(file,t,n):
+      yield row
 """
 
 ## The Table Pattern
@@ -61,49 +83,35 @@ The first row contains header info. All other rows are data.
 Yield all rows, after updating header and row data information.
 
 """
-def table(file):
-  t= t or o(nums=[],sym[],ords=[])
-  for first, row in era(file):
-    if first:
-      header(row,t)
-    else:
-      data(row,t)
-      yield t,row
+def table0():
+  return o(num=[],sym=[],ord=[],
+           more=[],less=[],
+           name={},index={},
+           indep=[],dep=[],all=[])
+
+def data(row,t):
+  for about,cell in zip(t.all,row):
+    about += cell
+  return row
 
 def header(row,t):
-  def numOrSym(val):
-    return w.num if w.opt.num in val else w.sym
-  def indepOrDep(val):
-    return w.dep if w.opt.klass in val else w.indep
-  for col,val in enumerate(row):
-    numOrSym(val).append(col)
-    indepOrDep(val).append(col)
-    w.name[col] = val
-    w.index[val] = col
-
-def indep(w,cols):
-  for col in cols:
-    if col in w.indep: yield col
-
-def rows(file):
+  tbl = the.TABLE
   def what(z):
-    if the.TABLE.num in z: return float
-    if the.TABLE.int in z: return int
-    return noop
-  def lines(): 
-    n,kept = 0,""
-    for line in open(file):
-      now   = re.sub(w.bad,"",line)
-      kept += now
-      if kept:
-        if not now[-1] == w.sep:
-          yield n, map(atom, kept.split(w.sep))
-          n += 1
-          kept = "" 
-  todo = None
-  for n,line in lines():
-    todo = todo or [col,what(name) for col,name 
-                    in enumerate(line) 
-                    if not w.skip in name]
-    yield n,[ comp(line[col])
-              for col,comp in todo ]
+    return (N,t.num) if tbl.num in z else (S,t.sym)
+  def depOrindep(z,header):
+    where  = t.dep if tbl.klass in z else t.indep
+    where += [header]
+  def moreOrLess(z,header,t):
+    if tbl.more in z : t.more.append(header)
+    if tbl.less in z : t.less.append(header)
+  for col,name in enumerate(row):
+    t.name[col]  = name
+    t.index[name] = col
+    print(col,name)
+    header, where = what(name)
+    header.name   = name
+    where        += [header]
+    depOrindep(name,header)
+    moreOrLess(name,header,t)
+    t.all += [header]
+  return t

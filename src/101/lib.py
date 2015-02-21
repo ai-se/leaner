@@ -78,6 +78,7 @@ name is displayed using it's function name.
 class o:
   def __init__(i,**d) : i.add(**d)
   def add(i,**d) : i.__dict__.update(**d); return i
+  def __setitem__(i,k,v): i.__dict__[k] = v
   def __repr__(i) :
     f = lambda z: z.__class__.__name__ == 'function'
     name   = lambda z: z.__name__ if f(z) else z
@@ -103,6 +104,7 @@ def setting(f):
   def wrapper(**d):
     tmp = the[f.__name__] = f(**d)
     return tmp
+  wrapper()
   return wrapper
 """
 
@@ -122,7 +124,11 @@ rseed = random.seed
 
 def shuffle(lst): random.shuffle(lst); return lst
 
-def noop(x): return x
+def noop(z)  : return z
+def first(z) : return z[0]
+def second(z): return z[1]
+def third(z) : return z[2]
+def last(z)  : return z[-1]
 """
 
 ### Print Stuff
@@ -141,12 +147,27 @@ def g(lst,n=3):
     if isinstance(val,float): val = round(val,n)
     lst[col] = val
   return lst
+
+
+def runs(lst):
+  for j,two in enumerate(lst):
+    if j == 0:
+      one,i = two,0
+    if one!=two:
+      yield j - i,one
+      i = j
+    one=two
+  yield j - i + 1,two
 """
 
 `Printm` prings a list of lists, aligning each column.
 
 """
-def printm(matrix):
+def printm(matrix,underline=None):
+  if underline:
+    matrix = [ matrix[0]]+ [
+              [("-"*len(s)) for s in matrix[0]]
+             ] +  matrix[1:]
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
   fmt = ' | '.join('{{:{}}}'.format(x) for x in lens)

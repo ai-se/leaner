@@ -4,8 +4,9 @@ from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode =True
 
-from sample import *
+from counts import *
 
+@go
 def _samples(n= 512, exps= 50, seed=1,
              f= random.weibullvariate):
   def sample1(lst,a,b):
@@ -43,5 +44,49 @@ def _samples(n= 512, exps= 50, seed=1,
           'with a cache of size',
           size, q(sorted(out)), '% error')
 
-_samples()
- 
+@go
+def _S():
+  s=S()
+  for x in list('tell.us.what.we.do.not.know'):
+    s += x
+  print(s.also())
+
+@go
+def _N():
+  n=N()
+  for x in xrange(10):
+    n += x
+  print( abs(n.sd-3.0276503541) < 10**-9)
+
+@go
+def _ranked():
+  def worker(lst):
+    for one in ranked(lst): print(one)
+  print("\nbasic..............:"); worker([
+      ["rx1",1,1,1,1,1,1,1,1],
+      ["rx2",2,2,2,2,2,2,2,2]])
+  print("\nstandard...........:"); worker([
+      ["rx1",0.34, 0.49, 0.51, 0.6],
+      ["rx2",0.6,  0.7,  0.8,  0.9],
+      ["rx3",0.6,  0.7,  0.8,  0.9],
+      ["rx4",0.1,  0.2,  0.3,  0.4]])
+  print("\nall the same.......:"); worker([
+      ["rx1",101, 100, 99, 101,  99], 
+      ["rx2",101, 100, 99, 101, 100],
+      ["rx3",101, 100, 99, 101,  99],
+      ["rx4",101, 100, 99, 101, 100],
+      ["rx5",101, 100, 99, 101,  99],
+      ["rx6",101, 100, 99, 101, 100]])
+  print("\ntwo large seperated:"); worker([
+      ["rx1",101, 100,  99, 101,  99],
+      ["rx2",101, 100, 199, 101, 100],
+      ["rx3",101, 100, 199, 101, 199],
+      ["rx4",401, 400, 499, 401, 400],
+      ["rx5",401, 400, 499, 401, 499],
+      ["rx6",401, 400, 409, 401, 400]])
+  print("\nvery small bags....:");worker([
+      ["rx1",1],
+      ["rx2",2],
+      ["rx3",3],
+      ["rx4",1000]])
+
