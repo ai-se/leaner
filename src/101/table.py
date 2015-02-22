@@ -25,6 +25,7 @@ class Row:
     Row.id = i.id = Row.id + 1
     i.cells = cells
     i.table = t
+    i.table.n += 1
     if t:
       for cell,value in zip(t.all,cells):
         if value is not the.TABLE.skip:
@@ -35,14 +36,14 @@ class Row:
   
 import re
 def rows(file):
+  def use(z): return not the.TABLE.skip in z
   def what(z):
     if the.TABLE.num in z: return float
     if the.TABLE.int in z: return int
     return noop
   def todos(line):
     return [(col,what(name)) for col,name 
-            in enumerate(line) 
-            if not the.TABLE.skip in name]
+            in enumerate(line) if use(name)]
   def lines(): 
     kept = ""
     for line in open(file):
@@ -59,6 +60,7 @@ def rows(file):
       line = [ comp(line[col]) for col,comp in todo ]
     else:
       todo = todos(line)
+      line = [ txt for txt in line if use(txt)]
     yield line
 """
 
@@ -74,6 +76,7 @@ def era(file,t):
   def chunks():
     chunk = []
     for row in rows(file):
+      print("era",row)
       if not t.all:
         header(t,row)
       else:
@@ -98,7 +101,7 @@ Yield all rows, after updating header and row data information.
 def table0():
   return o(num=[],sym=[],ord=[],spec=[],
            more=[],less=[],klass=[],
-           name={},index={},
+           name={},index={},n=0,
            indep=[],dep=[],all=[])
 
 def header(t,row):

@@ -36,7 +36,7 @@ class Sample:
 class S(): 
   def __init__(i,inits=[]):
     i.n,i.counts,i._also = 0, {}, None
-    for number in inits: i += number 
+    map(i.__iadd__,inits)
   def __iadd__(i,z): return i.inc(z,  1)
   def __isub__(i,z): return i.inc(z, -1)
   def inc(i,z,n):
@@ -45,7 +45,7 @@ class S():
     i.counts[z] = i.counts.get(z,0) + n
     return i
   def norm(i,z): return z
-  def likely(i,z):
+  def like(i,z):
     return i.counts.get(z,0) / i.n
   def most(i): return i.also().most
   def mode(i): return i.also().mode
@@ -60,27 +60,30 @@ class S():
         p = i.counts[z]/i.n
         if p: 
           e -= p*math.log(p,2)
-        i._also = o(counts=i.counts,
-                    most=most,mode=mode,e=e)
+      i._also = o(counts=i.counts,
+                  most=most,mode=mode,e=e)
     return i._also
-  
+
+# too many calls to hi lo sd for incremental
 class N(): 
   def __init__(i,inits=[]):
     i._also  = None
     i.sample = Sample()
     i.n = i.mu = i.m2 = i.sd = 0
-    for number in inits: i += number 
+    map(i.__iadd__,inits)
   def sd(i) : return i.also().sd
   def lo(i) : return i.also().lo
   def hi(i) : return i.also().hi
   def norm(i,x):
     return (x - i.lo()) / (i.hi() - i.lo() +0.0001)
-  def likely(i,x):
+  def like(i,x):
+    print("x",x,i,my,i.sd())
     return normpdf(i.mu, i.sd(),x)
   def __iadd__(i,x):
     i._also   = None
     i.sample += x
     i.n      += 1
+    print(x,i.mu)
     delta     = x - i.mu
     i.mu     += delta/i.n
     i.m2     += delta*(x - i.mu)
