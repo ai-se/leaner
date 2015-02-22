@@ -15,11 +15,24 @@ def TABLE(**d): return o(
     more  = '>',
     less  = '<',
     bad   =  r'(["\' \t\r\n]|#.*)',
-    era   = 256
+    era   = 256,
+    shuffle=True
   ).add(**d)
 
-### continuations are not at the thing level
-
+class Row:
+  id=0
+  def __init__(i,cells=[],t=None):
+    Row.id = i.id = Row.id + 1
+    i.cells = cells
+    i.table = t
+    if t:
+      for cell,value in zip(t.all,cells):
+        if value is not the.TABLE.skip:
+          cell += value
+  def __getitem__(i,k): return i.cells[k]
+  def __hash__(i)     : return i.id
+  def __repr__(i): return '<'+str(i.cells)+'>'
+  
 import re
 def rows(file):
   def what(z):
@@ -64,19 +77,16 @@ def era(file,t):
       if not t.all:
         header(t,row)
       else:
-        tell(t,row)
-        chunk += [row]
+        chunk += [Row(row,t)]
         if len(chunk) >= the.TABLE.era:
           yield chunk
           chunk=[]
     if chunk: yield chunk
   for chunk in chunks():
-    for row in shuffle(chunk):
+    if the.TABLE.shuffle:
+      chunk = shuffle(chunk)
+    for row in chunk:
       yield row
-
-def tell(t,row):
-  for one,x in zip(t.all,row): one += x
-  return row
 """
 
 ## The Table Pattern
@@ -87,7 +97,7 @@ Yield all rows, after updating header and row data information.
 """
 def table0():
   return o(num=[],sym=[],ord=[],spec=[],
-           more=[],less=[],
+           more=[],less=[],klass=[],
            name={},index={},
            indep=[],dep=[],all=[])
 
@@ -100,20 +110,20 @@ def header(t,row):
     else:
       return S(), t.sym
   def dep(z) :
-    if tbl.klass in z: return True
-    if tbl.less  in z: return True
-    if tbl.more  in z: return True
-    return False
+    return  tbl.klass in z or \
+            tbl.less  in z or  \
+            tbl.more  in z
   for col,txt in enumerate(row):
     t.name[col]  = txt
     t.index[txt] = col
-    header, at1 = what(txt)
-    header.name = txt
-    header.col  = col
+    header, at1  = what(txt)
+    header.name  = txt
+    header.col   = col
     at1  += [header]
-    at2   = t.dep if dep(z) else t.indep
+    at2   = t.dep if dep(txt) else t.indep
     at2  += [header]
-    if tbl.more in txt : t.more += [header]
-    if tbl.less in txt : t.less += [header]
+    if tbl.klass in txt : t.klass += [header]
+    if tbl.more  in txt : t.more  += [header]
+    if tbl.less  in txt : t.less  += [header]
     t.all += [header]
   return t

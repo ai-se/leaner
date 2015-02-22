@@ -143,6 +143,17 @@ def say(*lst): print(', '.join(map(str,lst)),end="")
 `G` prints long numbers with just a few decimal places.
  
 """
+import math
+pi  = math.pi
+sqrt  =math.sqrt
+
+def normpdf(mean, sd, x):
+    var = sd**2
+    denom = (2*math.pi*var)**.5
+    num = math.exp(-(x-mean)**2/(2*var))
+    return num/denom
+
+  
 def g(lst,n=3):
   for col,val in enumerate(lst):
     if isinstance(val,float): val = round(val,n)
@@ -174,3 +185,14 @@ def printm(matrix,underline=None):
   fmt = ' | '.join('{{:{}}}'.format(x) for x in lens)
   for row in [fmt.format(*row) for row in s]:
     print(row)
+
+def median(lst):
+  "Assumes lst is ordered."
+  n   = len(lst)
+  a   = int(0.25 * n)  
+  b1  = int(0.50 * n) ; b2 = min(b1 + 1,n)
+  c   = int(0.75 * n)
+  iqr = lst[c] - lst[a]
+  mid = lst[b1] if n % 2 else ((lst[b1] + lst[b2]) / 2) 
+  return mid, iqr
+

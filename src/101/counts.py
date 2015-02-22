@@ -44,7 +44,9 @@ class S():
     i.n += n
     i.counts[z] = i.counts.get(z,0) + n
     return i
-  def norm(i,x): return x
+  def norm(i,z): return z
+  def likely(i,z):
+    return i.counts.get(z,0) / i.n
   def most(i): return i.also().most
   def mode(i): return i.also().mode
   def ent(i) : return i.also().e
@@ -73,6 +75,8 @@ class N():
   def hi(i) : return i.also().hi
   def norm(i,x):
     return (x - i.lo()) / (i.hi() - i.lo() +0.0001)
+  def likely(i,x):
+    return normpdf(i.mu, i.sd(),x)
   def __iadd__(i,x):
     i._also   = None
     i.sample += x
@@ -82,7 +86,7 @@ class N():
     i.m2     += delta*(x - i.mu)
     return i
   def __isub__(i,x):
-    i._also = None
+    i._also = None; i.sample = Sample()
     i.n    -= 1
     delta   = x - i.mu
     i.mu   -= delta/i.n
@@ -91,13 +95,18 @@ class N():
   def __repr__(i): return str(i.also())
   def also(i):
     if not i._also:
+      i._also= o(
+        n  = i.n, mu = i.mu, sd= 0,
+        med= None, iqr= None,  lo= None, hi= None)
       i.sample.all.sort()
-      i._also = o(
-        n  = i.n,
-        mu = i.mu,
-        sd = (max(0,i.m2)/(i.n - 1))**0.5,
-        lo = i.sample.all[ 0],
-        hi = i.sample.all[-1])
+      if i.sample.all:
+        i._also.lo  = i.sample.all[ 0]
+        i._also.hi  = i.sample.all[-1]
+        med, iqr    = median(i.sample.all)
+        i._also.med = med
+        i._also.iqr = iqr 
+      if i.n > 1:
+        i._also.sd  = (max(0,i.m2)/(i.n - 1))**0.5
     return i._also
   
 def cliffsDelta(lst1,lst2,dull=None):
@@ -119,24 +128,26 @@ def ntiles(lst,tiles):
   thing = lambda z: lst[ int(len(lst)*z)  ]
   return [ thing(tile) for tile in tiles ]
 
-def ranked(lsts,tiles=None):
-  if tiles is None: tiles = the.COUNT.tiles
-  def prep(lst):
-    name = lst[0]
-    nums = sorted(lst[1:])
-    mid  = nums[ int(len(nums)/2 ) ]
-    return [1,name,mid,nums]
-  lsts = [ prep(z) for z in lsts ]
-  lsts = sorted(lsts, key=third)
-  pool = []
-  rank = 1
-  for lst in lsts:
-    nums = lst[-1]
-    if cliffsDelta(nums,pool):
+def ranked(d,tiles=None):
+  "Returns a ranked list."
+  tiles = tiles or the.COUNT.tiles
+  def prep(key):
+    nums  = sorted(d[key])
+    med,iqr = median(nums)
+    return o(rank  = 1,
+             name  = key,
+             _nums = nums,
+             median= med,
+             iqr   = iqr,
+             tiles = ntiles(nums, tiles))
+  lsts = sorted([prep(k) for k in d],
+                key = lambda z: z.median)
+  rank, pool = 1, []
+  for x in lsts:
+    if cliffsDelta(x._nums, pool):
       rank += 1
-      pool  = nums
+      pool  = x._nums
     else:
-      pool += nums
-    lst[0]  = rank
-    lst[-1] = ntiles(lst[-1],tiles)
+      pool += x._nums
+    x.rank = rank
   return lsts
