@@ -68,7 +68,7 @@ timm:
 publish: $(mds) wikiCommits
 	
 wikiCommits:
-	cp -p wiki/* $(Wiki)
+	cp  wiki/* $(Wiki)
 	bash $(Wiki)/commits $(Wiki) 
 
 tests: 
