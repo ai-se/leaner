@@ -2,6 +2,12 @@ from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode=True
 
+"""
+
+# Collecting Statistics from Classifiers
+
+"""
+
 class Abcd: 
   def __init__(i,db="all",rx="all"):
     i.db = db; i.rx=rx;
