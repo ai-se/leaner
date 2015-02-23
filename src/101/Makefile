@@ -69,7 +69,7 @@ publish: $(mds) wikiCommits
 	
 wikiCommits:
 	cp -p wiki/* $(Wiki)
-	$(shell bash $(Wiki)/commits $(Wiki);)
+	$(shell bash $(Wiki)/commits $(Wiki)  ;)
 
 tests: 
 	@$(foreach f,$(shell ls *eg.py), python $f;)
