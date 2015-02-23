@@ -1,185 +1,39 @@
 
-# Lib.py
-
-## Principles
-
-### Shareable
-
-+ Code starts with some open source license statement.
-+ Code stored in some downloadable public space (e.g. Github).
-+ Coded in some widely used language (e.g. Python) with extensive 
-  on-line tutorialsl e.g. [Stackoverflow.com](http://stackoverflow.com/questions/tagged/python).
-
-### Readable
-
-#### Succinct
-
-Not arcane, but lots of little short and useful code snippets. 
-
-#### Abstract
-
-Heavy use of abstraction to simplify processing of low-level details.
-
-#### Succinct
-
-Deliver features, not code. N-1 lines of code better than N. Write your code then cut it in half. YAGNI! YAGNI!
-
-#### Functional more Object-Oriented
-
-_(BEGIN PERSONNEL BIAS)_
-
-N-1 classes better than N. Give us this day our daily lambda. 
-
-Why? Well functional programemers can define and code a dozen useful patterns in the time it
-takes a pure-OO guy to code one class.
-
-#### Commented
-
-Comments tell a story. Describe each function in terms
-of some idiom (small thing) or pattern (larger thing)
-describing something that someone else other than
-the programmer might actually care about
-
-Code written to be included into a two column paper:
-
-+ All comments written in multiline strings and in 
-  Pandoc style markdown.
-      + File contains only one H1 header.
-+ No line longer than 52 characters.  Which means
-  for a language like Python:
-    + _Self_ replaced with "_i_".
-    + Indented with two characters.
-
-### Sensible
-
-Using Python 2.7 (cause of compatability issues).
-Adopt the future `print` and `division`
-functions. Do not write spurious _.pyc_ files.
-For examples of the use of these idioms, see top of this file.
-
-### Demo-able
-
-A code file X.py may have an associated file Xeg.py
-containing examples, demo, litle tutorials on how to use X.py.
-If functions in Xeg.py are decorated with  `@go`, then
-those functions will run just as a side-effect of loading that code. 
-And if those functions print True and False then you can generate the world's
-smallest test suite just by counting the percent True and Falses
-
-````python
-def go(f,ignoreErrors=True):
-  doc= '# '+f.__doc__+"\n" if f.__doc__ else ""
-  s='|'+'='*40 +'\n'
-  print('\n==|',f.func_name + ' ' + s+doc)
-  if ignoreErrors:
-    try:
-      f()
-    except:
-      print('Demo function',f,' did not crash: False')
-  else: f()
-  return f
-````
-
-## Misc Utilities
-
-### The Container Idiom
-
-Just a place to store and update named slots.
-When printed, any slot starting with "_"
-is not shown. Any slot that is a function
-name is displayed using it's function name.
-
-````python
-class o:
-  def __init__(i,**d) : i.add(**d)
-  def add(i,**d) : i.__dict__.update(**d); return i
-  def __repr__(i) :
-    f = lambda z: z.__class__.__name__ == 'function'
-    name   = lambda z: z.__name__ if f(z) else z
-    public = lambda z: not "_" is z[0]
-    d    = i.__dict__
-    show = [':%s=%s' % (k,name(d[k])) 
-            for k in sorted(d.keys()) if public[k]]
-    return '{'+' '.join(show)+'}'
-````
-
-## The Settings Idiom
-
-+ All  settings are stored in some global space so 
-     + Optimizers have one place to go to adjust settings;
-     + We have one place to go and print the options;
-+ These settings can be set from multiple places all over the code
-  using  a function decorated with "_@setting_".
-
-````python
-the=o()
-
-def setting(f):
-  def wrapper(**d):
-    tmp = the[f.__name__] = f(**d)
-    return tmp
-  return wrapper
-````
-
-For example, my code can now contain functions decorated by @setting
-and all their values can be accessed via (e.g.) `the.GENIC.k`'or updated 
-via (e.g.) `GENIC(k=100)`.
-
-````python
-@setting
-def GENIC(**d): 
-  def halfEraDivK(z): 
-    return z.opt.era/z.opt.k/2
-  return o(
-    k     = 10,
-    era   = 1000,
-    buffer= 500,
-    tiny  = halfEraDivK,
-    num   = '$',
-    klass = '=',
-    seed  = 1).add(**d)
-````
-
-@the
-def ROWS(**d): return o(
-  skip="?",
-  sep  = ',',
-  bad = r'(["\' \t\r\n]|#.*)'
-  ).add(**d)
-````python
-
 ## Misc stuff
 
 ### Random Stuff 
 
-````
+````python
+import random
 rand= random.random
 rseed= random.seed
 
 def shuffle(lst): random.shuffle(lst); return lst
-````python
+
+def noop(x): return x
+````
 
 ### Print Stuff
 
 `Say` prints without new lines.
 
-````
-def say(**lst): print(', '.join(map(str,lst)),end="")
 ````python
+def say(**lst): print(', '.join(map(str,lst)),end="")
+````
 
 `G` prints long numbers with just a few decimal places.
  
-````
+````python
 def g(lst,n=3):
   for col,val in enumerate(lst):
     if isinstance(val,float): val = round(val,n)
     lst[col] = val
   return lst
-````python
+````
 
 `Printm` prings a list of lists, aligning each column.
 
-````
+````python
 def printm(matrix):
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
@@ -187,13 +41,15 @@ def printm(matrix):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
+
+  
 def data(row):
   for col in w.num:
     val = row[col]
     w.min[col] = min(val, w.min.get(col,val))
     w.max[col] = max(val, w.max.get(col,val))
 
-````python
+````
 
 ## The Era Pattern
 
@@ -202,7 +58,7 @@ each era, shuffle the data order. Return one row at
 a time. Flag if this is the first row. Return 
 at least _want_ number of rows.
 
-````
+````python
 def era(file, n=0):
   def chunks():
     chunk = []
@@ -220,15 +76,14 @@ def era(file, n=0):
   if n < the.ERA.want:
     for first,row in era(file,n):
       yield first,row
-````python
+````
 
 ## The Table Pattern
 
 The first row contains header info. All other rows are data.
 Yield all rows, after updating header and row data information.
 
-````
-
+````python
 def table(file):
   t= t or o(nums=[],sym[],ords=[])
   for first, row in era(file):
@@ -254,12 +109,10 @@ def indep(w,cols):
     if col in w.indep: yield col
 
 def rows(file):
-  o = the.Rows
-  def atom(x):
-    try : return int(x)
-    except ValueError:
-       try : return float(x)
-       except ValueError : return x
+  def what(z):
+    if the.TABLE.num in z: return float
+    if the.TABLE.int in z: return int
+    return noop
   def lines(): 
     n,kept = 0,""
     for line in open(file):
@@ -272,10 +125,11 @@ def rows(file):
           kept = "" 
   todo = None
   for n,line in lines():
-    todo = todo or [col for col,name 
+    todo = todo or [col,what(name) for col,name 
                     in enumerate(line) 
                     if not w.skip in name]
-    yield n, [ line[col] for col in todo ]
+    yield n,[ comp(line[col])
+              for col,comp in todo ]
 
 def fuse(w,new,n):
   u0,u,dob,old = w.centroids[n]
@@ -366,7 +220,7 @@ def _genic( src='data/diabetes.csv'):
 
 if __name__ == '__main__': _genic()
 
-````python
+````
 data/diabetes2.csv (1.5M records).
 caught in last gen =77%
 
@@ -383,4 +237,5 @@ rows0 {:bad=(["\' \t\r\n]|#.*) :sep=, :skip=?}
 real	3m25.949s
 user	3m7.403s
 sys	0m2.315s
+````python
 ````
