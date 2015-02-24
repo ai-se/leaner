@@ -14,7 +14,7 @@ the `weibull` function). For each distribution:
 + Many times:
   + Pull, say, 1000 numbers (call it `truth`);
   + Save some random subset into a `Sample` of some `size` 
-    (call it the ``approximation'');
+    (call it the `approximation`);
   + Then pull the same number of randomly selected items
     from `truth` and `approximation`.
   + Sort the pulled values and compute the error difference
@@ -24,7 +24,7 @@ the `weibull` function). For each distribution:
 """
 
 from sample import *
-			 
+		 
 @go
 def _samples(n= 512, exps= 50, seed=1,
              f= random.weibullvariate):
