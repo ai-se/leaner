@@ -4,9 +4,8 @@ sys.dont_write_bytecode =True
 
 """
 
-# Sampling
+# Keeping a Random Subset of Some Items
 
-Keep some random subset of a set of items.
 
 """
 from lib import *
