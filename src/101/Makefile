@@ -17,12 +17,7 @@ git push origin master
 endef 
 
 define testsawk
-  BEGIN       { yes=no=0
-
-print "\n[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining"
-print "--- | --- | ---\n"
-
-              }	
+  BEGIN       { yes=no=0       }	
               { m="."          }	
   /True/      { yes += gsub("True","") ; m = "+" } 
   /False/     { no  += gsub("False",""); m = "X" } 
@@ -34,8 +29,14 @@ endef
 
 
 define p2md
-  BEGIN           { First = 1      
-                    In = 1}         
+  BEGIN           {
+print ""
+print "[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining"
+print "--- | --- | ---"
+print ""
+         First = 1      
+         In = 1
+  }         
   /^"""</,/^>"""/ {  next } 
   /^"""/          {  In = 1 - In       
                      if (In)            
@@ -88,15 +89,15 @@ tests:
 
 dirs: tmp $(Wiki)
 
-tmp     : ; mkdir $@
-$(Wiki) : ; mkdir $@
+tmp     : ; @- mkdir -p $@
+$(Wiki) : ; @- mkdir -p $@
 
 tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
 tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
 tmp/commits   : dirs ; @echo "$$commits" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
-	@awk -f tmp/p2md.awk $< > $@;
+	awk -f tmp/p2md.awk $< > $@;
 
 test: tmp/tests.awk
 	@$(MAKE) tests | awk -f $<
