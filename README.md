@@ -1,7 +1,7 @@
 
 
-[Home](Home) [[home.png]] :: [Data](Data) [[data.png]] :: Leaner Data Mining
---- | --- 
+|[Home](Home) [[home.png]] :: [Data](Data) [[data.png]] :: Leaner Data Mining |
+| --- | 
 
 # Data Mining: a  LEANER approach
 
