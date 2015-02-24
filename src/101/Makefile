@@ -30,10 +30,12 @@ endef
 
 define p2md
   BEGIN           {
+
 print ""
-print "[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining"
-print "--- | --- | ---"
+print "| [Home](Home) [[home.png]] :: [Data](Data) [[data.png]] :: Leaner Data Mining |"
+print "| --- |" 
 print ""
+
          First = 1      
          In = 1
   }         
