@@ -16,7 +16,7 @@ the `weibull` function). For each distribution:
   + Save some random subset into a `Sample` of some `size` 
     (call it the ``approximation'');
   + Then pull the same number of randomly selected items
-    from `truth` and ``approximation''.
+    from `truth` and `approximation`.
   + Sort the pulled values and compute the error difference
     between the _i-th_ item of each pull values.
   + Report this error as a percentage of `truth`.
