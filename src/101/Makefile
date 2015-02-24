@@ -33,7 +33,7 @@ define p2md
 
 print ""
 print "| [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |"
-print "| --- |" 
+print "| --- | --- | --- |" 
 print ""
 
          First = 1      
