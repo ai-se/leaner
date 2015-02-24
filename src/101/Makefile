@@ -99,7 +99,7 @@ tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
 tmp/commits   : dirs ; @echo "$$commits" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
-	awk -f tmp/p2md.awk $< > $@;
+	@awk -f tmp/p2md.awk $< > $@;
 
 test: tmp/tests.awk
 	@$(MAKE) tests | awk -f $<
