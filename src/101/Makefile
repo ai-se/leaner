@@ -1,16 +1,20 @@
-#  __   ___ ___ ___  ___  __  
-# |__) |__   |   |  |__  |__) 
-# |__) |___  |   |  |___ |  \.     
-#                           
-#  __   __   __   ___         
-# /  ` /  \ |  \ |__          
-# \__, \__/ |__/ |___.         
-
-Wiki=../../../leaner.wiki
-pys=$(subst .py,.md,$(shell ls *.py;))
-mds=$(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))
+Wiki = ../../../leaner.wiki#
+pys  = $(subst .py,.md,$(shell ls *.py;))#
+mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
 .PHONY: all typo commit update status giting timm publish tests test
+
+define commits
+HERE=$${1:-$$PWD}
+cd $HERE
+git config --global credential.helper cache
+git config credential.helper 'cache --timeout=3600'
+git config user.name "Tim Menzies"
+git config user.email "tim.menzies@gmail.com"
+git add *
+git commit -am "stuff"
+git push origin master
+endef 
 
 define testsawk
   BEGIN       { yes=no=0       }	
@@ -39,6 +43,7 @@ define p2md
   END     { if (In) print "````"  }
 endef
 
+export commits
 export testsawk
 export p2md
 
@@ -66,21 +71,22 @@ timm:
 	@git config user.email "tim.menzies@gmail.com"
 
 publish: $(mds) wikiCommits
-	
-wikiCommits:
+
+wikiCommits: tmp/commits
 	cp  wiki/* $(Wiki)
-	bash $(Wiki)/commits $(Wiki) 
+	bash tmp/commits $(Wiki) 
 
 tests: 
 	@$(foreach f,$(shell ls *eg.py), python $f;)
 
-tmp :
-	mkdir tmp
+dirs: tmp $(Wiki)
 
-tmp/p2md.awk: tmp  
-	 @echo "$$p2md" > $@
-tmp/tests.awk: tmp
-	 @echo "$$testsawk" > $@
+tmp     : ; mkdir $@
+$(Wiki) : ; mkdir $@
+
+tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
+tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
+tmp/commits   : dirs ; @echo "$$commits" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
 	@awk -f tmp/p2md.awk $< > $@;
