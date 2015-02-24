@@ -4,9 +4,16 @@ mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
 .PHONY: all typo commit update status giting timm publish tests test
 
+define header
+
+[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining
+--- | --- | ---
+
+endef
+
 define commits
 HERE=$${1:-$$PWD}
-cd $HERE
+cd $$HERE
 git config --global credential.helper cache
 git config credential.helper 'cache --timeout=3600'
 git config user.name "Tim Menzies"
@@ -26,6 +33,8 @@ define testsawk
   END         { print "\ntests passed",yes,"failed",no }
 endef
 
+
+
 define p2md
   BEGIN           { First = 1      
                     In = 1}         
@@ -44,6 +53,7 @@ define p2md
 endef
 
 export commits
+export header
 export testsawk
 export p2md
 
@@ -87,10 +97,10 @@ $(Wiki) : ; mkdir $@
 tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
 tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
 tmp/commits   : dirs ; @echo "$$commits" > $@
+tmp/header    : dirs ; @echo "$$header" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
 	@awk -f tmp/p2md.awk $< > $@;
-	@echo making $@
 
 test: tmp/tests.awk
 	@$(MAKE) tests | awk -f $<
