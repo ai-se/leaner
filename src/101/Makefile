@@ -32,7 +32,7 @@ define p2md
   BEGIN           {
 
 print ""
-print "| [Home](Home) [[home.png]] [Data](Data) [[data.png]] : Leaner Data Mining |"
+print "| [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |"
 print "| --- |" 
 print ""
 
