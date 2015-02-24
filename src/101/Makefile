@@ -4,13 +4,6 @@ mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
 .PHONY: all typo commit update status giting timm publish tests test
 
-define header
-
-[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining
---- | --- | ---
-
-endef
-
 define commits
 HERE=$${1:-$$PWD}
 cd $$HERE
@@ -24,7 +17,12 @@ git push origin master
 endef 
 
 define testsawk
-  BEGIN       { yes=no=0       }	
+  BEGIN       { yes=no=0
+
+print "\n[Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining"
+print "--- | --- | ---\n"
+
+              }	
               { m="."          }	
   /True/      { yes += gsub("True","") ; m = "+" } 
   /False/     { no  += gsub("False",""); m = "X" } 
@@ -53,7 +51,6 @@ define p2md
 endef
 
 export commits
-export header
 export testsawk
 export p2md
 
@@ -97,7 +94,6 @@ $(Wiki) : ; mkdir $@
 tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
 tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
 tmp/commits   : dirs ; @echo "$$commits" > $@
-tmp/header    : dirs ; @echo "$$header" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
 	@awk -f tmp/p2md.awk $< > $@;
