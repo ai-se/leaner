@@ -100,7 +100,7 @@ Yield all rows, after updating header and row data information.
 """
 def table0():
   return o(num=[],sym=[],ord=[],spec=[],
-           more=[],less=[],klass=[],
+           more=[],less=[],klass=[],inSyms=[], inNum=[]
            name={},index={},n=0,
            indep=[],dep=[],all=[])
 
@@ -112,6 +112,8 @@ def header(t,row):
       return N(), t.num
     else:
       return S(), t.sym
+  def num(z):
+    return isinstance(z,N)
   def dep(z) :
     return  tbl.klass in z or \
             tbl.less  in z or  \
@@ -129,4 +131,7 @@ def header(t,row):
     if tbl.more  in txt : t.more  += [header]
     if tbl.less  in txt : t.less  += [header]
     t.all += [header]
+    for z in i.indep:
+      at3 = t.inNums if num(z) else t.inSym
+      at3 += [header]
   return t

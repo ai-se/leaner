@@ -11,14 +11,14 @@ def _S():
   s=S()
   for x in list('tell.us.what.we.do.not.know'):
     s += x
-  print(s.also())
+  print(s)
 
 @go
 def _N():
   n=N()
   for x in xrange(10):
     n += x
-  print( abs(n.sd-3.0276503541) < 10**-9)
+  print( abs(n.sd() - 3.0276503541) < 10**-9)
 
 @go
 def _ranked():

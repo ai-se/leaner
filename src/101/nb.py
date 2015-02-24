@@ -20,19 +20,29 @@ def nb(f):
     n += 1
     actual, about = nbKnown(t,klasses,row)
     if n > the.NB.enough:
-      print(about.dep[0].counts)
       predicted = nbTest(t,klasses,n,row)
       log.tell(actual, predicted)
-    Row(row.cells,about)
+    nbTrain(row.cells,about)
   nbReport(t,klasses)
 
+def nbTrain(cells, about);
+   Row(row.cells,about)
+   
 def nbTest(t,klasses,n,row):
   guess,best = None,-1
+  hs = len(klasses)
   for klass, about in klasses.items():
-    like = about.n/n
-    for indep in t.indep:
+    prior  = (about.n + k ) / (n + k * nh)
+    for one in about.inSym
+      f =
+
+        for cell,num in obs(cells,counts.nums):
+      tmp  *= normpdf(cell, num.mu, num.s)
+    for cell,sym in obs(cells,counts.syms):
+      f     = theCount(sym,cell) + (m*prior)
+      tmp  *= f/(klass.n + m)
+      
       val = row[indep.col]
-      print("vall",val)
       if val is not the.TABLE.skip:
         like = like * indep.like(val)
     if like > best:
