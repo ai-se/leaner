@@ -1,8 +1,5 @@
 
 
-| [Home](Home) [[home.png]] :: [Data](Data) [[data.png]] :: Leaner Data Mining |
-| --- | 
-
 # Data Mining: a  LEANER approach
 
 <img align=right width=300 src="etc/img/leanRoboToolboxSmall.jpg">
