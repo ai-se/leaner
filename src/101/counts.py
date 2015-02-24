@@ -2,37 +2,17 @@ from __future__ import division,print_function
 import sys
 sys.dont_write_bytecode =True
 
+"""
+
+# Counting Stuff
+
+Counting maths and symbols
+
+"""
 from lib import *
 import math
 
-@setting
-def COUNT(**d): 
-  def halfEraDivK(z): 
-    return z.opt.era/z.opt.k/2
-  return o(
-    cache = 128,
-    dull  = [0.147, 0.33, 0.474][0],
-    tiles = [0.25,0.5,0.75]
-    ).add(**d)
 
-import random
-r = random.random
-rseed=random.seed
-
-class Sample:
-  def __init__(i,init=[],size=None):
-    if size is None: size = the.COUNT.cache
-    i.max, i.all, i.n = size, [], 0
-    map(i.__iadd__,init)
-  def __iadd__(i,x):
-    i.n += 1
-    now  = len(i.all)
-    if now < i.max:
-      i.all += [x]
-    elif r() <= now/i.n:
-      i.all[ int(r() * now) ]= x
-    return i
-    
 class S(): 
   def __init__(i,inits=[]):
     i.n,i.counts,i._also = 0, {}, None
@@ -96,21 +76,7 @@ class N():
     i.m2   -= delta*(x - i.mu)
     return i
   def __repr__(i): return str(i.also())
-  def also(i):
-    if not i._also:
-      i._also= o(
-        n  = i.n, mu = i.mu, sd= 0,
-        med= None, iqr= None,  lo= None, hi= None)
-      i.sample.all.sort()
-      if i.sample.all:
-        i._also.lo  = i.sample.all[ 0]
-        i._also.hi  = i.sample.all[-1]
-        med, iqr    = median(i.sample.all)
-        i._also.med = med
-        i._also.iqr = iqr 
-      if i.n > 1:
-        i._also.sd  = (max(0,i.m2)/(i.n - 1))**0.5
-    return i._also
+ 
   
 def cliffsDelta(lst1,lst2,dull=None):
   if dull is None: dull = the.COUNT.dull
