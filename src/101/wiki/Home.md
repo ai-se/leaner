@@ -1,4 +1,7 @@
 
+| [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |
+| --- | --- | --- |
+
 # Data Mining:  a Leaner Approach
 
 Turns out, data mining is easy if you follow three simple rules:
