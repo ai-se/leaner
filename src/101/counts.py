@@ -15,6 +15,7 @@ import math
 def COUNT(**d): return o(
     # Thresholds are from http://goo.gl/25bAh9
     dull = [0.147, 0.33, 0.474][0],
+    trivial = 0.05,
     tiles = [0.25, 0.5, 0.75 ]
     )
 """
@@ -122,12 +123,16 @@ def ranked(rx,tiles=None):
              tiles = ntiles(nums, tiles))
   lsts = sorted([prep(k) for k in rx],
                 key = lambda z: z.median)
-  rank, pool = 1, []
-  for x in lsts:
-    if cliffsDelta(x._nums, pool):
-      rank += 1
-      pool  = x._nums
-    else:
-      pool += x._nums
+  rank, pool = 1, lsts[0]
+  pmed,_ = median(pool)
+  for x in lsts[1:]
+    if abs(x.median - pmed) > the.COUNT.trivial:
+      if cliffsDelta(x._nums, pool):
+        rank += 1
+        pool  = x._nums
+        pmed  = x.median
+        continue
+    pool  += x._nums
+    pmed,_ = median(sorted(pool))
     x.rank = rank
   return lsts
