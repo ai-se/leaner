@@ -91,7 +91,7 @@ timm:
 publish: $(Wiki) $(mds) wikiCommits
 
 wikiCommits: tmp/commits
-	cp  wiki/* $(Wiki)
+	rsync -u  wiki/* $(Wiki)
 	bash tmp/commits $(Wiki) 
 
 tests: 
