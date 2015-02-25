@@ -61,7 +61,7 @@ the=o()
 
 def setting(f):
   def wrapper(**d):
-    tmp = the[f.__name__] = f(**d)
+    tmp = the[f.__name__] = f().add(**d)
     return tmp
   wrapper()
   return wrapper
@@ -70,7 +70,17 @@ def setting(f):
 For example, my code can now contain functions decorated by @setting
 and all their values can be accessed via (e.g.) `the.GENIC.k`'or updated 
 via (e.g.) `GENIC(k=100)`.
+"""
 
+class settings(object):
+  def __init__(i, what,**args):
+     i.what,i.args=what,args
+  def __enter__(i):
+     return i.what(**i.args)
+  def __exit__(i,*ignore):
+    i.what()
+
+"""
 ## Misc stuff
 
 ### Random Stuff 
@@ -150,7 +160,7 @@ def median(lst):
   "Assumes lst is ordered."
   n   = len(lst)
   a   = int(0.25 * n)  
-  b1  = int(0.50 * n) ; b2 = min(b1 + 1,n)
+  b1  = int(0.50 * n) ; b2 = max(b1 - 1,0)
   c   = int(0.75 * n)
   iqr = lst[c] - lst[a]
   mid = lst[b1] if n % 2 else ((lst[b1] + lst[b2]) / 2) 

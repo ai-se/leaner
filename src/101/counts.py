@@ -15,7 +15,7 @@ import math
 def COUNT(**d): return o(
     # Thresholds are from http://goo.gl/25bAh9
     dull = [0.147, 0.33, 0.474][0],
-    trivial = 0.05,
+    trivial = 0.01,
     tiles = [0.25, 0.5, 0.75 ]
     )
 """
@@ -109,9 +109,10 @@ of the values, sorted on their median,
 ranked by Cliff's Delta.
 
 """
-def ranked(rx,tiles=None):
+def ranked(rx,tiles=None,trivial=None):
   "Returns a ranked list."
   tiles = tiles or the.COUNT.tiles
+  tiny = trivial or the.COUNT.trivial
   def prep(key):
     nums  = sorted( rx[key] )
     med,iqr = median(nums)
@@ -123,16 +124,16 @@ def ranked(rx,tiles=None):
              tiles = ntiles(nums, tiles))
   lsts = sorted([prep(k) for k in rx],
                 key = lambda z: z.median)
-  rank, pool = 1, lsts[0]
-  pmed,_ = median(pool)
-  for x in lsts[1:]
-    if abs(x.median - pmed) > the.COUNT.trivial:
-      if cliffsDelta(x._nums, pool):
-        rank += 1
-        pool  = x._nums
-        pmed  = x.median
-        continue
-    pool  += x._nums
-    pmed,_ = median(sorted(pool))
+  rank, pool = 1, lsts[0]._nums
+  b4,_ = median(pool)
+  for x in lsts[1:]:
+    if abs(x.median - b4) > tiny \
+       and cliffsDelta(x._nums, pool):
+      rank += 1
+      pool  = x._nums
+      b4    = x.median
+    else:
+      pool  += x._nums
+      b4,_   = median(sorted(pool))
     x.rank = rank
   return lsts
