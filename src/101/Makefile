@@ -1,16 +1,20 @@
+## Begin config
+
 Wiki    =  ../../../leaner.wiki#
 Me      =  Tim Menzies#
 MyEmail =  tim.menzies@gmail.com#
 MyHeader1= [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |#
 MyHeader2= | --- | --- | --- |#
 
-#############
+## End config
+## (everything from here down should be generic)
 
+#################################################
 
 pys  = $(subst .py,.md,$(shell ls *.py;))#
 mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
-.PHONY: all typo commit update status giting timm publish tests test
+.PHONY: all typo commit update status giting timm dirs publish tests test wikiCommits
 
 define commits
 HERE=$${1:-$$PWD}
@@ -33,8 +37,6 @@ define testsawk
   ! (NR % 50) { print ""}
   END         { print "\ntests passed",yes,"failed",no }
 endef
-
-
 
 define p2md
   BEGIN           {
@@ -101,7 +103,6 @@ $(Wiki) : ; @- mkdir -p $@
 tmp     : 
 	@echo "/tmp" > .gitignore
 	@- mkdir -p $@
-
 
 tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
 tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
