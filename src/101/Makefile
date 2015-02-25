@@ -68,17 +68,17 @@ export p2md
 all: publish typo
 
 typo: publish gitting
-	- git status
-	- git commit -am "stuff"
-	- git push origin master
+	@- git status
+	@- git commit -am "stuff"
+	@- git push origin master
 
 commit: publish gitting
-	- git status
-	- git commit -a
-	- git push origin master
+	@- git status
+	@- git commit -a
+	@- git push origin master
 
-update:; - git pull origin master
-status:; - git status
+update:; @- git pull origin master
+status:; @- git status
 
 gitting:
 	@git config --global credential.helper cache
