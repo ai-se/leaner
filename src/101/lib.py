@@ -69,7 +69,7 @@ def setting(f):
 
 For example, my code can now contain functions decorated by @setting
 and all their values can be accessed via (e.g.) `the.GENIC.k`'or updated 
-via (e.g.) `GENIC(k=100)`.
+via (e.g.) `GENIC(k=100)`. MOre workds
 """
 
 class settings(object):
