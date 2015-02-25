@@ -91,7 +91,7 @@ timm:
 publish: $(Wiki) $(mds) wikiCommits
 
 wikiCommits: tmp/commits
-	rsync -u  wiki/* $(Wiki)
+	rsync -u  wiki/* $(Wiki) # cause cp -u not in Mac/OS
 	bash tmp/commits $(Wiki) 
 
 tests: 
