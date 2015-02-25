@@ -4,7 +4,7 @@
 
 # Data Mining:  a Leaner Approach
 
-Turns out, data mining is easy if you follow three simple rules:
+It turns out that data mining is easy if you follow three simple rules:
 
 1. Find some crap;
 2. Cut the crap;
