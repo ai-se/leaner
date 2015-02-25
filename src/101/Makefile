@@ -97,18 +97,17 @@ wikiCommits: tmp/commits
 tests: 
 	@$(foreach f,$(shell ls *eg.py), python $f;)
 
-
 $(Wiki) : ; @- mkdir -p $@
 tmp     : 
 	@echo "/tmp" > .gitignore
-	- mkdir -p $@
+	@- mkdir -p $@
 
 tmp/p2md.awk  : tmp ; echo "$$p2md" > $@
 tmp/tests.awk : tmp ; @echo "$$testsawk" > $@
 tmp/commits   : tmp ; @echo "$$commits" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
-	awk -f tmp/p2md.awk $< > $@;
+	@awk -f tmp/p2md.awk $< > $@;
 
 test: tmp/tests.awk
 	@$(MAKE) tests | awk -f $<
