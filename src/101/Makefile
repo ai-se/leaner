@@ -1,4 +1,12 @@
-Wiki = ../../../leaner.wiki#
+Wiki    =  ../../../leaner.wiki#
+Me      =  Tim Menzies#
+MyEmail =  tim.menzies@gmail.com#
+MyHeader1= [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |#
+MyHeader2= | --- | --- | --- |#
+
+#############
+
+
 pys  = $(subst .py,.md,$(shell ls *.py;))#
 mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
@@ -9,8 +17,8 @@ HERE=$${1:-$$PWD}
 cd $$HERE
 git config --global credential.helper cache
 git config credential.helper 'cache --timeout=3600'
-git config user.name "Tim Menzies"
-git config user.email "tim.menzies@gmail.com"
+git config user.name "$(Me)"
+git config user.email "$(MyEmail)"
 git add *
 git commit -am "stuff"
 git push origin master
@@ -30,12 +38,10 @@ endef
 
 define p2md
   BEGIN           {
-
-print ""
-print "| [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |"
-print "| --- | --- | --- |" 
-print ""
-
+         print ""
+         print "$(MyHeader1)"  
+         print "$(MyHeader2)"
+         print ""
          First = 1      
          In = 1
   }         
@@ -77,8 +83,8 @@ gitting:
 	@git config credential.helper 'cache --timeout=3600'
 
 timm:
-	@git config user.name "Tim Menzies" 
-	@git config user.email "tim.menzies@gmail.com"
+	@git config user.name "$(Me)" 
+	@git config user.email "$(MyEmail)"
 
 publish: $(mds) wikiCommits
 
