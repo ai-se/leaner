@@ -97,8 +97,11 @@ tests:
 
 dirs: tmp $(Wiki)
 
-tmp     : ; @- mkdir -p $@
 $(Wiki) : ; @- mkdir -p $@
+tmp     : 
+	@echo "/tmp" > .gitignore
+	@- mkdir -p $@
+
 
 tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
 tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
