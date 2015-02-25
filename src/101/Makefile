@@ -88,7 +88,7 @@ timm:
 	@git config user.name "$(Me)" 
 	@git config user.email "$(MyEmail)"
 
-publish: $(mds) wikiCommits
+publish: $(Wiki) $(mds) wikiCommits
 
 wikiCommits: tmp/commits
 	cp  wiki/* $(Wiki)
@@ -97,16 +97,15 @@ wikiCommits: tmp/commits
 tests: 
 	@$(foreach f,$(shell ls *eg.py), python $f;)
 
-dirs: tmp $(Wiki)
 
 $(Wiki) : ; @- mkdir -p $@
 tmp     : 
 	@echo "/tmp" > .gitignore
-	@- mkdir -p $@
+	- mkdir -p $@
 
-tmp/p2md.awk  : dirs ; @echo "$$p2md" > $@
-tmp/tests.awk : dirs ; @echo "$$testsawk" > $@
-tmp/commits   : dirs ; @echo "$$commits" > $@
+tmp/p2md.awk  : tmp ; echo "$$p2md" > $@
+tmp/tests.awk : tmp ; @echo "$$testsawk" > $@
+tmp/commits   : tmp ; @echo "$$commits" > $@
 
 $(Wiki)/%.md: %.py tmp/p2md.awk
 	awk -f tmp/p2md.awk $< > $@;
