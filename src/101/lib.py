@@ -71,16 +71,14 @@ For example, my code can now contain functions decorated by @setting
 and all their values can be accessed via (e.g.) `the.GENIC.k`'or updated 
 via (e.g.) `GENIC(k=100)`.
 """
+from contextlib import contextmanager as within
 
-class settings(object):
-  def __init__(i, what,**args):
-     i.what,i.args=what,args
-  def __enter__(i):
-     return i.what(**i.args)
-  def __exit__(i,*ignore):
-    i.what()
-
+@within
+def settings(f,**d):
+  yield f(**d)
+  f()
 """
+
 ## Misc stuff
 
 ### Random Stuff 
