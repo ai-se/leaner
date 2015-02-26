@@ -14,7 +14,8 @@ MyHeader2= | --- | --- | --- |#
 pys  = $(subst .py,.md,$(shell ls *.py;))#
 mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
-.PHONY: all typo commit update status giting timm dirs publish tests test wikiCommits
+.PHONY: all typo commit update status giting \
+        timm save dirs publish tests test wikiCommits
 
 define commits
 HERE=$${1:-$$PWD}
@@ -72,7 +73,9 @@ typo: publish gitting
 	@- git commit -am "stuff"
 	@- git push origin master
 
-commit: publish gitting
+commit: publish gitting save
+
+save:
 	@- git status
 	@- git commit -a
 	@- git push origin master

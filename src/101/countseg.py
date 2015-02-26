@@ -30,7 +30,7 @@ def _ranked():
         "rx2": [2,2,2,2,2,2,2,2]})
   for t in [0.01,0.3]:
     with settings(COUNT,trivial=t):
-      print("\nstandard...........:")
+      print("\nstandard...........:",the.COUNT.trivial)
       worker({
         "rx1": [0.34, 0.49, 0.51, 0.6],
         "rx2": [0.6,  0.7,  0.8,  0.9],
@@ -45,7 +45,8 @@ def _ranked():
        "rx5": [101, 100, 99, 101,  99],
        "rx6": [101, 100, 99, 101, 100]})
   with settings(COUNT,trivial=1):
-    print("\ntwo large seperated:"); worker({
+    print("\ntwo large separated:",the.COUNT.trivial)
+    worker({
         "rx1": [101, 100,  99, 101,  99],
         "rx2": [101, 100, 199, 101, 100],
         "rx3": [101, 100, 199, 101, 199],
