@@ -30,6 +30,8 @@ class S():
     map(i.__iadd__,inits)
   def __iadd__(i,z): return i.inc(z,  1)
   def __isub__(i,z): return i.inc(z, -1)
+  def cnt(i,z):
+    return i.counts.get(z,0)
   def inc(i,z,n):
     i.n += n
     tmp = i.counts[z] = i.counts.get(z,0) + n
@@ -62,6 +64,8 @@ class N():
     return (x - i.lo()) / (i.hi() - i.lo() +0.0001)
   def sd(i):
     return 0 if i.n < 2 else (i.m2/(i.n - 1))**0.5
+  def pdf(i,z):
+    return  normpdf(i.mu,i.sd(),z)
   def __iadd__(i,x):
     i.n   += 1
     i.lo   = min(i.lo, x)

@@ -20,38 +20,30 @@ def nb(f):
     n += 1
     actual, about = nbKnown(t,klasses,row)
     if n > the.NB.enough:
-      predicted = nbTest(t,klasses,n,row)
+      predicted = nbClassify(t,klasses,n,row)
       log.tell(actual, predicted)
     nbTrain(row.cells,about)
   nbReport(t,klasses)
-
-def nbTrain(cells, about);
-   Row(row.cells,about)
+ 
+def nbTrain(cells, about):
+   Row(cells,about)
    
-def nbTest(t,klasses,n,row):
-  guess,best = None,-1
-  hs = len(klasses)
-  for klass, about in klasses.items():
-    prior  = (about.n + k ) / (n + k * nh)
-    for one in about.inSym
-      f =
-
-        for cell,num in obs(cells,counts.nums):
-      tmp  *= normpdf(cell, num.mu, num.s)
-    for cell,sym in obs(cells,counts.syms):
-      f     = theCount(sym,cell) + (m*prior)
-      tmp  *= f/(klass.n + m)
-      
-      val = row[indep.col]
-      if val is not the.TABLE.skip:
-        like = like * indep.like(val)
+def nbClassify(t,klasses,n,row):
+  m = the.NB.m
+  k = the.NB.k
+  guess, best, nh = None, -1, len(klasses)
+  for x, klass in klasses.items():
+    tmp = prior = (klass.n + k ) / (n + k * nh)
+    for y,hdr in cells(row, klass.inSym):
+      print(o(ako=klass.__name__, y=y,
+              m=m, prior=prior, n=klass.n, tmp=tmp))
+      tmp *= (hdr.cnt(y) + (m*prior)) / (klass.n+m)
+    for y,hdr in cells(row, klass.inNum):
+      tmp  *= head.pdf(y)
     if like > best:
-      guess, best = klass, like
+      guess, best = x, like
   return guess
-  
-def nbTrain(cells,about):
-  Row(cells,about)
-  
+
 def nbReport(t,klasses):
   for one in t.indep:
     print("")
@@ -60,11 +52,11 @@ def nbReport(t,klasses):
       print(one.name,key,head)
 
 def nbKnown(t,klasses,row):
-   pos   = t.klass[0].col
-   klass = row[pos]
-   if not klass in klasses:
-     klasses[klass] = header(table0(),t.spec)
-   return klass, klasses[klass]  
+   pos = t.klass[0].col
+   x   = row[pos]
+   if not x in klasses:
+     klasses[x] = header(table0(),t.spec)
+   return x,klasses[x]
 
 
 

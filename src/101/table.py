@@ -100,7 +100,7 @@ Yield all rows, after updating header and row data information.
 """
 def table0():
   return o(num=[],sym=[],ord=[],spec=[],
-           more=[],less=[],klass=[],inSyms=[], inNum=[]
+           more=[],less=[],klass=[],inSym=[], inNum=[],
            name={},index={},n=0,
            indep=[],dep=[],all=[])
 
@@ -131,7 +131,14 @@ def header(t,row):
     if tbl.more  in txt : t.more  += [header]
     if tbl.less  in txt : t.less  += [header]
     t.all += [header]
-    for z in i.indep:
-      at3 = t.inNums if num(z) else t.inSym
+    for z in t.indep:
+      print("z",z.name,z.__class__,num(z))
+      at3 = t.inNum if num(z) else t.inSym
       at3 += [header]
   return t
+
+def cells(row,headers):
+  for header in headers:
+    cell = row[header.col]
+    if cell is not the.TABLE.skip:
+      yield cell,header
