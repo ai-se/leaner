@@ -1,5 +1,4 @@
 
-
 # Data Mining: a  LEANER approach
 
 <img align=right width=300 src="etc/img/leanRoboToolboxSmall.jpg">
