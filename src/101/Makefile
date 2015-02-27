@@ -95,9 +95,7 @@ timm:
 	@git config user.email "$(MyEmail)"
 
 reset:
-	cd $(WikiDir)
-	rm -rf $(WikiName)
-	git clone $(WikiGit)
+	cd $(WikiDir); rm -rf $(WikiName); git clone $(WikiGit)
 
 publish: $(mds) wikiCommits 
 
