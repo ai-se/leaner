@@ -9,8 +9,7 @@ from abcd  import *
 def NB(**d): 
   return o(
     m = 2,
-    k = 1,
-    enough=10,
+    k = 1
   ).add(**d)
 
 def ilearn(src,test,train):
