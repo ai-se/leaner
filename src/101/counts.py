@@ -65,7 +65,7 @@ class N():
   def sd(i):
     return 0 if i.n < 2 else (i.m2/(i.n - 1))**0.5
   def pdf(i,z):
-    return  normpdf(i.mu,i.sd(),z)
+    return normpdf(i.mu,i.sd(),z) if i.sd() else 1
   def __iadd__(i,x):
     i.n   += 1
     i.lo   = min(i.lo, x)

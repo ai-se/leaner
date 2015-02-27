@@ -14,10 +14,10 @@ def _rows():
 
 @go
 def _era():
-  the.TABLE.era = 10
-  t=table0()
-  for row in era("housing.csv",t):
-    print(row)
-  for indep in t.indep:
-    print(indep)
+  with settings(TABLE,era = 10):
+    for t,row in era("housing.csv"):
+      print(row)
+    print("Indep",t.indep)
+    for indep in t.indep:
+      print(indep)
 

@@ -65,6 +65,14 @@ def setting(f):
     return tmp
   wrapper()
   return wrapper
+
+import random
+@setting
+def LIB(**d):
+  tmp = o(seed=1).add(**d)
+  random.seed(tmp.seed)
+  return tmp
+
 """
 
 For example, my code can now contain functions decorated by @setting
@@ -84,7 +92,7 @@ def settings(f,**d):
 ### Random Stuff 
 
 """
-import random
+
 r     = random.random
 rseed = random.seed
 
@@ -114,6 +122,7 @@ def say(*lst): print(', '.join(map(str,lst)),end="")
 """
 import math
 pi  = math.pi
+log = math.log
 sqrt  =math.sqrt
 
 def normpdf(mean, sd, x):

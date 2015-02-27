@@ -72,13 +72,13 @@ a time. Flag if this is the first row. Return
 at least _want_ number of rows.
 
 """
-def era(file,t):
+def era(file):
+  t = table0()
   def chunks():
     chunk = []
     for row in rows(file):
-      print("era",row)
       if not t.all:
-        header(t,row)
+         header(row,t)
       else:
         chunk += [Row(row,t)]
         if len(chunk) >= the.TABLE.era:
@@ -89,7 +89,7 @@ def era(file,t):
     if the.TABLE.shuffle:
       chunk = shuffle(chunk)
     for row in chunk:
-      yield row
+      yield t,row
 """
 
 ## The Table Pattern
@@ -99,42 +99,35 @@ Yield all rows, after updating header and row data information.
 
 """
 def table0():
-  return o(num=[],sym=[],ord=[],spec=[],
+  return o(num=[],sym=[],ord=[],
            more=[],less=[],klass=[],inSym=[], inNum=[],
            name={},index={},n=0,
            indep=[],dep=[],all=[])
 
-def header(t,row):
-  tbl = the.TABLE
-  t.spec = row
-  def what(z):
-    if tbl.num in txt:
-      return N(), t.num
-    else:
-      return S(), t.sym
-  def num(z):
-    return isinstance(z,N)
+def header(row,t):
+  opt = the.TABLE
+  t.spec= row
   def dep(z) :
-    return  tbl.klass in z or \
-            tbl.less  in z or  \
-            tbl.more  in z
+    return  opt.klass in z or \
+            opt.less  in z or  \
+            opt.more  in z
   for col,txt in enumerate(row):
     t.name[col]  = txt
     t.index[txt] = col
-    header, at1  = what(txt)
+    (klass,at)   = ((N,t.num) if   opt.num in txt
+                              else (S,t.sym))
+    header       = klass()
     header.name  = txt
     header.col   = col
-    at1  += [header]
-    at2   = t.dep if dep(txt) else t.indep
-    at2  += [header]
-    if tbl.klass in txt : t.klass += [header]
-    if tbl.more  in txt : t.more  += [header]
-    if tbl.less  in txt : t.less  += [header]
+    at          += [header]
+    (t.dep if dep(txt) else t.indep).append(header)
+    if opt.klass in txt : t.klass += [header]
+    if opt.more  in txt : t.more  += [header]
+    if opt.less  in txt : t.less  += [header]
     t.all += [header]
-    for z in t.indep:
-      print("z",z.name,z.__class__,num(z))
-      at3 = t.inNum if num(z) else t.inSym
-      at3 += [header]
+  for z in t.indep:
+    (t.inNum if   isinstance(z,N)
+             else t.inSym).append(z)
   return t
 
 def cells(row,headers):

@@ -44,13 +44,14 @@ class Abcd:
       i.a[x] = i.yes + i.no
   def header(i):
     print("#",
-        ('{0:20s} {1:11s}  {2:4s}  {3:4s} {4:4s}'+\
+        ('{0:20s} {1:11s}   {2:4s} {3:4s} {4:4s}'+\
 				'{5:4s}{6:4s} {7:3s} {8:3s} {9:3s} '+ \
         '{10:3s} {11:3s}{12:3s}{13:10s}').format( 
         "db","rx","n","a","b","c","d","acc","pd",
         "pf","prec","f","g","class"))
     print('-'*100)
   def ask(i):
+    i.header()
     def p(y) : return int(100*y + 0.5)
     def n(y) : return int(y)
     pd = pf = pn = prec = g = f = acc = 0
