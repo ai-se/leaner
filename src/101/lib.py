@@ -39,13 +39,66 @@ class o:
   def add(i,**d) : i.has().update(**d); return i
   def __setitem__(i,k,v): i.has()[k] = v
   def __repr__(i) :
-    f = lambda z: z.__class__.__name__ == 'function'
-    name   = lambda z: z.__name__ if f(z) else z
-    public = lambda z: not "_" is z[0]
-    d    = i.has()
-    show = [':%s=%s' % (k,name(d[k])) 
-            for k in sorted(d.keys()) if public(k)]
-    return '{'+' '.join(show)+'}'
+     f = lambda z: z.__class__.__name__ == 'function'
+     name = lambda z: z.__name__ if f(z) else z
+     public = lambda z: not "_" is z[0]
+     d    = i.has()
+     show = [':%s=%s' % (k,name(d[k])) 
+             for k in sorted(d.keys()) if public(k)]
+     return '{'+' '.join(show)+'}'
+"""
+
+## Printing Anything
+
+Turns out most things in Python are, internally,
+represented as dictionaries. So to print anything,
+first print the simple primitive things (strings, numbers)
+then convert everything else into a dictionary (and just
+print the key,value pairs of the dictionary).
+
+"""
+def rprint(anything,  dpth = 0):
+  private   = lambda x: x[0] == "_"
+  what      = lambda x: ':%s' % x
+  tabs      = lambda n: '  ' * n  # or 2 or 8 or...
+  quoted    = lambda x: '\"%s\"'%x if stringp(x) \
+                                     else  str(x)
+  equals    = lambda x: ' = %s' % quoted(x)
+  isa       = lambda x,y: isinstance(x,y)
+  nump      = lambda x: isa(x, (int, long,
+                                float, complex))          
+  dictp     = lambda x: isa(x, dict)
+  containerp= lambda x: isa(x, (list,set))
+  stringp   = lambda x: isa(x, str)
+  rprintable= lambda x: hasattr(x,"rprint")
+  simple    = lambda x: stringp(x) or nump(x)
+  className = lambda x: x.__class__.__name__
+  if simple(anything):
+    print(tabs(dpth) + quoted(anything))
+  elif rprintable(anything):
+    print(tabs(dpth) + anything.rprint())
+  elif containerp(anything):
+    for something in anything:
+      rprint(something, dpth+1)
+    if not anything:
+       rprint("empty", dpth+1)
+  elif dictp(anything):
+    for key in sorted(anything.keys()):
+      if private(key):
+        continue
+      value = anything[key]
+      say(tabs(dpth) + what(key))
+      if simple(value):
+        print(equals(value))
+      else:
+        print("")
+        rprint(value, dpth + 1)
+  else:
+    print(tabs(dpth) + className(anything) + '(')
+    rprint(anything.__dict__, dpth + 1)
+    print(tabs(dpth) + ')')
+
+    
 """
 
 ## The Settings Idiom

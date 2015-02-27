@@ -8,8 +8,14 @@ from nb import *
 
 @go
 def _nb1():
-  with settings(NB,enough=2),settings(LIB,seed=2):
+  with settings(LIB,seed=2),settings(TABLE,era=3):
     nb("weather.csv")
+
+
+@go
+def _nb1():
+  with settings(LIB,seed=1),settings(TABLE,era=30):
+    nb("housingD.csv")
 
 #@go
 def _nb2():  nb("housingD.csv")

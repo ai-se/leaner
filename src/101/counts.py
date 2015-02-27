@@ -25,7 +25,7 @@ def COUNT(**d): return o(
 """
 class S(): 
   def __init__(i,inits=[]):
-    i.n,i.counts  = 0, {}
+    i.name,i.n,i.counts  = 'S',0, {}
     i.mode, i.most = None, 0
     map(i.__iadd__,inits)
   def __iadd__(i,z): return i.inc(z,  1)
@@ -40,8 +40,9 @@ class S():
     return i
   def norm(i,z):
     return z
+  def rprint(i): return i.__repr__()
   def __repr__(i):
-    return str(o(mode = i.mode, most=i.most,
+    return str(o(name=i.name, mode = i.mode, most=i.most,
                  n=i.n,counts=i.counts))
   def e(i):
     e = 0
@@ -58,6 +59,7 @@ class S():
 class N(): 
   def __init__(i,inits=[]):
     i.n = i.mu = i.m2 = 0
+    i.name ='N',
     i.lo = 10**32; i.hi = -1*i.lo
     map(i.__iadd__,inits)
   def norm(i,x):
@@ -80,8 +82,9 @@ class N():
     i.mu   -= delta/i.n
     i.m2   -= delta*(x - i.mu)
     return i
+  def rprint(i): return i.__repr__()
   def __repr__(i):
-    return str(o(n=i.n, mu=i.mu,sd = i.sd(),
+    return str(o(name=i.name,n=i.n, mu=i.mu,sd = i.sd(),
                  lo=i.lo, hi=i.hi))
 """
 

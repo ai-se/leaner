@@ -22,9 +22,7 @@ class Abcd:
     i.db = db; i.rx=rx;
     i.yes = i.no = 0
     i.known = {}; i.a= {}; i.b= {}; i.c= {}; i.d={}
-  def __call__(i,actual=None,predicted=None):
-    return i.keep(actual,predicted)
-  def tell(i,actual,predict):
+  def __call__(i,actual=None,predict=None):
     i.knowns(actual)
     i.knowns(predict)
     if actual == predict: i.yes += 1 
@@ -50,7 +48,7 @@ class Abcd:
         "db","rx","n","a","b","c","d","acc","pd",
         "pf","prec","f","g","class"))
     print('-'*100)
-  def ask(i):
+  def report(i):
     i.header()
     def p(y) : return int(100*y + 0.5)
     def n(y) : return int(y)

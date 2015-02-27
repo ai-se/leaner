@@ -72,8 +72,9 @@ a time. Flag if this is the first row. Return
 at least _want_ number of rows.
 
 """
-def era(file):
+def eras(file,size=None):
   t = table0()
+  size = size or the.TABLE.era
   def chunks():
     chunk = []
     for row in rows(file):
@@ -81,15 +82,16 @@ def era(file):
          header(row,t)
       else:
         chunk += [Row(row,t)]
-        if len(chunk) >= the.TABLE.era:
+        if len(chunk) >= size:
           yield chunk
           chunk=[]
     if chunk: yield chunk
+  era=0
   for chunk in chunks():
     if the.TABLE.shuffle:
       chunk = shuffle(chunk)
-    for row in chunk:
-      yield t,row
+    yield t,chunk,era
+    era += 1
 """
 
 ## The Table Pattern
@@ -101,19 +103,17 @@ Yield all rows, after updating header and row data information.
 def table0():
   return o(num=[],sym=[],ord=[],
            more=[],less=[],klass=[],inSym=[], inNum=[],
-           name={},index={},n=0,
+           n=0,rows=[],
            indep=[],dep=[],all=[])
 
 def header(row,t):
   opt = the.TABLE
-  t.spec= row
+  t["spec"]= row
   def dep(z) :
     return  opt.klass in z or \
             opt.less  in z or  \
             opt.more  in z
   for col,txt in enumerate(row):
-    t.name[col]  = txt
-    t.index[txt] = col
     (klass,at)   = ((N,t.num) if   opt.num in txt
                               else (S,t.sym))
     header       = klass()
@@ -129,6 +129,8 @@ def header(row,t):
     (t.inNum if   isinstance(z,N)
              else t.inSym).append(z)
   return t
+
+def theKlass(t,row): return row[t.klass[0].col]
 
 def cells(row,headers):
   for header in headers:

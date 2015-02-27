@@ -15,8 +15,9 @@ def _rows():
 @go
 def _era():
   with settings(TABLE,era = 10):
-    for t,row in era("housing.csv"):
-      print(row)
+    for t,rows,era in eras("housing.csv"):
+      for row in rows:
+        print(era,row)
     print("Indep",t.indep)
     for indep in t.indep:
       print(indep)

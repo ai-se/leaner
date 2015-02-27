@@ -13,54 +13,43 @@ def NB(**d):
     enough=10,
   ).add(**d)
 
-def nb(f):
+def ilearn(src,test,train):
   log = Abcd()
-  n, klasses = 0,{}
-  for t,row in era(f):
-    n += 1
-    actual, aboutActual = nbAbout(t,klasses,row)
-    # switch to eras as soon s you can
-    if n > the.NB.enough:
-      predicted = nbClassify(klasses,n,row)
-      log.tell(actual, predicted)
-    nbTrain(row.cells,aboutActual)
-  log.ask()
- 
-def nbTrain(cells, about):
-   Row(cells,about)
+  for t,rows,era in eras(src):
+    for row in rows:
+      k = theKlass(t,row)
+      if era > 0:
+        log(actual  = k,
+            predict = test(t,row))
+      train(t,row,k)
+  return t,log
+
+def nb(f):
+  klasses = {}
+  def train(t,row,k):
+    if not k in klasses:
+      klasses[k] = header(t.spec,table0())
+    Row(row.cells, klasses[k])
+  def test(t,row):    
+    return nbClassify(t,row,klasses)
+  t,log = ilearn(f,test,train)
+  log.report()
+  return t
    
-def nbClassify(klasses,n,row):
+def nbClassify(t,row,klasses):
   m = the.NB.m
   k = the.NB.k
   guess, best, nh = None, -10**32, len(klasses)
   for x in klasses:
     aboutx = klasses[x]
-    prior  = (aboutx.n + k ) / (n + k * nh)
-    like   = log(prior)
+    like = prior  = (aboutx.n + k ) / (t.n + k * nh)
     for y,hdr in cells(row, aboutx.inSym):
-      like += log((hdr.cnt(y) + (m*prior)) / (aboutx.n+m))
+      like *= (hdr.cnt(y) + (m*prior)) / (aboutx.n+m)
     for y,hdr in cells(row, aboutx.inNum):
-      like += log(hdr.pdf(y))
+      like *= hdr.pdf(y)
     if like > best:
       guess, best = x, like
   return guess
-
-def nbReport(t,klasses):
-  for one in t.indep:
-    print("")
-    for key in klasses:
-      head = klasses[key].all[one.col]
-      print(one.name,key,head)
-
-def nbAbout(t,klasses,row):
-   pos = t.klass[0].col
-   x   = row[pos]
-   if not x in klasses:
-     klasses[x] = header(t.spec,table0())
-   aboutx = klasses[x]
-   return x, aboutx
-
-
 
 
 
