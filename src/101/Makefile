@@ -1,6 +1,9 @@
 ## Begin config
 
-Wiki    =  ../../../leaner.wiki#
+WikiName=  leaner.wiki#
+WikiDir =  ../../..#
+Wiki    =  $(WikiDir)/$(WikiName)
+WikiGit =  https://github.com/ai-se/leaner.wiki.git#
 Me      =  Tim Menzies#
 MyEmail =  tim.menzies@gmail.com#
 MyHeader1= [Home](Home) [[home.png]] | [Data](Data) [[data.png]] | Leaner Data Mining |#
@@ -14,7 +17,7 @@ MyHeader2= | --- | --- | --- |#
 pys  = $(subst .py,.md,$(shell ls *.py;))#
 mds  = $(Wiki)/$(subst .md ,.md $(Wiki)/,$(pys))#
 
-.PHONY: all typo commit update status giting \
+.PHONY: all typo commit update status giting reset \
         timm save dirs publish tests test wikiCommits
 
 define commits
@@ -91,7 +94,12 @@ timm:
 	@git config user.name "$(Me)" 
 	@git config user.email "$(MyEmail)"
 
-publish: $(Wiki) $(mds) wikiCommits
+reset:
+	cd $(WikiDir)
+	rm -rf $(WikiName)
+	git clone $(WikiGit)
+
+publish: $(mds) wikiCommits 
 
 wikiCommits: tmp/commits
 	rsync -u  wiki/* $(Wiki) # cause cp -u not in Mac/OS
@@ -100,7 +108,7 @@ wikiCommits: tmp/commits
 tests: 
 	@$(foreach f,$(shell ls *eg.py), python $f;)
 
-$(Wiki) : ; @- mkdir -p $@
+
 tmp     : 
 	@echo "/tmp" > .gitignore
 	@- mkdir -p $@
