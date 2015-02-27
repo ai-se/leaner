@@ -73,7 +73,7 @@ all: publish typo
 
 typo: publish gitting
 	git status
-	git commit -am "stuff" || 1
+	git commit -am "stuff" || true
 	git push origin master
 
 commit: publish gitting save
