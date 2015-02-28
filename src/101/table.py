@@ -106,7 +106,8 @@ def table0():
            n=0,rows=[],
            indep=[],dep=[],all=[])
 
-def header(row,t):
+def header(row,t=None):
+  t = t or table0()
   opt = the.TABLE
   t["spec"]= row
   def dep(z) :

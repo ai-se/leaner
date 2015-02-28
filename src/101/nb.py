@@ -27,27 +27,26 @@ def nb(f):
   klasses = {}
   def train(t,row,k):
     if not k in klasses:
-      klasses[k] = header(t.spec,table0())
+      klasses[k] = header(t.spec)
     Row(row.cells, klasses[k])
   def test(t,row):    
     return nbClassify(t,row,klasses)
   t,log = ilearn(f,test,train)
   log.report()
   return t
-   
+
 def nbClassify(t,row,klasses):
   m = the.NB.m
   k = the.NB.k
   guess, best, nh = None, -10**32, len(klasses)
-  for x in klasses:
-    aboutx = klasses[x]
-    like = prior  = (aboutx.n + k ) / (t.n + k * nh)
-    for y,hdr in cells(row, aboutx.inSym):
-      like *= (hdr.cnt(y) + (m*prior)) / (aboutx.n+m)
-    for y,hdr in cells(row, aboutx.inNum):
+  for this,klass in klasses.items():
+    like = prior = (klass.n + k ) / (t.n + k * nh)
+    for y,hdr in cells(row, klass.inSym):
+      like *= (hdr.cnt(y) + (m*prior)) / (klass.n+m)
+    for y,hdr in cells(row, klass.inNum):
       like *= hdr.pdf(y)
     if like > best:
-      guess, best = x, like
+      guess, best = this, like
   return guess
 
 
