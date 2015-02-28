@@ -6,7 +6,7 @@ sys.dont_write_bytecode=True
 
 from nb import *
 
-@go
+#@go
 def _nb1():
   with settings(LIB,seed=2),settings(TABLE,era=3):
     nb("weather.csv")

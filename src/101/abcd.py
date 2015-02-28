@@ -4,9 +4,6 @@ sys.dont_write_bytecode=True
 
 """
 
-
-
-
 # Collecting Statistics from Classifiers
 
 
@@ -14,8 +11,8 @@ sys.dont_write_bytecode=True
 Here.
 
 
-
 """
+from lib import o
 
 class Abcd: 
   def __init__(i,db="all",rx="all"):
@@ -48,11 +45,11 @@ class Abcd:
         "db","rx","n","a","b","c","d","acc","pd",
         "pf","prec","f","g","class"))
     print('-'*100)
-  def report(i):
-    i.header()
+  def scores(i):
     def p(y) : return int(100*y + 0.5)
     def n(y) : return int(y)
     pd = pf = pn = prec = g = f = acc = 0
+    out={}
     for x in i.known:
       a= i.a[x]; b= i.b[x]; c= i.c[x]; d= i.d[x]
       if (b+d)    : pd   = d     / (b+d)
@@ -62,10 +59,18 @@ class Abcd:
       if (1-pf+pd): g    = 2*(1-pf)*pd / (1-pf+pd)
       if (prec+pd): f    = 2*prec*pd/(prec+pd)
       if (i.yes + i.no): acc= i.yes/(i.yes+i.no)
+      out[x]= o(db=i.db, rx=i.rx, yes= n(b+d),
+                all=n(a+b+c+d), a=n(a),
+                b=n(b), c=n(c), d=n(d), acc=p(acc), pd=p(pd),
+                pf=p(pf), prec=p(prec), f=p(f), g=p(g),x=x)
+    return out
+  def report(i):
+    i.header()
+    for x,s in i.scores().items():
       print("#",
        ('{0:20s} {1:10s} {2:4d} {3:4d} {4:4d}'+\
     		'{5:4d} {6:4d} {7:4d} {8:3d} {9:3d} '+ \
         '{10:3d} {11:3d} {12:3d} {13:10s}').format(
-       i.db,i.rx,  n(b + d), n(a), n(b),n(c), n(d), 
-       p(acc), p(pd),p(pf),p(prec), p(f), p(g),x))
+       s.db, s.rx,  s.yes, s.a, s.b, s.c, s.d, 
+          s.acc, s.pd, s.pf, s.prec, s.f, s.g, x))
 

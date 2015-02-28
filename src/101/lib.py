@@ -38,6 +38,7 @@ class o:
   def has(i): return i.__dict__
   def add(i,**d) : i.has().update(**d); return i
   def __setitem__(i,k,v): i.has()[k] = v
+  def __getitem__(i,k)  : return i.has()[k]
   def __repr__(i) :
      f = lambda z: z.__class__.__name__ == 'function'
      name = lambda z: z.__name__ if f(z) else z
