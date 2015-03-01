@@ -14,7 +14,7 @@ def _nb1():
 
 @go
 def _nb1():
-  with settings(LIB,seed=1),settings(TABLE,era=30):
+  with settings(LIB,seed=1),settings(TABLE,era=50):
     nb("housingD.csv")
 
 #@go

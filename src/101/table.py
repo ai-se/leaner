@@ -33,7 +33,19 @@ class Row:
   def __getitem__(i,k): return i.cells[k]
   def __hash__(i)     : return i.id
   def __repr__(i): return '<'+str(i.cells)+'>'
-  
+  def dist(i,j):
+    skip = lambda z: z == the.TABLE.skip
+    n = all = 0
+    for v1,v2,head in cells2(i,j,i.indep):
+      if skip(v1): v1 = hdr.far(v2)
+      if skip(v2): v2 = hdr.far(v1)
+      if the.TABLE.skip:
+        v1 = hdr.norm(v1)
+        v2 = hdr.norm(v2)
+      n   += 1
+      all += hdr.dist(v1,v2) 
+    return all**0.5 / (n+0.000001)**0.5
+    
 import re
 def rows(file):
   def use(z): return not the.TABLE.skip in z
@@ -133,8 +145,19 @@ def header(row,t=None):
 
 def theKlass(t,row): return row[t.klass[0].col]
 
+def theKlasses(t,rows):
+  return [theKlass(t,row) for row in rows]
+
 def cells(row,headers):
   for header in headers:
     cell = row[header.col]
     if cell is not the.TABLE.skip:
       yield cell,header
+
+def cells2(row1,row2,headers):
+  skip = lambda z: z == the.TABLE.skip
+  for header in headers:
+    cell1 = row1[header.col]
+    cell2 = row2[header.col]
+    if skip(v1) and skip(v2): continue
+    yield cell1, cell2, header

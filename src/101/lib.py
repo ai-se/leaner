@@ -151,12 +151,14 @@ r     = random.random
 rseed = random.seed
 
 def shuffle(lst): random.shuffle(lst); return lst
+def any(lst): return random.choice(lst)
 
 def noop(z)  : return z
 def first(z) : return z[0]
 def second(z): return z[1]
 def third(z) : return z[2]
 def last(z)  : return z[-1]
+def mean(z)  : return sum(z) / len(z)
 
 def ntiles(lst,tiles):
   thing = lambda z: lst[ int(len(lst)*z)  ]

@@ -25,6 +25,7 @@ def COUNT(**d): return o(
 """
 class S(): 
   def __init__(i,inits=[]):
+    i.w = 1
     i.name,i.n,i.counts  = 'S',0, {}
     i.mode, i.most = None, 0
     map(i.__iadd__,inits)
@@ -38,8 +39,11 @@ class S():
     if tmp > i.most:
       i.most, i.mode = tmp,z
     return i
+  def far(i,z):
+    return 'sOmImPoSSiBLEsYMBol'
   def norm(i,z):
     return z
+  def dist(i,j,k): return i.w*(j - k )**2
   def rprint(i): return i.__repr__()
   def __repr__(i):
     return str(o(name=i.name, mode = i.mode, most=i.most,
@@ -58,10 +62,14 @@ class S():
 """
 class N(): 
   def __init__(i,inits=[]):
+    i.w = 1
     i.n = i.mu = i.m2 = 0
     i.name ='N',
     i.lo = 10**32; i.hi = -1*i.lo
     map(i.__iadd__,inits)
+  def far(i,z):
+    mid = (i.lo + i.hi) * 0.5
+    return i.hi if z < mid else i.lo 
   def norm(i,x):
     return (x - i.lo()) / (i.hi() - i.lo() +0.0001)
   def sd(i):
@@ -82,6 +90,7 @@ class N():
     i.mu   -= delta/i.n
     i.m2   -= delta*(x - i.mu)
     return i
+  def dist(i,j,k): return i.w*(0 if j == k else 1)
   def rprint(i): return i.__repr__()
   def __repr__(i):
     return str(o(name=i.name,n=i.n, mu=i.mu,sd = i.sd(),
