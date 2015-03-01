@@ -16,13 +16,27 @@ def TABLE(**d): return o(
     less  = '<',
     bad   =  r'(["\' \t\r\n]|#.*)',
     era   = 256,
-    shuffle=True
+    shuffle=True,
   ).add(**d)
+
+def memo2(f):
+  name = f.__name__
+  def wrapper(i,j):
+    if i.cache is None:
+      i.cache={}
+    if id(i) > id(j):
+      i,j = j,i
+    key = (name, id(i), id(j))
+    if not key in i.cache:
+      i.cache[key] = f(i,j)
+    return i.cache[key]
+  return wrapper
 
 class Row:
   id=0
   def __init__(i,cells=[],t=None):
     Row.id = i.id = Row.id + 1
+    i.cache = None
     i.cells = cells
     i.table = t
     i.table.n += 1
@@ -33,10 +47,11 @@ class Row:
   def __getitem__(i,k): return i.cells[k]
   def __hash__(i)     : return i.id
   def __repr__(i): return '<'+str(i.cells)+'>'
+  @memo2
   def dist(i,j):
     skip = lambda z: z == the.TABLE.skip
     n = all = 0
-    for v1,v2,head in cells2(i,j,i.indep):
+    for v1,v2,hdr in cells2(i,j,i.table.indep):
       if skip(v1): v1 = hdr.far(v2)
       if skip(v2): v2 = hdr.far(v1)
       if the.TABLE.skip:
@@ -157,7 +172,7 @@ def cells(row,headers):
 def cells2(row1,row2,headers):
   skip = lambda z: z == the.TABLE.skip
   for header in headers:
-    cell1 = row1[header.col]
-    cell2 = row2[header.col]
-    if skip(v1) and skip(v2): continue
-    yield cell1, cell2, header
+    v1 = row1[header.col]
+    v2 = row2[header.col]
+    if not (skip(v1) and skip(v2)):
+      yield v1, v2, header

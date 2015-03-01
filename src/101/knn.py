@@ -16,9 +16,11 @@ def knn(f):
   klasses = {}
   rows = []
   def train(t,row,k):
-    rows += [ Row(row.cells, klasses[k]) ]
+    if not k in klasses:
+      klasses[k] = header(t.spec)
+    rows.append( Row(row.cells, klasses[k]) )
   def test(t,row):    
-    return mean(
+    return mode(
              theKlasses(
                nearest(k,row,rows)))
   t,logs = ilearn(f,test,train)

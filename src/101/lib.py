@@ -159,7 +159,15 @@ def second(z): return z[1]
 def third(z) : return z[2]
 def last(z)  : return z[-1]
 def mean(z)  : return sum(z) / len(z)
-
+def mode(lst):
+  cnts, out, most = {},None,0
+  for x in lst:
+    tmp = cnts[x] = cnts.get(x,0) + 1
+    if tmp > most:
+      out,most = x,tmp
+  return out
+    
+    
 def ntiles(lst,tiles):
   thing = lambda z: lst[ int(len(lst)*z)  ]
   return [ thing(tile) for tile in tiles ]
